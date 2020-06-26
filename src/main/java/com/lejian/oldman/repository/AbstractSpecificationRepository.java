@@ -5,6 +5,7 @@ import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.exception.PendingException;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,20 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
         }
     }
 
+    /**
+     * 根据bo查询equal条件 获取数据
+     * @param jpaSpecBo
+     * @return
+     */
+    public List<Bo> findWithSpec(JpaSpecBo jpaSpecBo) {
+        try {
+            List<Entity> entityList = getSpecDao().findAll(createSpec(jpaSpecBo));
+            return entityList.stream().map(this::convertEntity).collect(Collectors.toList());
+        }catch (Exception e){
+            throw new PendingException("findWithSpec",e);
+        }
+    }
+
 
     /**
      * 根据equal条件获取数量
@@ -86,6 +101,13 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             jpaSpecBo.getEqualMap().forEach((k,v)->{
                 if(!ObjectUtils.isEmpty(v)) {
                     predicateList.add(criteriaBuilder.equal(root.get(k), v));
+                }
+            });
+
+            jpaSpecBo.getInMap().forEach((k,v)->{
+                if (CollectionUtils.isNotEmpty(v)){
+                    CriteriaBuilder.In<Integer> in = criteriaBuilder.in(root.get(k));
+                    predicateList.add(in);
                 }
             });
         }

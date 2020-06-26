@@ -31,6 +31,11 @@ public class OldmanService {
     }
 
 
+    /**
+     * 根据条件， 获取老人数量
+     * @param oldmanSearchParam
+     * @return
+     */
     public Long getOldmanCount(OldmanSearchParam oldmanSearchParam) {
         return oldmanRepository.countWithSpec(convert(oldmanSearchParam));
     }
@@ -48,5 +53,9 @@ public class OldmanService {
         OldmanVo oldmanVo = new OldmanVo();
         BeanUtils.copyProperties(oldmanBo,oldmanVo);
         return oldmanVo;
+    }
+
+    public List<OldmanVo> getOldmanByLocationId(Integer locationId) {
+        return oldmanRepository.findByLocationId(locationId).stream().map(this::convert).collect(Collectors.toList());
     }
 }

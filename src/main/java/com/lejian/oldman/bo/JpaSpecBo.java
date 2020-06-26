@@ -1,9 +1,9 @@
 package com.lejian.oldman.bo;
 
-import lombok.Data;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -13,5 +13,6 @@ import java.util.Map;
 @Getter
 public class JpaSpecBo {
     Map<String,Object> equalMap = new HashMap<>();
+    Map<String,List<Object>> inMap = new HashMap<>();
 
 }

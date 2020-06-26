@@ -35,7 +35,7 @@ public class OldmanEntity {
     private Integer mary;
     @Column
     private String country;
-    @Column
+    @Column(name = "id_card")
     private String idCard;
     @Column
     private String district;
@@ -47,22 +47,26 @@ public class OldmanEntity {
     private String council;
     @Column
     private String address;
-    @Column
+    @Column(name = "residence_address")
     private String residenceAddress;
-    @Column
+    @Column(name = "politics_status")
     private Integer politicsStatus;
-    @Column
+    @Column(name = "household_type")
     private Integer householdType;
-    @Column
+    @Column(name = "pic_url")
     private String picUrl;
     @Column
     private Integer education;
-    @Column
+    @Column(name = "nonelevator_floor")
     private Integer nonelevatorFloor;
     @Column
     private String tags;
+    @Column(name = "location_id")
+    private Integer locationId;
     @Column
+    private Integer status;
+    @Column(name = "create_time")
     private Timestamp createTime;
-    @Column
+    @Column(name = "datachange_time")
     private Timestamp datachangeTime;
 }

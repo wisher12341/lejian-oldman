@@ -1,5 +1,6 @@
 package com.lejian.oldman.bo;
 
+import com.lejian.oldman.enums.OldmanStatusEnum;
 import lombok.Data;
 import java.util.List;
 
@@ -27,4 +28,6 @@ public class OldmanBo {
     private Integer education;
     private Integer nonelevatorFloor;
     private List<String> tags;
+    private Integer locationId;
+    private OldmanStatusEnum status;
 }
