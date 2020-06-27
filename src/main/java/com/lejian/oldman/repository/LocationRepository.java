@@ -1,7 +1,7 @@
 package com.lejian.oldman.repository;
 
 
-import com.lejian.oldman.Dao.LocationDao;
+import com.lejian.oldman.dao.LocationDao;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.entity.LocationEntity;
 import org.springframework.beans.BeanUtils;

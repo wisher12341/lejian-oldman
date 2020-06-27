@@ -1,8 +1,7 @@
-package com.lejian.oldman.Dao;
+package com.lejian.oldman.dao;
 
 
 import com.lejian.oldman.entity.OldmanEntity;
-import com.lejian.oldman.vo.OldmanVo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

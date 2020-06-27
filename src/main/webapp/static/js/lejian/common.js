@@ -1,4 +1,4 @@
-
+document.write('<link href="/static/css/common.css" rel="stylesheet">');
 document.write('<link href="/static/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">');
 document.write('<link href="/static/css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">');
 document.write('<link href="/static/css/animate.min.css" rel="stylesheet">');

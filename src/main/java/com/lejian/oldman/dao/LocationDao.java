@@ -1,4 +1,4 @@
-package com.lejian.oldman.Dao;
+package com.lejian.oldman.dao;
 
 import com.lejian.oldman.entity.LocationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

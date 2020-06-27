@@ -12,4 +12,5 @@ public class OldmanVo {
     private String idCard;
     private String area;
     private String council;
+    private String status;
 }

@@ -12,11 +12,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum  OldmanStatusEnum {
 
-    GREEN(1),
-    YELLOW(2),
-    RED(3);
+    GREEN(1,"正常"),
+    YELLOW(2,"服务中"),
+    RED(3,"异常");
 
     private Integer status;
+    private String desc;
 
     public static OldmanStatusEnum find(Integer status){
         for(OldmanStatusEnum statusEnum: OldmanStatusEnum.values()){

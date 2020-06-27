@@ -52,6 +52,7 @@ public class OldmanService {
     private OldmanVo convert(OldmanBo oldmanBo) {
         OldmanVo oldmanVo = new OldmanVo();
         BeanUtils.copyProperties(oldmanBo,oldmanVo);
+        oldmanVo.setStatus(oldmanBo.getStatus().getDesc());
         return oldmanVo;
     }
 
