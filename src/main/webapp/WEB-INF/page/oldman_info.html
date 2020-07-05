@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="/static/js/lejian/common.js"></script>
+
+    <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
+
+    <style>
+        .label_title{
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .col-sm-2{
+            width: 19%!important;
+        }
+        .form-horizontal .control-label{
+            text-align:left !important;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>老人信息
+                        <small style="color:red;">重点老人(90)</small>
+                    </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <form method="get" class="form-horizontal" >
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label label_title">基本信息</label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">编号：<span oldmanField="oid"></span></label>
+                            <label class="col-sm-2 control-label">姓名：<span oldmanField="name"></span></label>
+                            <label class="col-sm-2 control-label">性别：<span oldmanField="sex"></span></label>
+                            <label class="col-sm-2 control-label">年龄：<span oldmanField="age"></span></label>
+                            <label class="col-sm-2 control-label">出生日期：<span oldmanField="birthday"></span></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">属相：<span oldmanField="zodiac"></span></label>
+                            <label class="col-sm-2 control-label">星座：<span oldmanField="constellation"></span></label>
+                            <label class="col-sm-2 control-label">国籍：<span oldmanField="country"></span></label>
+                            <label class="col-sm-2 control-label">婚姻状况：<span oldmanField="mary"></span></label>
+                            <label class="col-sm-2 control-label">政治面貌：<span oldmanField="politics"></span></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">电话：<span oldmanField="phone"></span></label>
+                            <label class="col-sm-2 control-label">住址：<span oldmanField="address"></span></label>
+                            <label class="col-sm-2 control-label">户籍：<span oldmanField="residenceAddress"></span></label>
+                            <label class="col-sm-2 control-label">身份证：<span oldmanField="idCard"></span></label>
+                            <label class="col-sm-2 control-label">学历：<span oldmanField="education"></span></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">区：<span oldmanField="district"></span></label>
+                            <label class="col-sm-2 control-label">街道：<span oldmanField="street"></span></label>
+                            <label class="col-sm-2 control-label">片区：<span oldmanField="area"></span></label>
+                            <label class="col-sm-2 control-label">居委：<span oldmanField="council"></span></label>
+                            <label class="col-sm-2 control-label">户口性质：<span oldmanField="householdType"></span></label>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">楼房：<span oldmanField="nonelevatorFloor"></span></label>
+                            <label class="col-sm-2 control-label">状态：<span oldmanField="status"></span></label>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div id="contact">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label label_title">应急联系人</label>
+                            </div>
+                            <table class="table table-striped table-bordered table-hover dataTables-example">
+                                <thead>
+                                <tr>
+                                    <th>姓名</th>
+                                    <th>电话</th>
+                                    <th>关系</th>
+                                    <th>地址</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/lejian/oldman_info.js"></script>
+</body>
+
+</html>

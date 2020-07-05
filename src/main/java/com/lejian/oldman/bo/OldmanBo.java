@@ -1,19 +1,20 @@
 package com.lejian.oldman.bo;
 
-import com.lejian.oldman.enums.OldmanStatusEnum;
+import com.lejian.oldman.enums.OldmanEnum;
 import lombok.Data;
+
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Data
 public class OldmanBo {
     private String oid;
-    private Integer sex;
+    private OldmanEnum sex;
     private String name;
-    private String birthday;
-    private String zodiac;
-    private String constellation;
+    private LocalDate birthday;
     private String phone;
-    private Integer mary;
+    private String mary;
     private String country;
     private String idCard;
     private String district;
@@ -22,12 +23,12 @@ public class OldmanBo {
     private String council;
     private String address;
     private String residenceAddress;
-    private Integer politicsStatus;
-    private Integer householdType;
+    private OldmanEnum politics;
+    private OldmanEnum householdType;
     private String picUrl;
-    private Integer education;
+    private OldmanEnum education;
     private Integer nonelevatorFloor;
     private List<String> tags;
     private Integer locationId;
-    private OldmanStatusEnum status;
+    private OldmanEnum status;
 }

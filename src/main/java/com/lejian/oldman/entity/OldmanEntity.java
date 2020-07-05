@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -24,15 +25,11 @@ public class OldmanEntity {
     @Column
     private String name;
     @Column
-    private Date birthday;
-    @Column
-    private String zodiac;
-    @Column
-    private String constellation;
+    private LocalDate birthday;
     @Column
     private String phone;
     @Column
-    private Integer mary;
+    private String mary;
     @Column
     private String country;
     @Column(name = "id_card")
@@ -49,8 +46,8 @@ public class OldmanEntity {
     private String address;
     @Column(name = "residence_address")
     private String residenceAddress;
-    @Column(name = "politics_status")
-    private Integer politicsStatus;
+    @Column
+    private Integer politics;
     @Column(name = "household_type")
     private Integer householdType;
     @Column(name = "pic_url")

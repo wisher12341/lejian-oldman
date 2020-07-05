@@ -32,10 +32,27 @@ public class OldmanController {
     }
 
 
+    /**
+     * 根据locationid 获取全都老人
+     * @param request
+     * @return
+     */
     @RequestMapping("/getOldmanByLocationId")
     public GetOldmanByLocationIdResponse getOldmanByLocationId(@RequestBody GetOldmanByLocationIdRequest request){
         GetOldmanByLocationIdResponse response = new GetOldmanByLocationIdResponse();
         response.setOldmanVoList(oldmanService.getOldmanByLocationId(request.getLocationId()));
+        return response;
+    }
+
+    /**
+     * oid
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getOldmanByOid")
+    public GetOldmanByOidResponse getOldmanByOid(@RequestBody GetOldmanByOidRequest request){
+        GetOldmanByOidResponse response = new GetOldmanByOidResponse();
+        response.setOldmanVo(oldmanService.getOldmanByOid(request.getOid()));
         return response;
     }
 }

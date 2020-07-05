@@ -21,6 +21,14 @@ public class PageController {
         return mv;
     }
 
+    @GetMapping("/oldmanInfo")
+    public ModelAndView oldmanInfo(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/oldman_info");
+        return mv;
+    }
+
+
     @GetMapping("/main")
     public ModelAndView main(){
         ModelAndView mv = new ModelAndView();

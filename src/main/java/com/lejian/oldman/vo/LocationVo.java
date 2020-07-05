@@ -1,6 +1,6 @@
 package com.lejian.oldman.vo;
 
-import com.lejian.oldman.enums.OldmanStatusEnum;
+import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.exception.PendingException;
 import lombok.Data;
 
@@ -21,7 +21,7 @@ public class LocationVo {
          */
         GREEN {
             @Override
-            public LocationTypeEnum convert(OldmanStatusEnum oldmanStatus) {
+            public LocationTypeEnum convert(OldmanEnum.Status oldmanStatus) {
                 return LocationTypeEnum.find(oldmanStatus);
         }
         },
@@ -30,7 +30,7 @@ public class LocationVo {
          */
         RED {
             @Override
-            public LocationTypeEnum convert(OldmanStatusEnum oldmanStatus) {
+            public LocationTypeEnum convert(OldmanEnum.Status oldmanStatus) {
                 LocationTypeEnum locationTypeEnum = LocationTypeEnum.find(oldmanStatus);
                 if(locationTypeEnum == YELLOW){
                     return RANDY;
@@ -43,7 +43,7 @@ public class LocationVo {
          */
         YELLOW {
             @Override
-            public LocationTypeEnum convert(OldmanStatusEnum oldmanStatus) {
+            public LocationTypeEnum convert(OldmanEnum.Status oldmanStatus) {
                 LocationTypeEnum locationTypeEnum = LocationTypeEnum.find(oldmanStatus);
                 if(locationTypeEnum == RED){
                     return RANDY;
@@ -56,7 +56,7 @@ public class LocationVo {
          */
         RANDY {
             @Override
-            public LocationTypeEnum convert(OldmanStatusEnum oldmanStatus) {
+            public LocationTypeEnum convert(OldmanEnum.Status oldmanStatus) {
                 return this;
             }
         };
@@ -66,10 +66,10 @@ public class LocationVo {
          * @param oldmanStatus
          * @return
          */
-        public abstract LocationTypeEnum convert(OldmanStatusEnum oldmanStatus);
+        public abstract LocationTypeEnum convert(OldmanEnum.Status oldmanStatus);
 
 
-        public static LocationTypeEnum find(OldmanStatusEnum oldmanStatus){
+        public static LocationTypeEnum find(OldmanEnum.Status oldmanStatus){
             for(LocationTypeEnum typeEnum:LocationTypeEnum.values()){
                 if(typeEnum.name().equals(oldmanStatus.name())){
                     return typeEnum;

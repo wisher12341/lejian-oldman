@@ -4,11 +4,14 @@ import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.controller.contract.OldmanSearchParam;
 import com.lejian.oldman.repository.OldmanRepository;
+import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.OldmanVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,11 +55,24 @@ public class OldmanService {
     private OldmanVo convert(OldmanBo oldmanBo) {
         OldmanVo oldmanVo = new OldmanVo();
         BeanUtils.copyProperties(oldmanBo,oldmanVo);
+        oldmanVo.setBirthday(oldmanBo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
+        oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
+        oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
         oldmanVo.setStatus(oldmanBo.getStatus().getDesc());
+        oldmanVo.setSex(oldmanBo.getSex().getDesc());
+        oldmanVo.setPolitics(oldmanBo.getPolitics().getDesc());
+        oldmanVo.setEducation(oldmanBo.getEducation().getDesc());
+        oldmanVo.setHouseholdType(oldmanBo.getHouseholdType().getDesc());
         return oldmanVo;
     }
 
     public List<OldmanVo> getOldmanByLocationId(Integer locationId) {
         return oldmanRepository.findByLocationId(locationId).stream().map(this::convert).collect(Collectors.toList());
+    }
+
+
+    public OldmanVo getOldmanByOid(String oid) {
+        return convert(oldmanRepository.findByOid(oid));
     }
 }

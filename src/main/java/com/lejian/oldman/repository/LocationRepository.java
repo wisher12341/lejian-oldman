@@ -21,10 +21,6 @@ public class LocationRepository extends AbstractRepository<LocationBo,LocationEn
         return dao;
     }
 
-    @Override
-    protected LocationEntity convertBo(LocationBo locationBo) {
-        return null;
-    }
 
     @Override
     protected LocationBo convertEntity(LocationEntity locationEntity) {

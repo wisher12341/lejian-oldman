@@ -2,6 +2,7 @@ package com.lejian.oldman.dao;
 
 
 import com.lejian.oldman.entity.OldmanEntity;
+import com.lejian.oldman.vo.OldmanVo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -13,4 +14,6 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
     List<OldmanEntity> findByStatusIn(List<Integer> statusList);
 
     List<OldmanEntity> findByLocationId(Integer locationId);
+
+    OldmanEntity findByOid(String oid);
 }

@@ -2,10 +2,9 @@ package com.lejian.oldman.service;
 
 
 import com.google.common.collect.Lists;
-import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.enums.OldmanStatusEnum;
+import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.vo.LocationVo;
@@ -15,13 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
-import static com.lejian.oldman.enums.OldmanStatusEnum.GREEN;
-import static com.lejian.oldman.enums.OldmanStatusEnum.RED;
-import static com.lejian.oldman.enums.OldmanStatusEnum.YELLOW;
-
 @Service
 public class LocationService {
 
@@ -58,7 +51,8 @@ public class LocationService {
                         if(vo.getLocationTypeEnum()== LocationVo.LocationTypeEnum.RANDY){
                             break;
                         }
-                        vo.setLocationTypeEnum(vo.getLocationTypeEnum().convert(oldmanBo.getStatus()));
+                        OldmanEnum.Status oldmanStatus = (OldmanEnum.Status) oldmanBo.getStatus();
+                        vo.setLocationTypeEnum(vo.getLocationTypeEnum().convert(oldmanStatus));
                     }
                 }
                 return vo;
@@ -70,7 +64,7 @@ public class LocationService {
      * @return
      */
     private Map<Integer, List<OldmanBo>> getRedAndYellowLocation() {
-        List<OldmanBo> oldmanBoList = oldmanRepository.findByStatus(Lists.newArrayList(RED.getStatus(),YELLOW.getStatus()));
+        List<OldmanBo> oldmanBoList = oldmanRepository.findByStatus(Lists.newArrayList(OldmanEnum.Status.RED.getValue(),OldmanEnum.Status.YELLOW.getValue()));
         return oldmanBoList.stream().collect(Collectors.groupingBy(OldmanBo::getLocationId));
     }
 }
