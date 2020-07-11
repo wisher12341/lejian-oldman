@@ -1,5 +1,6 @@
 package com.lejian.oldman.entity;
 
+
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -11,24 +12,21 @@ import java.sql.Timestamp;
 @DynamicUpdate
 @Data
 @Entity
-@Table(name = "contact_man")
-public class ContactManEntity {
+@Table(name = "user")
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
-    private String oid;
+    private String username;
     @Column
-    private String name;
+    private String password;
     @Column
-    private String phone;
-    @Column
-    private String relation;
-    @Column
-    private String address;
+    private Integer type;
     @Column(name = "create_time")
     private Timestamp createTime;
     @Column(name = "datachange_time")
     private Timestamp datachangeTime;
+
 }

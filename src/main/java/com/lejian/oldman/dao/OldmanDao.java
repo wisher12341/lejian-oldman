@@ -16,4 +16,9 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
     List<OldmanEntity> findByLocationId(Integer locationId);
 
     OldmanEntity findByOid(String oid);
+
+
+    List<OldmanEntity> findByNameLike(String name);
+
+    OldmanEntity findByName(String name);
 }

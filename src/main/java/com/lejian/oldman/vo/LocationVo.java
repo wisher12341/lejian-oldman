@@ -1,7 +1,7 @@
 package com.lejian.oldman.vo;
 
 import com.lejian.oldman.enums.OldmanEnum;
-import com.lejian.oldman.exception.PendingException;
+import com.lejian.oldman.exception.BusinessException;
 import lombok.Data;
 
 @Data
@@ -75,7 +75,7 @@ public class LocationVo {
                     return typeEnum;
                 }
             }
-            throw new PendingException("no LocationTypeEnum found");
+            throw new BusinessException("no LocationTypeEnum found");
         }
     }
 

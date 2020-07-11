@@ -36,4 +36,11 @@ public class PageController {
         return mv;
     }
 
+    @GetMapping("/worker/checkin")
+    public ModelAndView workerCheckin(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/worker_checkin");
+        return mv;
+    }
+
 }

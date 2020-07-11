@@ -24,8 +24,18 @@ public class LocationRepository extends AbstractRepository<LocationBo,LocationEn
 
     @Override
     protected LocationBo convertEntity(LocationEntity locationEntity) {
+        if(locationEntity == null){
+            return null;
+        }
         LocationBo locationBo = new LocationBo();
         BeanUtils.copyProperties(locationEntity,locationBo);
         return locationBo;
+    }
+
+    @Override
+    protected LocationEntity convertBo(LocationBo locationBo) {
+        LocationEntity locationEntity = new LocationEntity();
+        BeanUtils.copyProperties(locationBo,locationEntity);
+        return locationEntity;
     }
 }

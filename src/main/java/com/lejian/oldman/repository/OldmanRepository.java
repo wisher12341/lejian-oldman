@@ -27,11 +27,25 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         return oldmanDao;
     }
 
-
+    @Override
+    protected OldmanEntity convertBo(OldmanBo oldmanBo) {
+        OldmanEntity oldmanEntity= new OldmanEntity();
+        BeanUtils.copyProperties(oldmanBo,oldmanEntity);
+        if(oldmanBo.getEducation()!=null) {
+            oldmanEntity.setEducation(oldmanBo.getEducation().getValue());
+        }
+        if(oldmanBo.getStatus()!=null) {
+            oldmanEntity.setStatus(oldmanBo.getStatus().getValue());
+        }
+        return oldmanEntity;
+    }
 
     @Override
     protected OldmanBo convertEntity(OldmanEntity oldmanEntity) {
         OldmanBo oldmanBo = new OldmanBo();
+        if(oldmanEntity == null){
+            return null;
+        }
         BeanUtils.copyProperties(oldmanEntity,oldmanBo);
         oldmanBo.setStatus(OldmanEnum.find(oldmanEntity.getStatus(),OldmanEnum.Status.class));
         oldmanBo.setEducation(OldmanEnum.find(oldmanEntity.getEducation(),OldmanEnum.Education.class));
@@ -51,5 +65,14 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
 
     public OldmanBo findByOid(String oid) {
         return convertEntity(oldmanDao.findByOid(oid));
+    }
+
+    public List<OldmanBo> findByFuzzyName(String value) {
+        return oldmanDao.findByNameLike(value).stream().map(this::convertEntity).collect(Collectors.toList());
+
+    }
+
+    public OldmanBo findByName(String name) {
+        return convertEntity(oldmanDao.findByName(name));
     }
 }

@@ -29,8 +29,18 @@ public class ContactManRepository extends AbstractRepository<ContactManBo,Contac
 
     @Override
     protected ContactManBo convertEntity(ContactManEntity contactManEntity) {
+        if(contactManEntity == null){
+            return null;
+        }
         ContactManBo contactManBo=new ContactManBo();
         BeanUtils.copyProperties(contactManEntity,contactManBo);
         return contactManBo;
+    }
+
+    @Override
+    protected ContactManEntity convertBo(ContactManBo contactManBo) {
+        ContactManEntity contactManEntity= new ContactManEntity();
+        BeanUtils.copyProperties(contactManBo,contactManEntity);
+        return contactManEntity;
     }
 }

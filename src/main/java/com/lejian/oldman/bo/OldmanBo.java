@@ -9,6 +9,7 @@ import java.util.List;
 
 @Data
 public class OldmanBo {
+    private Integer id;
     private String oid;
     private OldmanEnum sex;
     private String name;

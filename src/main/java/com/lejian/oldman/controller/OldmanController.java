@@ -38,8 +38,8 @@ public class OldmanController {
      * @return
      */
     @RequestMapping("/getOldmanByLocationId")
-    public GetOldmanByLocationIdResponse getOldmanByLocationId(@RequestBody GetOldmanByLocationIdRequest request){
-        GetOldmanByLocationIdResponse response = new GetOldmanByLocationIdResponse();
+    public GetOldmanListResponse getOldmanByLocationId(@RequestBody GetOldmanByLocationIdRequest request){
+        GetOldmanListResponse response = new GetOldmanListResponse();
         response.setOldmanVoList(oldmanService.getOldmanByLocationId(request.getLocationId()));
         return response;
     }
@@ -50,9 +50,34 @@ public class OldmanController {
      * @return
      */
     @RequestMapping("/getOldmanByOid")
-    public GetOldmanByOidResponse getOldmanByOid(@RequestBody GetOldmanByOidRequest request){
-        GetOldmanByOidResponse response = new GetOldmanByOidResponse();
+    public GetOldmanResponse getOldmanByOid(@RequestBody GetOldmanByOidRequest request){
+        GetOldmanResponse response = new GetOldmanResponse();
         response.setOldmanVo(oldmanService.getOldmanByOid(request.getOid()));
         return response;
     }
+
+    /**
+     * 模糊姓名查询
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getOldmanByFuzzyName")
+    public GetOldmanListResponse getOldmanByFuzzyName(@RequestBody GetOldmanByFuzzNameRequest request){
+        GetOldmanListResponse response = new GetOldmanListResponse();
+        response.setOldmanVoList(oldmanService.getOldmanByFuzzyName(request.getValue()));
+        return response;
+    }
+
+    /**
+     * 根据姓名查询
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getOldmanByName")
+    public GetOldmanResponse getOldmanByName(@RequestBody GetOldmanByNameRequest request){
+        GetOldmanResponse response = new GetOldmanResponse();
+        response.setOldmanVo(oldmanService.getOldmanByName(request.getName()));
+        return response;
+    }
+
 }

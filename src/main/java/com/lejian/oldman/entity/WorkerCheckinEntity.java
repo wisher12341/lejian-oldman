@@ -11,24 +11,21 @@ import java.sql.Timestamp;
 @DynamicUpdate
 @Data
 @Entity
-@Table(name = "contact_man")
-public class ContactManEntity {
+@Table(name = "worker_checkin")
+public class WorkerCheckinEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "worker_id")
+    private Integer workerId;
     @Column
     private String oid;
-    @Column
-    private String name;
-    @Column
-    private String phone;
-    @Column
-    private String relation;
-    @Column
-    private String address;
     @Column(name = "create_time")
     private Timestamp createTime;
-    @Column(name = "datachange_time")
-    private Timestamp datachangeTime;
+    @Column
+    private String lng;
+    @Column
+    private String lat;
+
 }

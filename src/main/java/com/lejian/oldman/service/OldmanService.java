@@ -67,6 +67,18 @@ public class OldmanService {
         return oldmanVo;
     }
 
+    /**
+     * 只填充部分
+     * @param oldmanBo
+     * @return
+     */
+    private OldmanVo convertBrief(OldmanBo oldmanBo) {
+        OldmanVo oldmanVo = new OldmanVo();
+        oldmanVo.setOid(oldmanBo.getOid());
+        oldmanVo.setName(oldmanBo.getName());
+        return oldmanVo;
+    }
+
     public List<OldmanVo> getOldmanByLocationId(Integer locationId) {
         return oldmanRepository.findByLocationId(locationId).stream().map(this::convert).collect(Collectors.toList());
     }
@@ -74,5 +86,19 @@ public class OldmanService {
 
     public OldmanVo getOldmanByOid(String oid) {
         return convert(oldmanRepository.findByOid(oid));
+    }
+
+    /**
+     * 模糊名称查询
+     * @param value
+     * @return
+     */
+    public List<OldmanVo> getOldmanByFuzzyName(String value) {
+        return oldmanRepository.findByFuzzyName(value).stream().map(this::convertBrief).collect(Collectors.toList());
+
+    }
+
+    public OldmanVo getOldmanByName(String name) {
+        return convertBrief(oldmanRepository.findByName(name));
     }
 }

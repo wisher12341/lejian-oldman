@@ -3,20 +3,19 @@ package com.lejian.oldman.repository;
 
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.exception.PendingException;
-import lombok.SneakyThrows;
+import com.lejian.oldman.exception.BusinessException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 import org.thymeleaf.util.MapUtils;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             Page<Entity> page = getSpecDao().findAll(createSpec(jpaSpecBo), pageable);
             return page.get().map(this::convertEntity).collect(Collectors.toList());
         }catch (Exception e){
-            throw new PendingException("findByPageWithSpec",e);
+            throw new BusinessException("findByPageWithSpec",e);
         }
     }
 
@@ -58,7 +57,7 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             List<Entity> entityList = getSpecDao().findAll(createSpec(jpaSpecBo));
             return entityList.stream().map(this::convertEntity).collect(Collectors.toList());
         }catch (Exception e){
-            throw new PendingException("findWithSpec",e);
+            throw new BusinessException("findWithSpec",e);
         }
     }
 

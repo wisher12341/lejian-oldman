@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class GetOldmanByLocationIdResponse {
+public class GetOldmanResponse {
     private ResponseHead responseHead;
-    private List<OldmanVo> oldmanVoList;
+    private OldmanVo oldmanVo;
 }

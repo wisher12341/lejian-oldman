@@ -8,20 +8,17 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.util.Date;
 
 @DynamicInsert
 @DynamicUpdate
 @Data
 @Entity
-@Table(name = "oldman")
-public class OldmanEntity {
+@Table(name = "worker")
+public class WorkerEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column
-    private String oid;
     @Column
     private Integer sex;
     @Column
@@ -29,41 +26,39 @@ public class OldmanEntity {
     @Column
     private LocalDate birthday;
     @Column
-    private String phone;
-    @Column
-    private String mary;
+    private String nation;
     @Column
     private String country;
     @Column(name = "id_card")
     private String idCard;
-    @Column
-    private String district;
-    @Column
-    private String street;
-    @Column
-    private String area;
-    @Column
-    private String council;
+    @Column(name = "birthplace_province")
+    private String birthplaceProvince;
+    @Column(name = "birthplace_city")
+    private String birthplaceCity;
     @Column
     private String address;
-    @Column(name = "residence_address")
-    private String residenceAddress;
-    @Column
-    private Integer politics;
-    @Column(name = "household_type")
-    private Integer householdType;
     @Column(name = "pic_url")
     private String picUrl;
     @Column
     private Integer education;
-    @Column(name = "nonelevator_floor")
-    private Integer nonelevatorFloor;
     @Column
-    private String tags;
-    @Column(name = "location_id")
-    private Integer locationId;
+    private String phone;
     @Column
-    private Integer status;
+    private String mary;
+    @Column(name = "retired_status")
+    private Integer retiredStatus;
+    @Column
+    private Integer reserve;
+    @Column(name = "housekeeping_insurance")
+    private String housekeepingInsurance;
+    @Column
+    private Double salary;
+    @Column(name = "organ_id")
+    private Integer organId;
+    @Column
+    private Integer star;
+    @Column(name = "user_id")
+    private Integer userId;
     @Column(name = "create_time")
     private Timestamp createTime;
     @Column(name = "datachange_time")
