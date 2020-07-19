@@ -1,11 +1,8 @@
 package com.lejian.oldman.repository;
 
-import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.bo.WorkerCheckinBo;
-import com.lejian.oldman.exception.RepositoryException;
+import com.lejian.oldman.bo.WorkerBo;
 import com.lejian.oldman.utils.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.util.ObjectUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -17,7 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.lejian.oldman.common.ComponentRespCode.REPOSITORY_ERROR;
+
 public abstract class AbstractRepository<Bo,Entity> {
+
+
+
+    @PersistenceContext
+    protected EntityManager entityManager;
 
 
     public List<Bo> getAll() {
@@ -33,10 +37,9 @@ public abstract class AbstractRepository<Bo,Entity> {
 
     public Bo getByPkId(Integer pkId) {
         Optional<Entity> optional =getDao().findById(pkId);
-        if(optional.isPresent()){
-            return convertEntity(optional.get());
-        }
-        throw new RepositoryException("getByPkId no data found,"+this.getClass().getSimpleName());
+        REPOSITORY_ERROR.check(optional.isPresent(),
+                "getByPkId no data found,id:"+pkId+","+this.getClass().getSimpleName());
+        return convertEntity(optional.get());
     }
 
 
@@ -44,10 +47,6 @@ public abstract class AbstractRepository<Bo,Entity> {
         Entity entity = convertBo(bo);
         getDao().save(entity);
     }
-
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     /**
      * 动态根据主键id更新 过滤非null字段
@@ -58,7 +57,6 @@ public abstract class AbstractRepository<Bo,Entity> {
     @Transactional
     public void dynamicUpdateByPkId(Bo bo){
         try {
-
             String sqlFormat = "update %s set %s where id=%s";
 
             StringBuilder updateStr=new StringBuilder();
@@ -79,9 +77,9 @@ public abstract class AbstractRepository<Bo,Entity> {
             }
             updateStr.deleteCharAt(updateStr.length()-1);
 
-            if(pkId ==null){
-                throw new RepositoryException("dynamicUpdateByPkId, no pk id found,"+this.getClass().getSimpleName());
-            }
+
+            REPOSITORY_ERROR.checkNotNull(pkId,
+                    "dynamicUpdateByPkId, no pk id found,"+this.getClass().getSimpleName());
 
             String sql = String.format(sqlFormat,
                     entity.getClass().getAnnotation(Table.class).name(),
@@ -92,7 +90,12 @@ public abstract class AbstractRepository<Bo,Entity> {
             query.executeUpdate();
 
         }catch (Exception e){
-            throw new RepositoryException("dynamicUpdateByPkId,"+this.getClass().getSimpleName(),e);
+            REPOSITORY_ERROR.doThrowException("dynamicUpdateByPkId,"+this.getClass().getSimpleName(),e);
         }
+    }
+
+    public List<Bo> getByPkIds(List<Integer> pkIds) {
+        List<Entity> entityList =getDao().findAllById(pkIds);
+        return entityList.stream().map(this::convertEntity).collect(Collectors.toList());
     }
 }

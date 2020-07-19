@@ -1,9 +1,9 @@
 package com.lejian.oldman.repository;
 
 
+import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.JpaSpecBo;
-import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.exception.BusinessException;
+import com.lejian.oldman.exception.BizException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,14 +13,16 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.util.ObjectUtils;
 import org.thymeleaf.util.MapUtils;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.lejian.oldman.common.ComponentRespCode.REPOSITORY_ERROR;
 
 /**
  * 动态查询
@@ -43,8 +45,9 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             Page<Entity> page = getSpecDao().findAll(createSpec(jpaSpecBo), pageable);
             return page.get().map(this::convertEntity).collect(Collectors.toList());
         }catch (Exception e){
-            throw new BusinessException("findByPageWithSpec",e);
+            REPOSITORY_ERROR.doThrowException("findByPageWithSpec",e);
         }
+        return Lists.newArrayList();
     }
 
     /**
@@ -57,8 +60,9 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             List<Entity> entityList = getSpecDao().findAll(createSpec(jpaSpecBo));
             return entityList.stream().map(this::convertEntity).collect(Collectors.toList());
         }catch (Exception e){
-            throw new BusinessException("findWithSpec",e);
+            REPOSITORY_ERROR.doThrowException("findWithSpec",e);
         }
+        return Lists.newArrayList();
     }
 
 
@@ -107,6 +111,27 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
                 if (CollectionUtils.isNotEmpty(v)){
                     CriteriaBuilder.In<Integer> in = criteriaBuilder.in(root.get(k));
                     predicateList.add(in);
+                }
+            });
+
+            jpaSpecBo.getGreatEMap().forEach((k,v)->{
+                if(!ObjectUtils.isEmpty(v)) {
+                    if(v instanceof Timestamp) {
+                        predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (Timestamp) v));
+                    }else{
+                        predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (String) v));
+                    }
+                }
+            });
+
+
+            jpaSpecBo.getLessEMap().forEach((k,v)->{
+                if(!ObjectUtils.isEmpty(v)) {
+                    if(v instanceof Timestamp) {
+                        predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (Timestamp) v));
+                    }else{
+                        predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (String) v));
+                    }
                 }
             });
         }

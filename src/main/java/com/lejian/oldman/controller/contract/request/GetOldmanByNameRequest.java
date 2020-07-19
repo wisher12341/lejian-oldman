@@ -1,4 +1,4 @@
-package com.lejian.oldman.controller.contract;
+package com.lejian.oldman.controller.contract.request;
 
 import lombok.Data;
 

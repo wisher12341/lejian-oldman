@@ -2,7 +2,8 @@ package com.lejian.oldman.service;
 
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.controller.contract.OldmanSearchParam;
+import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
+import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.OldmanVo;
@@ -10,7 +11,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -100,5 +100,14 @@ public class OldmanService {
 
     public OldmanVo getOldmanByName(String name) {
         return convertBrief(oldmanRepository.findByName(name));
+    }
+
+
+    /**
+     * 长者关怀紧急报警 根据老人姓名 状态变成红色
+     * @param oldmanName
+     */
+    public void sensorUrgency(String oldmanName) {
+        oldmanRepository.updateStatusByName(oldmanName, OldmanEnum.Status.RED.getValue());
     }
 }

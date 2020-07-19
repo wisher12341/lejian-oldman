@@ -12,7 +12,21 @@ import java.util.Map;
  */
 @Getter
 public class JpaSpecBo {
+    /**
+     * 等于
+     */
     Map<String,Object> equalMap = new HashMap<>();
+    /**
+     * in
+     */
     Map<String,List<Object>> inMap = new HashMap<>();
+    /**
+     * 小于等于
+     */
+    Map<String,Object> lessEMap = new HashMap<>();
+    /**
+     * 大于等于
+     */
+    Map<String,Object> greatEMap = new HashMap<>();
 
 }

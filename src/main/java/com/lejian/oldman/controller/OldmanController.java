@@ -1,12 +1,16 @@
 package com.lejian.oldman.controller;
 
-import com.lejian.oldman.controller.contract.*;
+import com.lejian.oldman.controller.contract.request.*;
+import com.lejian.oldman.controller.contract.response.GetOldmanByPageResponse;
+import com.lejian.oldman.controller.contract.response.GetOldmanListResponse;
+import com.lejian.oldman.controller.contract.response.GetOldmanResponse;
+import com.lejian.oldman.controller.contract.response.ResultResponse;
 import com.lejian.oldman.service.OldmanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @ResponseBody
@@ -78,6 +82,15 @@ public class OldmanController {
         GetOldmanResponse response = new GetOldmanResponse();
         response.setOldmanVo(oldmanService.getOldmanByName(request.getName()));
         return response;
+    }
+
+    /**
+     * 关怀系统紧急报警 根据老人姓名（最好录入不能重名）
+     */
+    @GetMapping("/sensorUrgency")
+    public ResultResponse sensorUrgency(@RequestParam("name") String oldmanName){
+        oldmanService.sensorUrgency(oldmanName);
+        return new ResultResponse();
     }
 
 }

@@ -1,7 +1,6 @@
 package com.lejian.oldman.controller;
 
-import com.lejian.oldman.controller.contract.GetAllLocationResponse;
-import com.lejian.oldman.controller.contract.GetOldmanByPageRequest;
+import com.lejian.oldman.controller.contract.response.GetAllLocationResponse;
 import com.lejian.oldman.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

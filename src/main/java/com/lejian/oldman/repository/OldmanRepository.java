@@ -4,14 +4,11 @@ import com.lejian.oldman.dao.OldmanDao;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.entity.OldmanEntity;
 import com.lejian.oldman.enums.OldmanEnum;
-import com.lejian.oldman.vo.OldmanVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -74,5 +71,9 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
 
     public OldmanBo findByName(String name) {
         return convertEntity(oldmanDao.findByName(name));
+    }
+
+    public void updateStatusByName(String oldmanName, Integer status) {
+        oldmanDao.updateStatusByName(oldmanName,status);
     }
 }

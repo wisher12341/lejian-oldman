@@ -1,6 +1,8 @@
 package com.lejian.oldman.utils;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public final class DateUtils {
@@ -10,7 +12,7 @@ public final class DateUtils {
     private final static String[] zodiaces = new String[] { "鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊",
             "猴", "鸡", "狗", "猪" };
 
-    private final static DateTimeFormatter YYMMDDHHMMSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public final static DateTimeFormatter YYMMDDHHMMSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     /**
@@ -67,4 +69,11 @@ public final class DateUtils {
     }
 
 
+    public static String format(Timestamp timestamp, DateTimeFormatter format) {
+        return timestamp.toLocalDateTime().format(format);
+    }
+
+    public static Timestamp toTimeStamp(String time) {
+        return Timestamp.valueOf(time);
+    }
 }
