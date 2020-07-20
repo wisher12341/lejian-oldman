@@ -12,6 +12,21 @@
             width: 70%;
             z-index: 9999;
         }
+        #workerIcon{
+            position: absolute;
+            height: 10%;
+            width: 15%;
+            z-index: 9998;
+            background-color: #0e3954;
+            opacity: 0.8;
+            color: white;
+            font-weight: bold;
+            font-size: x-large;
+            margin: 1%;
+            text-align: center;
+            padding-top: 2%;
+            border-radius: 10%;
+        }
         #map{
             width: 100%;
             height: 100%;
@@ -29,6 +44,31 @@
         .anchorBL {
             display: none;
         }
+        #workerDiv{
+            width: 40%;
+            position: absolute;
+            z-index: 9998;
+            margin: 1%;
+        }
+        #workerList{
+            border-radius: 10%;
+            margin: 1%;
+            background-color: #0e3954;
+            opacity: 0.8;
+            color: white;
+            font-weight: bold;
+            display: none;
+            width: 100%!important;
+            font-size: large;
+            text-align: center;
+        }
+        #workerList .btn-primary{
+            padding:0px 3px!important;
+            font-size: large;
+        }
+        #workerList .row{
+            margin-top: 2px;
+        }
     </style>
     <script type="text/javascript" src="/static/js/lejian/common.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=6YSpoya23ILZkeQeyRGdt8s0CVzhKtzG"></script>
@@ -39,6 +79,10 @@
         <div class="col-xs-3" style="height: 100%"></div>
         <div class="col-xs-6" style="height: 100%">
             <iframe id="oldmanInfo"></iframe>
+            <div id="workerIcon" onclick="showAllWorker()">服务人员</div>
+            <div id="workerDiv">
+                <div id="workerList" class='container'></div>
+            </div>
             <div id="map"></div>
         </div>
         <div class="col-xs-3" style="height: 100%"></div>

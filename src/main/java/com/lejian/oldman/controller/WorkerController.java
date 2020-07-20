@@ -1,7 +1,8 @@
 package com.lejian.oldman.controller;
 
-import com.lejian.oldman.controller.contract.request.GetAllWorkerPositionByTimeRequest;
+import com.lejian.oldman.controller.contract.request.GetWorkerByPageRequest;
 import com.lejian.oldman.controller.contract.request.GetWorkerPositionByTimeAndIdRequest;
+import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.controller.contract.response.GetWorkerListResponse;
 import com.lejian.oldman.controller.contract.request.WorkerCheckInRequest;
 import com.lejian.oldman.controller.contract.response.GetWorkerResponse;
@@ -37,14 +38,15 @@ public class WorkerController {
     }
 
     /**
-     * 获取某个时间段 全部阿姨  最后一次 位置信息
+     * 分页获取服务人员
      */
-    @RequestMapping("/getAllWorkerLatestPositionByTime")
-    public GetWorkerListResponse getAllWorkerLatestPositionByTime(@RequestBody GetAllWorkerPositionByTimeRequest request){
-        GetWorkerListResponse response=new GetWorkerListResponse();
-        response.setWorkerVoList(workerService.getAllWorkerLatestPositionByTime(request.getStartTime(),request.getEndTime()));
+    @RequestMapping("getWorkerByPage")
+    public GetWorkerListResponse getWorkerByPage(@RequestBody GetWorkerByPageRequest request){
+        GetWorkerListResponse response= new GetWorkerListResponse();
+        response.setWorkerVoList(workerService.getWorkerByPage(request.getPageParam(),request.getStartTime(),request.getEndTime(),request.getLocation()));
         return response;
     }
+
 
     /**
      * 获取某个时间段  特定阿姨  全部位置信息

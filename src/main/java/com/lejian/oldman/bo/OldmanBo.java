@@ -32,4 +32,5 @@ public class OldmanBo {
     private List<String> tags;
     private Integer locationId;
     private OldmanEnum status;
+    private String qq;
 }

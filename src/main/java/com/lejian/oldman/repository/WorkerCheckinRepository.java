@@ -58,10 +58,11 @@ public class WorkerCheckinRepository extends AbstractSpecificationRepository<Wor
      * 获取时间范围内，服务人员签到最近时间
      * @param startTime
      * @param endTime
+     * @param workerIdList
      * @return
      */
-    public List<WorkerCheckinBo> getAllLatestTimeByTime(String startTime, String endTime) {
-        List<Map<String,Object>> mapList = workerCheckinDao.getAllLatestTimeByTime(startTime,endTime);
+    public List<WorkerCheckinBo> getAllLatestTimeByTime(String startTime, String endTime,List<Integer> workerIdList) {
+        List<Map<String,Object>> mapList = workerCheckinDao.getAllLatestTimeByTime(startTime,endTime,workerIdList);
         if(CollectionUtils.isNotEmpty(mapList)){
             return mapList.stream().map(item->{
                 WorkerCheckinBo workerCheckinBo=new WorkerCheckinBo();
@@ -111,8 +112,4 @@ public class WorkerCheckinRepository extends AbstractSpecificationRepository<Wor
         return workerCheckinEntity;
     }
 
-
-    public List<WorkerCheckinBo> getByWorkerIdAndTime(String startTime, String endTime, Integer workerId) {
-        return null;
-    }
 }

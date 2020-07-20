@@ -2,6 +2,7 @@ package com.lejian.oldman.service;
 
 import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.*;
+import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.WorkerVo;
 import com.lejian.oldman.enums.OldmanEnum;
@@ -154,17 +155,10 @@ public class WorkerService {
      * @param endTime
      * @return
      */
-    public List<WorkerVo> getAllWorkerLatestPositionByTime(String startTime, String endTime) {
-        List<WorkerCheckinBo> latestWorkerList = workerCheckinRepository.getAllLatestTimeByTime(startTime,endTime);
+    public List<WorkerCheckinBo> getWorkerLatestPositionByTime(String startTime, String endTime,List<Integer> workerIdList) {
+        List<WorkerCheckinBo> latestWorkerList = workerCheckinRepository.getAllLatestTimeByTime(startTime,endTime,workerIdList);
         if(CollectionUtils.isNotEmpty(latestWorkerList)) {
-            List<WorkerCheckinBo> latestPositionWorkerList = workerCheckinRepository.getAllPositionByTime(latestWorkerList);
-            List<Integer> workerIdList = latestPositionWorkerList.stream().map(WorkerCheckinBo::getWorkerId).collect(Collectors.toList());
-            List<WorkerBo> workerBoList = workerRepository.getByPkIds(workerIdList);
-            Map<Integer,WorkerCheckinBo> workerPositionMap = latestPositionWorkerList.stream().collect(Collectors.toMap(WorkerCheckinBo::getWorkerId, Function.identity()));
-            return workerBoList.stream().map(bo->{
-                WorkerCheckinBo workerCheckinBo = workerPositionMap.get(bo.getId());
-                return convert(bo,Lists.newArrayList(workerCheckinBo));
-            }).collect(Collectors.toList());
+            return workerCheckinRepository.getAllPositionByTime(latestWorkerList);
         }
         return Lists.newArrayList();
 
@@ -179,6 +173,7 @@ public class WorkerService {
         return workerVo;
     }
 
+
     public WorkerVo getWorkerPositionByTime(String startTime, String endTime, Integer workerId) {
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
         jpaSpecBo.getEqualMap().put("workerId",workerId);
@@ -188,5 +183,20 @@ public class WorkerService {
         WorkerBo workerBo = new WorkerBo();
         workerBo.setId(workerId);
         return convert(workerBo,workerCheckinBoList);
+    }
+
+
+    public List<WorkerVo> getWorkerByPage(PageParam pageParam, String startTime, String endTime, Boolean location) {
+        List<WorkerBo> workerBoList = workerRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),null);
+        if(location) {
+            List<Integer> workerIdList = workerBoList.stream().map(WorkerBo::getId).collect(Collectors.toList());
+            List<WorkerCheckinBo> workerCheckinBoList = getWorkerLatestPositionByTime(startTime, endTime, workerIdList);
+            Map<Integer, WorkerCheckinBo> workerPositionMap = workerCheckinBoList.stream().collect(Collectors.toMap(WorkerCheckinBo::getWorkerId, Function.identity()));
+            return workerBoList.stream().map(bo -> {
+                WorkerCheckinBo workerCheckinBo = workerPositionMap.get(bo.getId());
+                return convert(bo, Lists.newArrayList(workerCheckinBo));
+            }).collect(Collectors.toList());
+        }
+        return workerBoList.stream().map(bo -> convert(bo, Lists.newArrayList())).collect(Collectors.toList());
     }
 }
