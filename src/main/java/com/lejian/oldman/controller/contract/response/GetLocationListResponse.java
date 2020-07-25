@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class GetAllLocationResponse {
+public class GetLocationListResponse {
 
     private ResponseHead responseHead;
     private List<LocationVo> locationVoList;

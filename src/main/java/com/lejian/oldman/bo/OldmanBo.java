@@ -4,6 +4,7 @@ import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -34,4 +35,5 @@ public class OldmanBo {
     private Integer locationId;
     private BusinessEnum status;
     private String careGatewayId;
+    private Timestamp datachangeTime;
 }

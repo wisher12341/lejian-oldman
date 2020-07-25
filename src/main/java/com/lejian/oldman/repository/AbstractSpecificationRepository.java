@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.util.ObjectUtils;
-import org.thymeleaf.util.MapUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
@@ -100,41 +99,35 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
      */
     private List<Predicate> createPredicate(JpaSpecBo jpaSpecBo, CriteriaBuilder criteriaBuilder, Root<Entity> root){
         List<Predicate> predicateList = new ArrayList<>();
-        if(!MapUtils.isEmpty(jpaSpecBo.getEqualMap())){
-            jpaSpecBo.getEqualMap().forEach((k,v)->{
-                if(!ObjectUtils.isEmpty(v)) {
-                    predicateList.add(criteriaBuilder.equal(root.get(k), v));
+        jpaSpecBo.getEqualMap().forEach((k,v)->{
+            if(!ObjectUtils.isEmpty(v)) {
+                predicateList.add(criteriaBuilder.equal(root.get(k), v));
+            }
+        });
+        jpaSpecBo.getInMap().forEach((k,v)->{
+            if (CollectionUtils.isNotEmpty(v)){
+                CriteriaBuilder.In<Integer> in = criteriaBuilder.in(root.get(k));
+                predicateList.add(in);
+            }
+        });
+        jpaSpecBo.getGreatEMap().forEach((k,v)->{
+            if(!ObjectUtils.isEmpty(v)) {
+                if(v instanceof Timestamp) {
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (Timestamp) v));
+                }else{
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (String) v));
                 }
-            });
-
-            jpaSpecBo.getInMap().forEach((k,v)->{
-                if (CollectionUtils.isNotEmpty(v)){
-                    CriteriaBuilder.In<Integer> in = criteriaBuilder.in(root.get(k));
-                    predicateList.add(in);
+            }
+        });
+        jpaSpecBo.getLessEMap().forEach((k,v)->{
+            if(!ObjectUtils.isEmpty(v)) {
+                if(v instanceof Timestamp) {
+                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (Timestamp) v));
+                }else{
+                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (String) v));
                 }
-            });
-
-            jpaSpecBo.getGreatEMap().forEach((k,v)->{
-                if(!ObjectUtils.isEmpty(v)) {
-                    if(v instanceof Timestamp) {
-                        predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (Timestamp) v));
-                    }else{
-                        predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (String) v));
-                    }
-                }
-            });
-
-
-            jpaSpecBo.getLessEMap().forEach((k,v)->{
-                if(!ObjectUtils.isEmpty(v)) {
-                    if(v instanceof Timestamp) {
-                        predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (Timestamp) v));
-                    }else{
-                        predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (String) v));
-                    }
-                }
-            });
-        }
+            }
+        });
         return predicateList;
     }
 

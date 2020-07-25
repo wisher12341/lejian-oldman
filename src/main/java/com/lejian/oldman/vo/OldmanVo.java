@@ -2,6 +2,8 @@ package com.lejian.oldman.vo;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 
 @Data
 public class OldmanVo {
@@ -31,5 +33,6 @@ public class OldmanVo {
     private Integer locationId;
     private String status;
     private String careGatewayId;
+    private Timestamp datachangeTime;
 
 }
