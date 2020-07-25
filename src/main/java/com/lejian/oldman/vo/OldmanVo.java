@@ -30,6 +30,6 @@ public class OldmanVo {
     private String tags;
     private Integer locationId;
     private String status;
-    private String qq;
+    private String careGatewayId;
 
 }

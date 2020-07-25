@@ -28,6 +28,7 @@ public class WorkerVo {
     private Double salary;
     private Integer organId;
     private List<Position> positionList;
+    private String qq;
 
 
     @Data

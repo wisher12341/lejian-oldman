@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 @Controller
 @ResponseBody
@@ -85,11 +87,14 @@ public class OldmanController {
     }
 
     /**
-     * 关怀系统紧急报警 根据老人姓名（最好录入不能重名）
+     * 关怀系统紧急报警 根据长者关怀系统 的老人oid（最好录入不能重名）
+     * @param gatewayId 长者关怀系统 的老人 网关id
+     * @param type
+     * @param content
      */
-    @GetMapping("/sensorUrgency")
-    public ResultResponse sensorUrgency(@RequestParam("name") String oldmanName){
-        oldmanService.sensorUrgency(oldmanName);
+    @GetMapping("/alarm")
+    public ResultResponse sensorUrgency(String gatewayId,String type,String content) throws UnsupportedEncodingException {
+        oldmanService.alarm(gatewayId,type,content);
         return new ResultResponse();
     }
 

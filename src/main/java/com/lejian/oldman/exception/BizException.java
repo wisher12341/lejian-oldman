@@ -1,7 +1,9 @@
 package com.lejian.oldman.exception;
 
 import com.lejian.oldman.common.IRespCode;
+import lombok.Data;
 
+@Data
 public class BizException extends RuntimeException{
     /**
      * resp code

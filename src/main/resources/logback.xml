@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 定义变量 -->
+    <!--<property name="LOG_DIR" value="C:\log\"/>-->
+    <timestamp key="LOG_TIME" datePattern="yyyyMMdd"/>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>log.${LOG_TIME}.txt</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.lejian.oldman.repository" level="info" additivity="false">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
+    </logger>
+
+
+    <root level="debug">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+
+</configuration>

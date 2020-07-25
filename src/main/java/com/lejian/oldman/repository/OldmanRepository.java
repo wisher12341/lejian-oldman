@@ -3,12 +3,14 @@ package com.lejian.oldman.repository;
 import com.lejian.oldman.dao.OldmanDao;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.entity.OldmanEntity;
+import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,11 +46,11 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
             return null;
         }
         BeanUtils.copyProperties(oldmanEntity,oldmanBo);
-        oldmanBo.setStatus(OldmanEnum.find(oldmanEntity.getStatus(),OldmanEnum.Status.class));
-        oldmanBo.setEducation(OldmanEnum.find(oldmanEntity.getEducation(),OldmanEnum.Education.class));
-        oldmanBo.setHouseholdType(OldmanEnum.find(oldmanEntity.getHouseholdType(),OldmanEnum.HouseholdType.class));
-        oldmanBo.setPolitics(OldmanEnum.find(oldmanEntity.getPolitics(),OldmanEnum.Politics.class));
-        oldmanBo.setSex(OldmanEnum.find(oldmanEntity.getSex(),OldmanEnum.Sex.class));
+        oldmanBo.setStatus(BusinessEnum.find(oldmanEntity.getStatus(),OldmanEnum.Status.class));
+        oldmanBo.setEducation(BusinessEnum.find(oldmanEntity.getEducation(),OldmanEnum.Education.class));
+        oldmanBo.setHouseholdType(BusinessEnum.find(oldmanEntity.getHouseholdType(),OldmanEnum.HouseholdType.class));
+        oldmanBo.setPolitics(BusinessEnum.find(oldmanEntity.getPolitics(),OldmanEnum.Politics.class));
+        oldmanBo.setSex(BusinessEnum.find(oldmanEntity.getSex(),OldmanEnum.Sex.class));
         return oldmanBo;
     }
 
@@ -73,7 +75,12 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         return convertEntity(oldmanDao.findByName(name));
     }
 
-    public void updateStatusByName(String oldmanName, Integer status) {
-        oldmanDao.updateStatusByName(oldmanName,status);
+    @Transactional
+    public void updateStatusByCareGatewayId(String gatewayId, Integer status) {
+        oldmanDao.updateStatusByCareGatewayId(gatewayId,status);
+    }
+
+    public OldmanBo findByCareGatewayId(String gatewayId) {
+        return convertEntity(oldmanDao.findByCareGatewayId(gatewayId));
     }
 }

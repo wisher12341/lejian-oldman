@@ -1,9 +1,13 @@
 package com.lejian.oldman.service;
 
+import com.lejian.oldman.bo.CareAlarmRecordBo;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
+import com.lejian.oldman.enums.BusinessEnum;
+import com.lejian.oldman.enums.CareSystemEnum;
 import com.lejian.oldman.enums.OldmanEnum;
+import com.lejian.oldman.repository.CareAlarmRecordRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.OldmanVo;
@@ -11,15 +15,20 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.lejian.oldman.common.ComponentRespCode.NO_DATA_FOUND;
 
 @Service
 public class OldmanService {
 
     @Autowired
     private OldmanRepository oldmanRepository;
+    @Autowired
+    private CareAlarmRecordRepository careAlarmRecordRepository;
 
     /**
      * 分页获取老人信息
@@ -104,10 +113,28 @@ public class OldmanService {
 
 
     /**
-     * 长者关怀紧急报警 根据老人姓名 状态变成红色
-     * @param oldmanName
+     * 长者关怀报警
+     * 1. 老人状态变成红色
+     * 2. 记录报警记录
+     * 3. 前端页面展示
      */
-    public void sensorUrgency(String oldmanName) {
-        oldmanRepository.updateStatusByName(oldmanName, OldmanEnum.Status.RED.getValue());
+    public void alarm(String gatewayId, String type, String content) throws UnsupportedEncodingException {
+        type=new String(type.getBytes("ISO-8859-1"),"UTF-8");
+        content=new String(content.getBytes("ISO-8859-1"),"UTF-8");
+
+        OldmanBo oldmanBo = oldmanRepository.findByCareGatewayId(gatewayId);
+        NO_DATA_FOUND.checkNotNull(oldmanBo);
+        //step 1
+        oldmanRepository.updateStatusByCareGatewayId(gatewayId, OldmanEnum.Status.RED.getValue());
+
+        //step 2
+        CareAlarmRecordBo careAlarmRecordBo=new CareAlarmRecordBo();
+        careAlarmRecordBo.setType(BusinessEnum.find(type, CareSystemEnum.AlarmType.class).getValue());
+        careAlarmRecordBo.setContent(content);
+        careAlarmRecordBo.setOid(oldmanBo.getOid());
+        careAlarmRecordRepository.save(careAlarmRecordBo);
+
+        //step 3
+
     }
 }

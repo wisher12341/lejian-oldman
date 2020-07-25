@@ -27,4 +27,5 @@ public class WorkerBo {
     private Integer organId;
     private Integer star;
     private Integer userId;
+    private String qq;
 }

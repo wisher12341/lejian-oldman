@@ -25,6 +25,8 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
 
 
     @Modifying
-    @Query(value = "update oldman set status=?2 where name=?1",nativeQuery = true)
-    Integer updateStatusByName(String name, Integer status);
+    @Query(value = "update oldman set status=?2 where care_gateway_id=?1",nativeQuery = true)
+    Integer updateStatusByCareGatewayId(String gatewayId, Integer status);
+
+    OldmanEntity findByCareGatewayId(String careGatewayId);
 }

@@ -1,5 +1,6 @@
 package com.lejian.oldman.bo;
 
+import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ import java.util.List;
 public class OldmanBo {
     private Integer id;
     private String oid;
-    private OldmanEnum sex;
+    private BusinessEnum sex;
     private String name;
     private LocalDate birthday;
     private String phone;
@@ -24,13 +25,13 @@ public class OldmanBo {
     private String council;
     private String address;
     private String residenceAddress;
-    private OldmanEnum politics;
-    private OldmanEnum householdType;
+    private BusinessEnum politics;
+    private BusinessEnum householdType;
     private String picUrl;
-    private OldmanEnum education;
+    private BusinessEnum education;
     private Integer nonelevatorFloor;
     private List<String> tags;
     private Integer locationId;
-    private OldmanEnum status;
-    private String qq;
+    private BusinessEnum status;
+    private String careGatewayId;
 }

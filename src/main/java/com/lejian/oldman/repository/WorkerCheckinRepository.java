@@ -5,6 +5,7 @@ import com.lejian.oldman.bo.WorkerCheckinBo;
 import com.lejian.oldman.dao.WorkerCheckinDao;
 import com.lejian.oldman.entity.WorkerCheckinEntity;
 import com.lejian.oldman.utils.DateUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 import static com.lejian.oldman.common.ComponentRespCode.REPOSITORY_ERROR;
 import static com.lejian.oldman.utils.DateUtils.YYMMDDHHMMSS;
 
+@Slf4j
 @Repository
 public class WorkerCheckinRepository extends AbstractSpecificationRepository<WorkerCheckinBo,WorkerCheckinEntity> {
 
@@ -90,8 +92,9 @@ public class WorkerCheckinRepository extends AbstractSpecificationRepository<Wor
 
             });
             sql.deleteCharAt(sql.length()-1).deleteCharAt(sql.length()-1);
-
+            log.info("sql:"+sql);
             Query query =entityManager.createNativeQuery(sql.toString());
+            log.info("result:"+query.getResultList().size());
             return (List<WorkerCheckinBo>) (query.getResultList()).stream().map(item->convertEntity(convertQuery(item))).collect(Collectors.toList());
 
         }catch (Exception e){

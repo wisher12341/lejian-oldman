@@ -13,7 +13,7 @@ $(document).ready(function(){
         success: function (result) {
             var positions = result.locationVoList;
             for(var i=0;i<positions.length;i++){
-                createOldmanMarker(positions[i],map);
+                createLocationMarker(positions[i],map);
             }
         }
     });
@@ -25,7 +25,7 @@ $(document).ready(function(){
  * @param position
  * @param map
  */
-function createOldmanMarker(position,map) {
+function createLocationMarker(position,map) {
     var pt = new BMap.Point(position.positionX, position.positionY);
     var myIcon;
     if(position.locationTypeEnum == "GREEN"){
@@ -66,7 +66,7 @@ function createInfoWindow(position) {
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
             var opts = {
-                width : 400,     // 信息窗口宽度
+                width : 500,     // 信息窗口宽度
                 height: 200,     // 信息窗口高度
                 title : position.desc, // 信息窗口标题
                 message:""
@@ -77,8 +77,8 @@ function createInfoWindow(position) {
                 var oldman = oldmanList[i];
                 data += '<div class="row">' +
                     '<div class="col-sm-4">'+oldman.name+'</div>' +
-                    '<div class="col-sm-4">'+oldman.status+'</div>' +
-                    '<div class="col-sm-4"><button class="btn btn-primary" onclick=oldmanInfo('+oldman.oid+')>查看</button><button class="btn btn-primary" onclick="openQQ('+oldman.qq+')">语音</button><button class="btn btn-primary">视频</button></div>' +
+                    '<div class="col-sm-2">'+oldman.status+'</div>' +
+                    '<div class="col-sm-6"><button class="btn btn-primary" onclick=oldmanInfo('+oldman.oid+')>查看</button><button class="btn btn-primary" onclick="openVideo()">视频</button><a class="btn btn-primary" href="Webshell://hello">萤石云</a></div>' +
                     '</div>';
             }
             data+="</div>";
@@ -116,8 +116,8 @@ function showAllWorker() {
             for(var i=0;i<workerList.length;i++){
                 var worker = workerList[i];
                 data += '<div class="row worker-highlight" id="row'+worker.id+'">' +
-                    '<div class="col-sm-8" style="padding-top: 1%">'+worker.name+'</div>' +
-                    '<div class="col-sm-4"><button class="btn btn-primary" onclick="showOneWorker('+worker.id+')" >路线</button></div>' +
+                    '<div class="col-sm-6" style="padding-top: 1%">'+worker.name+'</div>' +
+                    '<div class="col-sm-6"><button class="btn btn-primary" onclick="showOneWorker('+worker.id+')" >路线</button><button class="btn btn-primary" onclick="openQQ('+worker.qq+')">语音</button></div>' +
                     '</div>';
                 if(worker.positionList.length>0){
                     var location = worker.positionList[0];
@@ -202,3 +202,13 @@ function openQQ(qq) {
     var url='tencent://Message/?uin='+qq;
     window.open(url);
 }
+
+function openVideo() {
+    var url='https://cloud3.xiangjiabao.com:28058';
+    window.open(url);
+}
+
+function openYsy() {
+    window.location.href="Webshell://hello";
+}
+

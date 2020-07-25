@@ -63,4 +63,6 @@ public class WorkerEntity {
     private Timestamp createTime;
     @Column(name = "datachange_time")
     private Timestamp datachangeTime;
+    @Column
+    private String qq;
 }

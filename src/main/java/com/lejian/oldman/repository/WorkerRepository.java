@@ -37,6 +37,6 @@ public class WorkerRepository extends AbstractSpecificationRepository<WorkerBo,W
     protected WorkerEntity convertBo(WorkerBo workerBo) {
         WorkerEntity workerEntity = new WorkerEntity();
         BeanUtils.copyProperties(workerBo,workerEntity);
-        return null;
+        return workerEntity;
     }
 }

@@ -6,25 +6,7 @@ import lombok.Getter;
 /**
  * 老人属性 枚举
  */
-public interface OldmanEnum {
-
-
-    /**
-     * 默认值
-     */
-    enum DefaultValue implements OldmanEnum{
-        NULL;
-
-        @Override
-        public Integer getValue() {
-            return null;
-        }
-
-        @Override
-        public String getDesc() {
-            return null;
-        }
-    }
+public interface OldmanEnum extends BusinessEnum{
 
 
     /**
@@ -100,28 +82,6 @@ public interface OldmanEnum {
         private String desc;
     }
 
-
-
-    /**
-     * 获取 枚举 值（DB存的数字）
-     * @return
-     */
-    Integer getValue();
-    /**
-     * 枚举描述
-     * @return
-     */
-    String getDesc();
-
-
-    static OldmanEnum find(Integer value, Class<? extends OldmanEnum> enumClass){
-        for(OldmanEnum oldmanEnum: enumClass.getEnumConstants()){
-            if(oldmanEnum.getValue().intValue()==value){
-                return oldmanEnum;
-            }
-        }
-        return DefaultValue.NULL;
-    }
 
 
 }

@@ -17,6 +17,10 @@ $(document).ready(function(){
 
 });
 
+/**
+ * 手机访问 定位是准确的
+ * PC上不准确
+ */
 function checkIn() {
     var geolocation = new BMap.Geolocation();
     geolocation.getCurrentPosition(function(r){

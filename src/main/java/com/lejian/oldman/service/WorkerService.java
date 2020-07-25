@@ -8,6 +8,7 @@ import com.lejian.oldman.vo.WorkerVo;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.*;
 import com.lejian.oldman.utils.MapUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import static com.lejian.oldman.common.ComponentRespCode.CHECKIN_OVER_DISTANCE;
 import static com.lejian.oldman.common.ComponentRespCode.CHECKIN_SHORT_TIME;
 import static com.lejian.oldman.utils.DateUtils.YYMMDDHHMMSS;
 
+@Slf4j
 @Service
 public class WorkerService {
 
@@ -50,7 +52,7 @@ public class WorkerService {
      * 服务人员签到签出 距离目标老人 最远的距离 (米)
      */
     //todo 变成可配置的
-    private static final double MAX_MAP_DISTANCE=100;
+    private static final double MAX_MAP_DISTANCE=Double.MAX_VALUE;
 
 
     /**
@@ -136,7 +138,7 @@ public class WorkerService {
         //服务人员服务的上一个记录
         WorkerCheckinBo lastWorkerCheckinBo = workerCheckinRepository.getLatestRecordByWid(workerBo.getId());
         if(lastWorkerCheckinBo!=null){
-            long interval = Duration.between(LocalDateTime.now(),lastWorkerCheckinBo.getCreateTime().toLocalDateTime()).toMinutes();
+            long interval = Duration.between(lastWorkerCheckinBo.getCreateTime().toLocalDateTime(),LocalDateTime.now()).toMinutes();
             if(interval < MIN_INTERVAL_TIME){
                 CHECKIN_SHORT_TIME.doThrowException();
             }
