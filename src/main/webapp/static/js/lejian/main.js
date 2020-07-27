@@ -1,4 +1,6 @@
 var map;
+var timestamp=new Date().getTime();
+var interval;
 $(document).ready(function(){
     map = new BMap.Map("map");
     map.centerAndZoom(new BMap.Point(121.390421, 31.157395), 16);
@@ -15,10 +17,47 @@ $(document).ready(function(){
             for(var i=0;i<positions.length;i++){
                 createLocationMarker(positions[i],map);
             }
+            interval =self.setInterval("pollOldmanStatus()",30*1000);
         }
     });
-
 });
+
+function pollOldmanStatus() {
+    console.info("start job");
+    $.ajax({
+        url: "/location/pollStatus",
+        type: 'post',
+        dataType: 'json',
+        data :JSON.stringify({
+            "timestamp": timestamp
+        }),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            var positions = result.locationVoList;
+            var allOverlay = map.getOverlays();
+            if(positions!=null && positions.length>0){
+                timestamp=result.timestamp;
+                for(var i=0;i<positions.length;i++){
+                    var position=positions[i];
+                    for(var j = 0;j<allOverlay.length;j++) {
+                        //删除指定的楼
+                        if(allOverlay[j].id !=undefined && allOverlay[j].id!=null){
+                            var id=allOverlay[j].id;
+                            if (id==position.id) {
+                                position.positionX=allOverlay[j].getPosition().lng;
+                                position.positionY=allOverlay[j].getPosition().lat;
+                                map.removeOverlay(allOverlay[j]);
+                                console.info(position.positionX+":"+position.positionY);
+                                createLocationMarker(position,map);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
 /**
  * 创建标注
@@ -40,6 +79,7 @@ function createLocationMarker(position,map) {
     });  // 创建标注
     marker.setTitle(position.desc);
     marker.disableMassClear();
+    marker.id=position.id;
     map.addOverlay(marker);
 
     marker.addEventListener("click", function(){

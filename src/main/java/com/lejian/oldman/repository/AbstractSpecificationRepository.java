@@ -119,6 +119,15 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
                 }
             }
         });
+        jpaSpecBo.getGreatMap().forEach((k,v)->{
+            if(!ObjectUtils.isEmpty(v)) {
+                if(v instanceof Timestamp) {
+                    predicateList.add(criteriaBuilder.greaterThan(root.get(k), (Timestamp) v));
+                }else{
+                    predicateList.add(criteriaBuilder.greaterThan(root.get(k), (String) v));
+                }
+            }
+        });
         jpaSpecBo.getLessEMap().forEach((k,v)->{
             if(!ObjectUtils.isEmpty(v)) {
                 if(v instanceof Timestamp) {

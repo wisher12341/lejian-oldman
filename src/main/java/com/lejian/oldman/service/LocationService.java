@@ -5,17 +5,18 @@ import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.vo.LocationVo;
+import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -72,10 +73,10 @@ public class LocationService {
         return oldmanBoList.stream().collect(Collectors.groupingBy(OldmanBo::getLocationId));
     }
 
-    public List<LocationVo> pollStatus(long timestamp) {
+    public Pair<Long, List<LocationVo>> pollStatus(long timestamp) {
         List<LocationVo> locationVoList = Lists.newArrayList();
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
-        jpaSpecBo.getGreatEMap().put("datachangeTime", new Timestamp(timestamp));
+        jpaSpecBo.getGreatMap().put("datachangeTime", new Timestamp(timestamp));
         List<OldmanBo> oldmanBoList = oldmanRepository.findWithSpec(jpaSpecBo);
         if(CollectionUtils.isNotEmpty(oldmanBoList)){
             Map<Integer,List<OldmanBo>> map = oldmanBoList.stream()
@@ -93,8 +94,10 @@ public class LocationService {
                 }
                 locationVoList.add(locationVo);
             });
+            OldmanBo oldmanBo=oldmanBoList.stream().max(Comparator.comparing(OldmanBo::getDatachangeTime)).get();
+            return new Pair(oldmanBo.getDatachangeTime().getTime(),locationVoList);
 
         }
-        return locationVoList;
+        return new Pair<>(null,null);
     }
 }

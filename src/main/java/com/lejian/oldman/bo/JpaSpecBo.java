@@ -28,5 +28,9 @@ public class JpaSpecBo {
      * 大于等于
      */
     Map<String,Object> greatEMap = new HashMap<>();
+    /**
+     * 大于
+     */
+    Map<String,Object> greatMap = new HashMap<>();
 
 }
