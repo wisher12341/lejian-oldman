@@ -22,6 +22,9 @@ $(document).ready(function(){
     });
 });
 
+/**
+ * 轮询老人状态
+ */
 function pollOldmanStatus() {
     console.info("start job");
     $.ajax({
@@ -129,9 +132,11 @@ function createInfoWindow(position) {
 }
 
 function oldmanInfo(oid) {
+    $("#oldmanInfo").hide();
     $("#oldmanInfo").attr("src","/oldmanInfo?oid="+oid+"&contact=no");
-    //todo 等数据加载完 再展示
-    $("#oldmanInfo").css("display","block");
+    $("#oldmanInfo").load(function(){                             //  等iframe加载完毕
+        $("#oldmanInfo").show();
+    });
 }
 
 // 展示所有服务人员及其特定时间段内的位置
