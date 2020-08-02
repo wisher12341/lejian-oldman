@@ -18,10 +18,10 @@ public class OldmanVo {
     private String mary;
     private String country;
     private String idCard;
-    private String district;
-    private String street;
-    private String area;
-    private String council;
+    private String areaCountry;
+    private String areaTown;
+    private String areaVillage;
+    private String areaCustomOne;
     private String address;
     private String residenceAddress;
     private String politics;

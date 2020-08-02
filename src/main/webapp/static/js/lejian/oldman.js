@@ -14,9 +14,9 @@ $(document).ready(function(){
             },{
                 data:"name"
             },{
-                data:"area"
+                data:"areaVillage"
             },{
-                data:"council"
+                data:"areaCustomOne"
             },{
                 data:"sex"
             },{

@@ -52,7 +52,7 @@ public class WorkerService {
      * 服务人员签到签出 距离目标老人 最远的距离 (米)
      */
     //todo 变成可配置的
-    private static final double MAX_MAP_DISTANCE=Double.MAX_VALUE;
+    private static final double MAX_MAP_DISTANCE=2000;
 
 
     /**

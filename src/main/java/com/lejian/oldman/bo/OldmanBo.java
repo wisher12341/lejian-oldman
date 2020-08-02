@@ -20,10 +20,6 @@ public class OldmanBo {
     private String mary;
     private String country;
     private String idCard;
-    private String district;
-    private String street;
-    private String area;
-    private String council;
     private String address;
     private String residenceAddress;
     private BusinessEnum politics;
@@ -36,4 +32,9 @@ public class OldmanBo {
     private BusinessEnum status;
     private String careGatewayId;
     private Timestamp datachangeTime;
+
+    private String areaCountry;
+    private String areaTown;
+    private String areaVillage;
+    private String areaCustomOne;
 }

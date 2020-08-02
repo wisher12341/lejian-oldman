@@ -36,14 +36,14 @@ public class OldmanEntity {
     private String country;
     @Column(name = "id_card")
     private String idCard;
-    @Column
-    private String district;
-    @Column
-    private String street;
-    @Column
-    private String area;
-    @Column
-    private String council;
+    @Column(name = "area_country")
+    private String areaCountry;
+    @Column(name = "area_town")
+    private String areaTown;
+    @Column(name = "area_village")
+    private String areaVillage;
+    @Column(name = "area_custom_one")
+    private String areaCustomOne;
     @Column
     private String address;
     @Column(name = "residence_address")
