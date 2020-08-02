@@ -94,7 +94,7 @@ function createBarChart(title,data,obj,callback) {
 function createPieChart(title,data,obj,callback) {
     var legend_data=[];
     var series_data=[];
-    // var j=-1;
+    var j=-1;
     for(var i=0;i<data.length;i++){
         // if(i%2===0){
         //     j++;
@@ -103,24 +103,6 @@ function createPieChart(title,data,obj,callback) {
         legend_data[i]=data[i].key;
         series_data[i]={name:data[i].key,value:data[i].value};
     }
-    // var legend=[];
-    // for(var i=0;i<legend_data.length;i++){
-    //     legend[i]={
-    //         icon: "circle", //设置形状
-    //         itemWidth: 5,  // 设置大小
-    //         itemHeight: 5,
-    //         itemGap: 5, // 设置间距
-    //         orient: 'horizontal',
-    //         x : ((i+1)*5)+"%",
-    //         y : ((i+1)*10)+"%",
-    //         align: 'left',
-    //         textStyle: { //图例文字的样式
-    //             color: '#fff',
-    //             fontSize: 10
-    //         },
-    //         data: legend_data[i]
-    //     }
-    // }
 
 
     var pie= echarts.init(obj);
@@ -138,11 +120,11 @@ function createPieChart(title,data,obj,callback) {
             formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
         legend: {
-            itemWidth: 5,  // 设置大小
-            itemHeight: 5,
+            itemWidth: 10,  // 设置大小
+            itemHeight: 10,
             itemGap: 5, // 设置间距
             icon: "circle", //设置形状
-
+            left:"right",
             orient: 'vertical',
             align: 'right',
             textStyle: { //图例文字的样式
@@ -156,7 +138,7 @@ function createPieChart(title,data,obj,callback) {
                 name: '人数',
                 type: 'pie',
                 radius: '55%',
-                center: ['28%', '45%'],
+                center: ['32%', '55%'],
                 data: series_data,
                 //去掉指示线
                 label: {

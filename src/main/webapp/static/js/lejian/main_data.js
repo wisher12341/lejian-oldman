@@ -85,14 +85,14 @@ function createOldmanChart() {
 
     var sex=[{"key":"男","value":2000},{"key":"女","value":1000}];
     var age=[{key:"60-70",value:100},{key:"71-80",value:100},{key:"81-90",value:100},{key:"90-",value:100}];
-    var huji=[{key:"本地",value:100},{key:"外地",value:100},{key:"人户分离",value:100}];
-    var jia=[{key:"纯老",value:100},{key:"独居",value:100},{key:"失独",value:100},{key:"孤老",value:100},{key:"一老养一老",value:100},{key:"三支人员",value:100},{key:"其他",value:100}];
+    var huji=[{key:"本地",value:100},{key:"外地",value:100},{key:"人户\n分离",value:100}];
+    var jia=[{key:"纯老",value:100},{key:"独居",value:100},{key:"失独",value:100},{key:"孤老",value:100},{key:"一老养\n一老",value:100},{key:"三支\n人员",value:100},{key:"其他",value:100}];
 
 
-    createPieChart("男女分布",sex,document.getElementById('oldmanAge'),oldmanSelect);
-    createPieChart("年龄分布",age,document.getElementById('oldmanSex'),oldmanSelect);
-    createPieChart("户籍分布",huji,document.getElementById('oldmanHuji'),oldmanSelect);
-    createPieChart("家庭结构分布",jia,document.getElementById('oldmanJia'),oldmanSelect);
+    createPieChart("男女",sex,document.getElementById('oldmanAge'),oldmanSelect);
+    createPieChart("年龄",age,document.getElementById('oldmanSex'),oldmanSelect);
+    createPieChart("户籍",huji,document.getElementById('oldmanHuji'),oldmanSelect);
+    createPieChart("家庭结构",jia,document.getElementById('oldmanJia'),oldmanSelect);
 
 }
 
