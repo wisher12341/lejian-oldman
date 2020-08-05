@@ -43,4 +43,10 @@ public class PageController {
         return mv;
     }
 
+    @GetMapping("/login")
+    public ModelAndView login(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/login");
+        return mv;
+    }
 }

@@ -11,7 +11,13 @@ $(document).ready(function(){
             var oldman =result.oldmanVo;
             $("#oid").text(oldman.oid);
             $("#oldmanname").text(oldman.name);
-            checkIn();
+            var token =$.cookie("token");
+            console.info(token);
+            if(token !==null){
+                checkIn();
+            }else{
+                window.location="/login?path=/worker/checkin&oid="+getQueryVariable("oid");
+            }
         }
     });
 
@@ -37,10 +43,10 @@ function checkIn() {
                 contentType: "application/json;charset=UTF-8",
                 success: function (result) {
                     console.info(JSON.stringify(result));
-                    if(result.responseHead==null){
+                    if(result.errorCode==null){
                         $("#result").text("签到成功");
                     }else{
-                        $("#result").text("签到失败："+result.responseHead.errMsg);
+                        $("#result").text("签到失败："+result.errMsg);
                     }
                     $("#load-spinner").css("display","none");
                 }

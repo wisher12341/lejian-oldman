@@ -12,7 +12,7 @@ public enum ComponentRespCode implements IRespCode {
 
     UN_KNOWN("500", "unknown error"),
     REPOSITORY_ERROR("501", "repository error"),
-
+    ACCOUNT_ERROR("502","username or password error"),
 
     /**
      * 2xx 服务人员业务中断

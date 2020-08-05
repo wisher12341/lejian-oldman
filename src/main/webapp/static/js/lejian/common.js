@@ -5,6 +5,7 @@ document.write('<link href="/static/css/animate.min.css" rel="stylesheet">');
 document.write('<link href="/static/css/style.min.css?v=4.0.0" rel="stylesheet">');
 document.write('<link href="/static/css/bootstrap.min.css?v=3.3.5" rel="stylesheet">');
 document.write('<script src="/static/js/jquery.min.js?v=2.1.4"></script>');
+document.write('<script src="/static/js/jquery.cookie.js"></script>');
 document.write('<script src="/static/js/bootstrap.min.js?v=3.3.5"></script>');
 document.write('<script src="/static/js/plugins/jeditable/jquery.jeditable.js"></script>');
 document.write('<script src="/static/js/plugins/dataTables/jquery.dataTables.js"></script>');

@@ -1,18 +1,13 @@
 package com.lejian.oldman.controller;
 
 import com.lejian.oldman.controller.contract.request.*;
-import com.lejian.oldman.controller.contract.response.GetOldmanByPageResponse;
-import com.lejian.oldman.controller.contract.response.GetOldmanListResponse;
-import com.lejian.oldman.controller.contract.response.GetOldmanResponse;
-import com.lejian.oldman.controller.contract.response.ResultResponse;
+import com.lejian.oldman.controller.contract.response.*;
 import com.lejian.oldman.service.OldmanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 @Controller
 @ResponseBody
@@ -97,5 +92,17 @@ public class OldmanController {
         oldmanService.alarm(gatewayId,type,content);
         return new ResultResponse();
     }
+
+    /**
+     * 获取老人表 符合某个属性的数量
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getCountOfOldmanField")
+    public GetCountResponse getCountOfOldmanField(GetCountOfOldmanFieldRequest request){
+        GetCountResponse response = new GetCountResponse();
+        return response;
+    }
+
 
 }

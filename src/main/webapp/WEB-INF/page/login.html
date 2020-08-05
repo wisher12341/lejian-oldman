@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
+
+    <script type="text/javascript" src="/static/js/lejian/common.js"></script>
+    <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
+
+</head>
+<body>
+    <div class="form-group">
+        <label>账号</label>
+        <input type="text" class="form-control" id="username" placeholder="账号"/>
+    </div>
+    <div class="form-group">
+        <label>密码</label>
+        <input type="password" class="form-control" id="password" placeholder="密码"/>
+    </div>
+    <button id="login" value="Login" class="btn btn-primary" onclick="login()">登录</button>
+</body>
+<script>
+    function login() {
+        $.ajax({
+            url: "/worker/login",
+            data :JSON.stringify({
+                "username":$("#username").val(),
+                "password":$("#password").val()
+            }),
+            type: 'post',
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                if(result.errMsg==null){
+                    $.cookie("token","username="+$("#username").val()+"&password="+$("#password").val());
+                    window.location=getQueryVariable("path")+"?oid="+getQueryVariable("oid");
+                }else{
+                    alert(result.errMsg)
+                }
+            }
+        });
+    }
+</script>
+</html>

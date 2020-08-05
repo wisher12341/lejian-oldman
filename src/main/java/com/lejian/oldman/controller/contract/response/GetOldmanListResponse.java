@@ -7,6 +7,5 @@ import java.util.List;
 
 @Data
 public class GetOldmanListResponse {
-    private ResponseHead responseHead;
     private List<OldmanVo> oldmanVoList;
 }

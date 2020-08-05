@@ -7,6 +7,5 @@ import java.util.List;
 
 @Data
 public class GetWorkerResponse {
-    private ResponseHead responseHead;
     private WorkerVo workerVo;
 }

@@ -9,10 +9,10 @@ import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.vo.LocationVo;
-import javafx.util.Pair;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -95,9 +95,9 @@ public class LocationService {
                 locationVoList.add(locationVo);
             });
             OldmanBo oldmanBo=oldmanBoList.stream().max(Comparator.comparing(OldmanBo::getDatachangeTime)).get();
-            return new Pair(oldmanBo.getDatachangeTime().getTime(),locationVoList);
+            return Pair.of(oldmanBo.getDatachangeTime().getTime(),locationVoList);
 
         }
-        return new Pair<>(null,null);
+        return null;
     }
 }

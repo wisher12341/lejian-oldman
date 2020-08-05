@@ -1,6 +1,6 @@
 package com.lejian.oldman.utils;
 
-public final class StringUtils {
+public final class StringUtils extends org.springframework.util.StringUtils{
 
     /**
      * 驼峰转下划线

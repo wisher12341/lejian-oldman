@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static com.lejian.oldman.common.ComponentRespCode.ACCOUNT_ERROR;
 import static com.lejian.oldman.common.ComponentRespCode.CHECKIN_OVER_DISTANCE;
 import static com.lejian.oldman.common.ComponentRespCode.CHECKIN_SHORT_TIME;
 import static com.lejian.oldman.utils.DateUtils.YYMMDDHHMMSS;
@@ -121,6 +122,7 @@ public class WorkerService {
         String username = token.split("&")[0].split("=")[1];
         String password = token.split("&")[1].split("=")[1];
         UserBo userBo = userRepository.getByUsernameAndPassword(username,password);
+        ACCOUNT_ERROR.checkNotNull(userBo);
         return workerRepository.getWorkerByUid(userBo.getId());
     }
 

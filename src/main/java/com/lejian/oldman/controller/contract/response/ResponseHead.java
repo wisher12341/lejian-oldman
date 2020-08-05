@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ResponseHead {
-    private String code;
+    private String errorCode;
     private String errMsg;
     private StackTraceElement[] stackTraceElements;
 }

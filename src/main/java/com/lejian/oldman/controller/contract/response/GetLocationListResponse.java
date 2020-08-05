@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 public class GetLocationListResponse {
 
-    private ResponseHead responseHead;
     private List<LocationVo> locationVoList;
     /**
      * 用于轮询接口， 数据的最新时间
