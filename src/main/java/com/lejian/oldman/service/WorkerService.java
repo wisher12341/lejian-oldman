@@ -149,6 +149,8 @@ public class WorkerService {
         LocationBo locationBo = locationRepository.getByPkId(oldmanBo.getLocationId());
         double distance = MapUtils.distance(longitude,latitude,locationBo.getPositionX(),locationBo.getPositionY());
         if(distance > MAX_MAP_DISTANCE){
+            log.info("check in location:{},{}; oldman location:{},{}; distance:{}"
+                    ,longitude,latitude,locationBo.getPositionX(),locationBo.getPositionY(),distance);
             CHECKIN_OVER_DISTANCE.doThrowException();
         }
     }

@@ -54,12 +54,12 @@ public class WorkerController {
      * @return
      */
     @RequestMapping("/checkin")
-    public WorkerCheckInResponse checkIn(@RequestBody WorkerCheckInRequest request,HttpServletRequest httpServletRequest) throws UnsupportedEncodingException {
+    public ResultResponse checkIn(@RequestBody WorkerCheckInRequest request,HttpServletRequest httpServletRequest) throws UnsupportedEncodingException {
         //todo 后面加了权限后 删掉
         String token = CookieUtils.getCookie(httpServletRequest,"token");
         token= URLDecoder.decode(token, "UTF-8");
         workerService.checkIn(request.getLng(),request.getLat(),request.getOid(),token);
-        return new WorkerCheckInResponse();
+        return new ResultResponse();
     }
 
     /**

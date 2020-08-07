@@ -11,6 +11,7 @@ import com.lejian.oldman.repository.CareAlarmRecordRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.OldmanVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static com.lejian.oldman.common.ComponentRespCode.NO_DATA_FOUND;
 
+@Slf4j
 @Service
 public class OldmanService {
 
@@ -116,11 +118,14 @@ public class OldmanService {
      * 长者关怀报警
      * 1. 老人状态变成红色
      * 2. 记录报警记录
-     * 3. 前端页面展示
      */
     public void alarm(String gatewayId, String type, String content) throws UnsupportedEncodingException {
-        type=new String(type.getBytes("ISO-8859-1"),"UTF-8");
-        content=new String(content.getBytes("ISO-8859-1"),"UTF-8");
+        BusinessEnum alarmType=BusinessEnum.find(type, CareSystemEnum.AlarmType.class);
+        if(alarmType==BusinessEnum.DefaultValue.NULL) {
+            type = new String(type.getBytes("ISO-8859-1"), "UTF-8");
+            alarmType=BusinessEnum.find(type, CareSystemEnum.AlarmType.class);
+            content = new String(content.getBytes("ISO-8859-1"), "UTF-8");
+        }
 
         OldmanBo oldmanBo = oldmanRepository.findByCareGatewayId(gatewayId);
         NO_DATA_FOUND.checkNotNull(oldmanBo);
@@ -129,12 +134,11 @@ public class OldmanService {
 
         //step 2
         CareAlarmRecordBo careAlarmRecordBo=new CareAlarmRecordBo();
-        careAlarmRecordBo.setType(BusinessEnum.find(type, CareSystemEnum.AlarmType.class).getValue());
+        careAlarmRecordBo.setType(alarmType.getValue());
         careAlarmRecordBo.setContent(content);
         careAlarmRecordBo.setOid(oldmanBo.getOid());
         careAlarmRecordRepository.save(careAlarmRecordBo);
 
-        //step 3
 
     }
 }
