@@ -32,7 +32,8 @@ public class OldmanVo {
     private String tags;
     private Integer locationId;
     private String status;
-    private String careGatewayId;
+    private Integer careGatewayId;
+    private Integer cameraId;
     private Timestamp datachangeTime;
     private String family;
 

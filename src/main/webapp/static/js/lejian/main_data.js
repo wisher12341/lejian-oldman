@@ -4,14 +4,9 @@ var adminNumber=[{"name":"XX（生产）队","number":"1,000"},
     {"name":"XX（生产）队","number":"1,000"},{"name":"XX（生产）队","number":"1,000"},
     {"name":"XX（生产）队","number":"1,000"},{"name":"XX（生产）队","number":"1,000"}];
 var serviceOldman=[{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":2},{"name":"测试老人1","oid":3},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1}];
+var areaCustomOne=null;
 $(document).ready(function(){
     createAdminNumber(adminNumber);
-    // createOldman(serviceOldman);
-    // createWorker(serviceOldman);
-    // createHomeServiceBar();
-    // createEquipBar();
-    // createWarnBar();
-    // createWorkerBar();
     createOldmanChart();
 });
 
@@ -41,7 +36,7 @@ function sixReturn() {
 }
 
 function birthdayOldman() {
-    createOldman(serviceOldman,"birthdayOldmanList");
+    createOldman(serviceOldman,"birthdayOldmanList",true);
     $(".secondceng").hide();
     $(".thirdceng").hide();
     $(".fourceng").hide();
@@ -70,11 +65,21 @@ function createHeightAndWidthFromSourceDoc(sourceId,targetId,heightP,withP) {
 }
 
 function secondceng(obj,type) {
+    var oldmanSearchParam={
+        "pageParam": {
+            "pageNo": 0,
+            "pageSize": 10
+        },
+        "oldmanSearchParam": {},
+        "needCount": false
+    };
+    oldmanSearchParam.oldmanSearchParam.areaCustomOne=areaCustomOne;
     var data=[];
     if(type==1){
         data=getHomeServiceData();
     }
     if(type==2){
+        oldmanSearchParam.oldmanSearchParam.equip=true;
         data=getEquipData();
     }
     if(type==3){
@@ -83,9 +88,16 @@ function secondceng(obj,type) {
     if(type==4){
         data=getWorkerData();
     }
+
     createHeightAndWidthFromSourceDoc("sencondAll","chart",0.7,0.8);
     createBarChart(null,data,document.getElementById('chart'),null);
-    createOldman(serviceOldman,"oldmanList");
+    if(type==4) {
+        createWorker(serviceOldman,"manList",true);
+        $("#manName").html("工作人员");
+    }else{
+        createOldman(oldmanSearchParam, "manList",true);
+        $("#manName").html("服务人员");
+    }
     $("#secondcengName").html($(obj).children().eq(0).html());
     $("#secondcengNum").html($(obj).children().eq(1).html());
     $("#secondFirst").hide();
@@ -112,10 +124,6 @@ function getWorkerData() {
     return data=[{"key":"长护险","value":2000},{"key":"居家养老","value":1000},{"key":"送餐","value":500},{"key":"医疗","value":500}];
 }
 
-function oldmanSelect(name) {
-    $("#thirdOldmanName").html(name);
-    $("#thirdOldmanNum").html(1000);
-}
 
 
 function createOldmanChart() {
@@ -130,9 +138,9 @@ function createOldmanChart() {
     var jia=[{key:"纯老",value:100},{key:"独居",value:100},{key:"失独",value:100},{key:"孤老",value:100},{key:"一老养\n一老",value:100},{key:"三支\n人员",value:100},{key:"其他",value:100}];
 
 
-    createPieChart("男女",sex,document.getElementById('oldmanAge'),oldmanSelect);
-    createPieChart("年龄",age,document.getElementById('oldmanSex'),oldmanSelect);
-    createPieChart("户籍",huji,document.getElementById('oldmanHuji'),oldmanSelect);
+    createPieChart("男女",sex,document.getElementById('oldmanAge'),null);
+    createPieChart("年龄",age,document.getElementById('oldmanSex'),null);
+    createPieChart("户籍",huji,document.getElementById('oldmanHuji'),null);
     var legend= {
         itemWidth: 8,  // 设置大小
         itemHeight: 8,
@@ -147,7 +155,7 @@ function createOldmanChart() {
             fontSize: 10
         }
     };
-    createPieChartWithLegend("家庭结构",jia,document.getElementById('oldmanJia'),oldmanSelect,legend);
+    createPieChartWithLegend("家庭结构",jia,document.getElementById('oldmanJia'),null,legend);
 
 }
 
@@ -155,10 +163,35 @@ function createOldmanChart() {
 /**
  * 获取老人
  */
-function createOldman(data,id) {
+function createOldman(param,id,clear) {
+    if(clear){
+        $("#"+id).html("");
+    }
+    $.ajax({
+        url: "/oldman/getOldmanByPage",
+        type: 'post',
+        dataType: 'json',
+        data :JSON.stringify(param),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            var oldmanList = result.oldmanVoList;
+            for(var i=0;i<oldmanList.length;i++){
+                var li="<li onclick='oldmanInfo("+oldmanList[i].oid+")'><span class='word' style='font-size: larger;'>"+oldmanList[i].name+"</span></li>";
+                $("#"+id).append(li);
+            }
+        }
+    });
+}
+
+/**
+ * 获取老人
+ */
+function createWorker(data,id,clear) {
+    if(clear){
+        $("#"+id).html("");
+    }
     for(var i=0;i<data.length;i++){
         var li="<li onclick='oldmanInfo("+data[i].oid+")'><span class='word' style='font-size: larger;'>"+data[i].name+"</span></li>";
         $("#"+id).append(li);
     }
 }
-

@@ -17,6 +17,10 @@ public class JpaSpecBo {
      */
     Map<String,Object> equalMap = new HashMap<>();
     /**
+     * like
+     */
+    Map<String,Object> likeMap = new HashMap<>();
+    /**
      * in
      */
     Map<String,List<Object>> inMap = new HashMap<>();
@@ -32,5 +36,10 @@ public class JpaSpecBo {
      * 大于
      */
     Map<String,Object> greatMap = new HashMap<>();
+    /**
+     * or
+     * and ( or or or )
+     */
+    Map<String,Object> orNotEquipMap = new HashMap<>();
 
 }

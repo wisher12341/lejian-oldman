@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.util.ObjectUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
@@ -137,6 +138,21 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
                 }
             }
         });
+        jpaSpecBo.getLikeMap().forEach((k,v)->{
+            if(!ObjectUtils.isEmpty(v)) {
+                predicateList.add(criteriaBuilder.like(root.get(k), (String) v));
+            }
+        });
+        List<Predicate> orPredicateList = Lists.newArrayList();
+        jpaSpecBo.getOrNotEquipMap().forEach((k,v)->{
+            if(!ObjectUtils.isEmpty(v)) {
+                orPredicateList.add(criteriaBuilder.notEqual(root.get(k), v));
+            }
+        });
+        if(CollectionUtils.isNotEmpty(orPredicateList)){
+            Predicate[] predicates=new Predicate[orPredicateList.size()];
+            predicateList.add(criteriaBuilder.or(orPredicateList.toArray(predicates)));
+        }
         return predicateList;
     }
 

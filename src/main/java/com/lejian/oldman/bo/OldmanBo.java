@@ -30,7 +30,8 @@ public class OldmanBo {
     private List<String> tags;
     private Integer locationId;
     private BusinessEnum status;
-    private String careGatewayId;
+    private Integer careGatewayId;
+    private Integer cameraId;
     private Timestamp datachangeTime;
     private BusinessEnum family;
     private String areaCountry;

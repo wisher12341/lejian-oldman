@@ -40,7 +40,7 @@ public class OldmanService {
      * @return
      */
     public List<OldmanVo> getOldmanByPage(Integer pageNo, Integer pageSize, OldmanSearchParam oldmanSearchParam) {
-        List<OldmanBo> oldmanBoList = oldmanRepository.findByPageWithSpec(pageNo,pageSize,convert(oldmanSearchParam));
+        List<OldmanBo> oldmanBoList = oldmanRepository.findByPageWithSpec(pageNo,pageSize,OldmanSearchParam.convert(oldmanSearchParam));
         return oldmanBoList.stream().map(this::convert).collect(Collectors.toList());
     }
 
@@ -51,18 +51,10 @@ public class OldmanService {
      * @return
      */
     public Long getOldmanCount(OldmanSearchParam oldmanSearchParam) {
-        return oldmanRepository.countWithSpec(convert(oldmanSearchParam));
+        return oldmanRepository.countWithSpec(OldmanSearchParam.convert(oldmanSearchParam));
     }
 
 
-    private JpaSpecBo convert(OldmanSearchParam oldmanSearchParam) {
-        if(oldmanSearchParam == null){
-            return null;
-        }
-        JpaSpecBo jpaSpecBo = new JpaSpecBo();
-        jpaSpecBo.getEqualMap().put("oid",oldmanSearchParam.getOid());
-        return jpaSpecBo;
-    }
     private OldmanVo convert(OldmanBo oldmanBo) {
         OldmanVo oldmanVo = new OldmanVo();
         BeanUtils.copyProperties(oldmanBo,oldmanVo);

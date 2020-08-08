@@ -129,6 +129,7 @@
     </style>
 
     <script type="text/javascript" src="/static/js/lejian/common.js"></script>
+    <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
     <script  src="/static/js/echarts.js" type="text/javascript"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=6YSpoya23ILZkeQeyRGdt8s0CVzhKtzG"></script>
 </head>
@@ -232,11 +233,10 @@
 
             <div class="row fiveceng" style="display:none;">
                 <div class="col-xs-12 mengceng w3">
-                    <span class="word" style="font-size:medium;">服务老人数</span>
-                    <ul id="oldmanList" style="height: 80%"></ul>
+                    <span class="word" style="font-size:medium;" id="manName"></span>
+                    <ul id="manList" style="height: 80%"></ul>
                 </div>
             </div>
-
             <div class="row sixceng" style="display:none;">
                 <div class="col-xs-12 mengceng w3">
                     <span class="word" style="font-size: larger;display: block" onclick="sixReturn()">当日老人生日总人数</span>

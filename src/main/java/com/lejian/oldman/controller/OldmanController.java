@@ -28,7 +28,9 @@ public class OldmanController {
         GetOldmanByPageResponse response = new GetOldmanByPageResponse();
         PageParam pageParam = request.getPageParam();
         response.setOldmanVoList(oldmanService.getOldmanByPage(pageParam.getPageNo(),pageParam.getPageSize(),request.getOldmanSearchParam()));
-        response.setCount(oldmanService.getOldmanCount(request.getOldmanSearchParam()));
+        if(request.getNeedCount()) {
+            response.setCount(oldmanService.getOldmanCount(request.getOldmanSearchParam()));
+        }
         return response;
     }
 

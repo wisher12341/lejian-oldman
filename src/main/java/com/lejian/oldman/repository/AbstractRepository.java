@@ -1,6 +1,5 @@
 package com.lejian.oldman.repository;
 
-import com.lejian.oldman.bo.WorkerBo;
 import com.lejian.oldman.utils.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 

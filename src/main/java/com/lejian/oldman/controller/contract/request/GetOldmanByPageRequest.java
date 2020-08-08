@@ -6,4 +6,8 @@ import lombok.Data;
 public class GetOldmanByPageRequest {
     private PageParam pageParam;
     private OldmanSearchParam oldmanSearchParam;
+    /**
+     * 是否需要获取 数量
+     */
+    private Boolean needCount=true;
 }

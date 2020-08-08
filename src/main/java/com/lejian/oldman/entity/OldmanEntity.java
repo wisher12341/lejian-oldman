@@ -71,5 +71,7 @@ public class OldmanEntity {
     @Column(name = "datachange_time")
     private Timestamp datachangeTime;
     @Column(name = "care_gateway_id")
-    private String careGatewayId;
+    private Integer careGatewayId;
+    @Column(name = "camera_id")
+    private Integer cameraId;
 }
