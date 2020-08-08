@@ -43,7 +43,7 @@ public interface BusinessEnum {
 
     static BusinessEnum find(String desc, Class<? extends BusinessEnum> enumClass){
         for(BusinessEnum businessEnum: enumClass.getEnumConstants()){
-            if(businessEnum.getDesc().equals(desc)){
+            if(businessEnum.getValue().equals(desc)){
                 return businessEnum;
             }
         }

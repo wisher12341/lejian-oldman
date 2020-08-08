@@ -75,6 +75,7 @@ public class OldmanService {
         oldmanVo.setPolitics(oldmanBo.getPolitics().getDesc());
         oldmanVo.setEducation(oldmanBo.getEducation().getDesc());
         oldmanVo.setHouseholdType(oldmanBo.getHouseholdType().getDesc());
+        oldmanVo.setFamily(oldmanBo.getFamily().getDesc());
         return oldmanVo;
     }
 

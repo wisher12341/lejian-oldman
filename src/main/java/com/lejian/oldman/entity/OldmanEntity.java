@@ -34,6 +34,8 @@ public class OldmanEntity {
     private String mary;
     @Column
     private String country;
+    @Column
+    private Integer family;
     @Column(name = "id_card")
     private String idCard;
     @Column(name = "area_country")

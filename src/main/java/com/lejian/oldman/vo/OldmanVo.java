@@ -34,5 +34,6 @@ public class OldmanVo {
     private String status;
     private String careGatewayId;
     private Timestamp datachangeTime;
+    private String family;
 
 }

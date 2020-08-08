@@ -32,7 +32,7 @@ public class OldmanBo {
     private BusinessEnum status;
     private String careGatewayId;
     private Timestamp datachangeTime;
-
+    private BusinessEnum family;
     private String areaCountry;
     private String areaTown;
     private String areaVillage;

@@ -82,6 +82,24 @@ public interface OldmanEnum extends BusinessEnum{
         private String desc;
     }
 
+        /**
+         * 家庭结构
+         */
+        @Getter
+        @AllArgsConstructor
+        enum FamilyType implements OldmanEnum{
+            CHUNLAO(1,"纯老"),
+            DUJU(2,"独居"),
+            SHUDU(3,"失独"),
+            GULAO(4,"孤老"),
+            YLYYL(5,"一老养一老"),
+            SZRY(6,"三支人员"),
+            OTHER(0,"其他"),
+            ;
+        private Integer value;
+        private String desc;
+    }
+
 
 
 }
