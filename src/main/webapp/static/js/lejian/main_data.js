@@ -6,12 +6,12 @@ var adminNumber=[{"name":"XX（生产）队","number":"1,000"},
 var serviceOldman=[{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":2},{"name":"测试老人1","oid":3},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1}];
 $(document).ready(function(){
     createAdminNumber(adminNumber);
-    createOldman(serviceOldman);
-    createWorker(serviceOldman);
-    createHomeServiceBar();
-    createEquipBar();
-    createWarnBar();
-    createWorkerBar();
+    // createOldman(serviceOldman);
+    // createWorker(serviceOldman);
+    // createHomeServiceBar();
+    // createEquipBar();
+    // createWarnBar();
+    // createWorkerBar();
     createOldmanChart();
 });
 
@@ -25,6 +25,28 @@ function createAdminNumber(data) {
     }
 }
 
+function secondReturn() {
+    $("#secondSecond").hide();
+    $(".fiveceng").hide();
+    $("#secondFirst").show();
+    $(".thirdceng").show();
+    $(".fourceng").show();
+}
+
+function sixReturn() {
+    $(".sixceng").hide();
+    $(".thirdceng").show();
+    $(".fourceng").show();
+    $(".secondceng").show();
+}
+
+function birthdayOldman() {
+    createOldman(serviceOldman,"birthdayOldmanList");
+    $(".secondceng").hide();
+    $(".thirdceng").hide();
+    $(".fourceng").hide();
+    $(".sixceng").show();
+}
 
 /**
  * sourceId 为null 获取父类的元素
@@ -47,28 +69,47 @@ function createHeightAndWidthFromSourceDoc(sourceId,targetId,heightP,withP) {
 
 }
 
-function createHomeServiceBar() {
-    createHeightAndWidthFromSourceDoc("home","homeService",0.7,0.8);
-    var data=[{"key":"长护险服务人数","value":2000},{"key":"居家养老人数","value":1000},{"key":"家庭服务人数","value":500}];
-    createBarChart(null,data,document.getElementById('homeService'),oldmanSelect);
+function secondceng(obj,type) {
+    var data=[];
+    if(type==1){
+        data=getHomeServiceData();
+    }
+    if(type==2){
+        data=getEquipData();
+    }
+    if(type==3){
+        data=getWarnData();
+    }
+    if(type==4){
+        data=getWorkerData();
+    }
+    createHeightAndWidthFromSourceDoc("sencondAll","chart",0.7,0.8);
+    createBarChart(null,data,document.getElementById('chart'),null);
+    createOldman(serviceOldman,"oldmanList");
+    $("#secondcengName").html($(obj).children().eq(0).html());
+    $("#secondcengNum").html($(obj).children().eq(1).html());
+    $("#secondFirst").hide();
+    $(".thirdceng").hide();
+    $(".fourceng").hide();
+    $("#secondSecond").show();
+    $(".fiveceng").show();
 }
 
-function createEquipBar() {
-    createHeightAndWidthFromSourceDoc("equip","equipC",0.7,0.8);
-    var data=[{"key":"关怀系统","value":2000},{"key":"想家宝","value":1000},{"key":"摄像头","value":500}];
-    createBarChart(null,data,document.getElementById('equipC'),oldmanSelect);
+
+function getHomeServiceData() {
+    return [{"key":"长护险服务人数","value":2000},{"key":"居家养老人数","value":1000},{"key":"家庭服务人数","value":500}];
 }
 
-function createWarnBar() {
-    createHeightAndWidthFromSourceDoc("warn","warnList",0.7,0.8);
-    var data=[{"key":"紧急报警","value":2000},{"key":"行为报警","value":1000},{"key":"规律报警","value":500}];
-    createBarChart(null,data,document.getElementById('warnList'),oldmanSelect);
+function getEquipData() {
+    return data=[{"key":"关怀系统","value":2000},{"key":"想家宝","value":1000},{"key":"摄像头","value":500}];
 }
 
-function createWorkerBar() {
-    createHeightAndWidthFromSourceDoc("worker","workerCList",0.7,0.8);
-    var data=[{"key":"长护险","value":2000},{"key":"居家养老","value":1000},{"key":"送餐","value":500},{"key":"医疗","value":500}];
-    createBarChart(null,data,document.getElementById('workerCList'),oldmanSelect);
+function getWarnData() {
+    return data=[{"key":"紧急报警","value":2000},{"key":"行为报警","value":1000},{"key":"规律报警","value":500}];
+}
+
+function getWorkerData() {
+    return data=[{"key":"长护险","value":2000},{"key":"居家养老","value":1000},{"key":"送餐","value":500},{"key":"医疗","value":500}];
 }
 
 function oldmanSelect(name) {
@@ -78,10 +119,10 @@ function oldmanSelect(name) {
 
 
 function createOldmanChart() {
-    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanAge",1,0.22);
-    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanSex",1,0.22);
-    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanHuji",1,0.22);
-    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanJia",1,0.22);
+    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanAge",0.45,0.45);
+    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanSex",0.45,0.45);
+    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanHuji",0.45,0.45);
+    createHeightAndWidthFromSourceDoc("oldmanChart","oldmanJia",0.45,0.45);
 
     var sex=[{"key":"男","value":2000},{"key":"女","value":1000}];
     var age=[{key:"60-70",value:100},{key:"71-80",value:100},{key:"81-90",value:100},{key:"90-",value:100}];
@@ -92,7 +133,21 @@ function createOldmanChart() {
     createPieChart("男女",sex,document.getElementById('oldmanAge'),oldmanSelect);
     createPieChart("年龄",age,document.getElementById('oldmanSex'),oldmanSelect);
     createPieChart("户籍",huji,document.getElementById('oldmanHuji'),oldmanSelect);
-    createPieChart("家庭结构",jia,document.getElementById('oldmanJia'),oldmanSelect);
+    var legend= {
+        itemWidth: 8,  // 设置大小
+        itemHeight: 8,
+        itemGap: 3, // 设置间距
+        icon: "circle", //设置形状
+        right: 10,
+        top: 3,
+        bottom: 20,
+        orient: 'vertical',
+        textStyle: { //图例文字的样式
+            color: '#fff',
+            fontSize: 10
+        }
+    };
+    createPieChartWithLegend("家庭结构",jia,document.getElementById('oldmanJia'),oldmanSelect,legend);
 
 }
 
@@ -100,19 +155,10 @@ function createOldmanChart() {
 /**
  * 获取老人
  */
-function createOldman(data) {
+function createOldman(data,id) {
     for(var i=0;i<data.length;i++){
         var li="<li onclick='oldmanInfo("+data[i].oid+")'><span class='word' style='font-size: larger;'>"+data[i].name+"</span></li>";
-        $("#oldmanList").append(li);
+        $("#"+id).append(li);
     }
 }
 
-/**
- * 获取服务人员
- */
-function createWorker(data) {
-    for(var i=0;i<data.length;i++){
-        var li="<li onclick='oldmanInfo("+data[i].oid+")'><span class='word' style='font-size: larger;'>"+data[i].name+"</span></li>";
-        $("#workerNameList").append(li);
-    }
-}

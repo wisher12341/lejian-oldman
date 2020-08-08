@@ -90,8 +90,25 @@ function createBarChart(title,data,obj,callback) {
     bar.setOption(option);
 }
 
+function createPieChart(title,data,obj,callback){
+    var legend= {
+        itemWidth: 10,  // 设置大小
+        itemHeight: 10,
+        itemGap: 5, // 设置间距
+        icon: "circle", //设置形状
+        right: 10,
+        top: 3,
+        bottom: 20,
+        orient: 'vertical',
+        textStyle: { //图例文字的样式
+            color: '#fff',
+            fontSize: 10
+        }
+    };
+    createPieChartWithLegend(title,data,obj,callback,legend)
+}
 
-function createPieChart(title,data,obj,callback) {
+function createPieChartWithLegend(title,data,obj,callback,lengend) {
     var legend_data=[];
     var series_data=[];
     var j=-1;
@@ -106,12 +123,13 @@ function createPieChart(title,data,obj,callback) {
 
 
     var pie= echarts.init(obj);
+    lengend.data=legend_data;
     var option = {
         title: {
             text:title,
             textStyle:{
                 color:'#fff',
-                fontSize:14,
+                fontSize:12,
                 fontWeight:'normal'
             }
         },
@@ -119,26 +137,13 @@ function createPieChart(title,data,obj,callback) {
             trigger: 'item',
             formatter: '{a} <br/>{b} : {c} ({d}%)'
         },
-        legend: {
-            itemWidth: 10,  // 设置大小
-            itemHeight: 10,
-            itemGap: 5, // 设置间距
-            icon: "circle", //设置形状
-            left:"right",
-            orient: 'vertical',
-            align: 'right',
-            textStyle: { //图例文字的样式
-                color: '#fff',
-                fontSize: 10
-            },
-            data: legend_data[i]
-        },
+        legend: lengend,
         series: [
             {
                 name: '人数',
                 type: 'pie',
                 radius: '55%',
-                center: ['32%', '55%'],
+                center: ['45%', '50%'],
                 data: series_data,
                 //去掉指示线
                 label: {

@@ -2,7 +2,7 @@ var map;
 var timestamp=new Date().getTime();
 var interval;
 $(document).ready(function(){
-    map = new BMap.Map("map");
+    map = new BMap.Map("map",{enableMapClick:false});
     map.centerAndZoom(new BMap.Point(121.390421, 31.157395), 16);
     map.setMapStyle({style:'midnight'});
     map.enableScrollWheelZoom(true);
