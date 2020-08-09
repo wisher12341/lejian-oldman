@@ -1,5 +1,6 @@
 package com.lejian.oldman.service;
 
+import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.lejian.oldman.common.ComponentRespCode.NO_DATA_FOUND;
@@ -133,5 +135,18 @@ public class OldmanService {
         careAlarmRecordRepository.save(careAlarmRecordBo);
 
 
+    }
+
+    public Long getOldmanByStatus(BusinessEnum status) {
+        return oldmanRepository.countByStatus(status.getValue());
+    }
+
+    /**
+     * 老人表， 根据 数据库字段 group 查数量
+     * @param groupFieldName
+     * @return
+     */
+    public Map<String, Long> getGroupCount(String groupFieldName) {
+        return oldmanRepository.getGroupCount(groupFieldName);
     }
 }

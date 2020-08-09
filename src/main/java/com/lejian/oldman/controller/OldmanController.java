@@ -107,4 +107,15 @@ public class OldmanController {
     }
 
 
+    /**
+     * 获取 根据区域分组的 各数量
+     * @return
+     */
+    @RequestMapping("/getOldmanGroupCount")
+    public GetCountResponse getOldmanGroupCount(@RequestBody GetGroupCountRequest request){
+        GetCountResponse response= new GetCountResponse();
+        response.setCountMap(oldmanService.getGroupCount(request.getGroupFieldName()));
+        response.sum();
+        return response;
+    }
 }

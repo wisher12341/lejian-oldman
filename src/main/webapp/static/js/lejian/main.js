@@ -36,6 +36,7 @@ function pollOldmanStatus() {
         }),
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
+            $("#serviceNum").html(result.serviceOldmanCount);
             var positions = result.locationVoList;
             var allOverlay = map.getOverlays();
             if(positions!=null && positions.length>0){

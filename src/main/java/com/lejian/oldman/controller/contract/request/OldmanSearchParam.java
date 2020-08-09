@@ -32,6 +32,7 @@ public class OldmanSearchParam {
         if(oldmanSearchParam.getEquip()!=null && oldmanSearchParam.getEquip()){
             jpaSpecBo.getOrNotEquipMap().put("careGatewayId",0);
             jpaSpecBo.getOrNotEquipMap().put("cameraId",0);
+            jpaSpecBo.getOrNotEquipMap().put("xjbId",0);
         }
 
         return jpaSpecBo;

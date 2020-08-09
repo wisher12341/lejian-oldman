@@ -13,4 +13,8 @@ public class GetLocationListResponse {
      * 用于轮询接口， 数据的最新时间
      */
     private Long timestamp;
+    /**
+     * 黄灯老人的数量
+     */
+    private Long serviceOldmanCount;
 }

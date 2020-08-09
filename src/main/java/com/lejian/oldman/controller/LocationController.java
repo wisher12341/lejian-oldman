@@ -2,7 +2,9 @@ package com.lejian.oldman.controller;
 
 import com.lejian.oldman.controller.contract.request.PollLocationStatusRequest;
 import com.lejian.oldman.controller.contract.response.GetLocationListResponse;
+import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.service.LocationService;
+import com.lejian.oldman.service.OldmanService;
 import com.lejian.oldman.vo.LocationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -22,6 +24,8 @@ public class LocationController {
 
     @Autowired
     private LocationService service;
+    @Autowired
+    private OldmanService oldmanService;
 
     @RequestMapping("/getAllLocation")
     public GetLocationListResponse getAllLocation(){
@@ -38,6 +42,7 @@ public class LocationController {
     @RequestMapping("/pollStatus")
     public GetLocationListResponse pollStatus(@RequestBody PollLocationStatusRequest request){
         GetLocationListResponse response=new GetLocationListResponse();
+        response.setServiceOldmanCount(oldmanService.getOldmanByStatus(OldmanEnum.Status.YELLOW));
         Pair<Long,List<LocationVo>> pair = service.pollStatus(request.getTimestamp());
         if(pair!=null) {
             response.setLocationVoList(pair.getSecond());

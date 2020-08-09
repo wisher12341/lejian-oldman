@@ -74,4 +74,6 @@ public class OldmanEntity {
     private Integer careGatewayId;
     @Column(name = "camera_id")
     private Integer cameraId;
+    @Column(name = "xjb_id")
+    private Integer xjbId;
 }

@@ -32,6 +32,7 @@ public class OldmanBo {
     private BusinessEnum status;
     private Integer careGatewayId;
     private Integer cameraId;
+    private Integer xjbId;
     private Timestamp datachangeTime;
     private BusinessEnum family;
     private String areaCountry;

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecificationExecutor<OldmanEntity> {
@@ -29,4 +30,13 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
     Integer updateStatusByCareGatewayId(String gatewayId, Integer status);
 
     OldmanEntity findByCareGatewayId(String careGatewayId);
+
+    Long countByStatus(Integer status);
+
+    @Query(value = "(select count(care_gateway_id) from oldman where if(?1 !=null,area_custom_one=?1,1=1) and care_gateway_id!=0)\n" +
+            "union all " +
+            "(select count(camera_id)  from oldman where if(?1 !=null,area_custom_one=?1,1=1) and camera_id!=0)\n" +
+            "union all " +
+            "(select count(xjb_id)  from oldman  where if(?1 !=null,area_custom_one=?1,1=1) and xjb_id!=0)",nativeQuery = true)
+    List<Long> getEquipCountByArea(String areaCustomOne);
 }

@@ -1,23 +1,60 @@
-var adminNumber=[{"name":"XX（生产）队","number":"1,000"},
-    {"name":"XX（生产）队","number":"1,000"},{"name":"XX（生产）队","number":"1,000"},
-    {"name":"XX（生产）队","number":"1,000"},{"name":"XX（生产）队","number":"1,000"},
-    {"name":"XX（生产）队","number":"1,000"},{"name":"XX（生产）队","number":"1,000"},
-    {"name":"XX（生产）队","number":"1,000"},{"name":"XX（生产）队","number":"1,000"}];
-var serviceOldman=[{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":2},{"name":"测试老人1","oid":3},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1},{"name":"测试老人1","oid":1}];
-var areaCustomOne=null;
 $(document).ready(function(){
-    createAdminNumber(adminNumber);
+    createAdminNumber();
+    createCount();
     createOldmanChart();
 });
+var areaCustomOne=null;
+var homeServiceData={};
+var equipData={};
+var warnData={};
+var workerData={};
+
+function createCount() {
+    $.ajax({
+        url: "/count/getMainSencondAllCount",
+        type: 'post',
+        dataType: 'json',
+        data :JSON.stringify({
+            "areaCustomOne":areaCustomOne
+        }),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            homeServiceData= result.homeServiceMap;
+            equipData=result.equipMap;
+            warnData=result.warnMap;
+            workerData=result.workerMap;
+            $("#homeServiceNum").html(result.homeServiceCount);
+            $("#equipNum").html(result.equipCount);
+            $("#warnNum").html(result.warnCount);
+            $("#workerNum").html(result.workerCount);
+        }
+    });
+}
 
 /**
  * 行政区域划分的各服务总人数
  */
-function createAdminNumber(data) {
-    for(var i=0;i<data.length;i++){
-        var li="<li class='adminNumber'><span class='word num' style='display: inline'>"+data[i].number+"</span><span class='word' style='font-size: large;display: inline;margin-left: 5%'>"+data[i].name+"</span></li>";
-        $("#adminNumber").append(li);
-    }
+function createAdminNumber() {
+    $.ajax({
+        url: "/oldman/getOldmanGroupCount",
+        type: 'post',
+        dataType: 'json',
+        data :JSON.stringify({
+            "groupFieldName":"area_custom_one"
+        }),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            console.info(JSON.stringify(result));
+            var map = result.countMap;
+            $("#totalNumber").html(result.sumCount);
+            for(var key in map)  {
+                var li="<li class='adminNumber'><span class='word num' style='display: inline'>"+map[key]+"</span>" +
+                    "<span class='word' style='font-size: large;display: inline;margin-left: 5%'>"+key+"</span></li>";
+                $("#adminNumber").append(li);
+            }
+        }
+    });
+
 }
 
 function secondReturn() {
@@ -36,7 +73,19 @@ function sixReturn() {
 }
 
 function birthdayOldman() {
-    createOldman(serviceOldman,"birthdayOldmanList",true);
+    var date = new Date();
+    var oldmanSearchParam={
+        "pageParam": {
+            "pageNo": 0,
+            "pageSize": 40
+        },
+        "oldmanSearchParam": {
+            "birthdayLike":date.getFullYear()+"-"+(date.getMonth()+1)+"-"+data.getDate()
+        },
+        "needCount": true
+    };
+    createOldman(oldmanSearchParam,"birthdayOldmanList",true);
+    $("#birthdayOldmanNumber").html($("#birthdayOldmanList > li").length);
     $(".secondceng").hide();
     $(".thirdceng").hide();
     $(".fourceng").hide();
@@ -68,29 +117,35 @@ function secondceng(obj,type) {
     var oldmanSearchParam={
         "pageParam": {
             "pageNo": 0,
-            "pageSize": 10
+            "pageSize": 40
         },
         "oldmanSearchParam": {},
         "needCount": false
     };
     oldmanSearchParam.oldmanSearchParam.areaCustomOne=areaCustomOne;
-    var data=[];
+    var data={};
     if(type==1){
-        data=getHomeServiceData();
+        data=homeServiceData;
     }
     if(type==2){
         oldmanSearchParam.oldmanSearchParam.equip=true;
-        data=getEquipData();
+        data=equipData;
     }
     if(type==3){
-        data=getWarnData();
+        data=warnData;
     }
     if(type==4){
-        data=getWorkerData();
+        data=workerData;
+    }
+
+    var chartData=[];
+    var i=0;
+    for(var key in data)  {
+        chartData[i++]={"key":key,"value":data[key]};
     }
 
     createHeightAndWidthFromSourceDoc("sencondAll","chart",0.7,0.8);
-    createBarChart(null,data,document.getElementById('chart'),null);
+    createBarChart(null,chartData,document.getElementById('chart'),null);
     if(type==4) {
         createWorker(serviceOldman,"manList",true);
         $("#manName").html("工作人员");
@@ -107,22 +162,6 @@ function secondceng(obj,type) {
     $(".fiveceng").show();
 }
 
-
-function getHomeServiceData() {
-    return [{"key":"长护险服务人数","value":2000},{"key":"居家养老人数","value":1000},{"key":"家庭服务人数","value":500}];
-}
-
-function getEquipData() {
-    return data=[{"key":"关怀系统","value":2000},{"key":"想家宝","value":1000},{"key":"摄像头","value":500}];
-}
-
-function getWarnData() {
-    return data=[{"key":"紧急报警","value":2000},{"key":"行为报警","value":1000},{"key":"规律报警","value":500}];
-}
-
-function getWorkerData() {
-    return data=[{"key":"长护险","value":2000},{"key":"居家养老","value":1000},{"key":"送餐","value":500},{"key":"医疗","value":500}];
-}
 
 
 
