@@ -39,4 +39,5 @@ public class OldmanBo {
     private String areaTown;
     private String areaVillage;
     private String areaCustomOne;
+    private BusinessEnum serviceType;
 }

@@ -90,7 +90,7 @@ public class OldmanController {
      * @param content
      */
     @GetMapping("/alarm")
-    public ResultResponse sensorUrgency(String gatewayId,String type,String content) throws UnsupportedEncodingException {
+    public ResultResponse sensorUrgency(Integer gatewayId,String type,String content) throws UnsupportedEncodingException {
         oldmanService.alarm(gatewayId,type,content);
         return new ResultResponse();
     }
@@ -116,6 +116,23 @@ public class OldmanController {
         GetCountResponse response= new GetCountResponse();
         response.setCountMap(oldmanService.getGroupCount(request.getGroupFieldName()));
         response.sum();
+        response.sort(true);
+        return response;
+    }
+
+    /**
+     * 根据location id更新老人状态
+     */
+    @RequestMapping("/updateStatusByLocationId")
+    public ResultResponse updateStatusByLocationId(@RequestBody UpdateStatusByLocationIdRequest request){
+        oldmanService.updateStatusByLocationId(request.getLocationId(),request.getStatus());
+        return new ResultResponse();
+    }
+
+    @RequestMapping("/getBirthdayOldman")
+    public GetOldmanListResponse getBirthdayOldman(@RequestBody GetBirthdayOldmanRequest request){
+        GetOldmanListResponse response=new GetOldmanListResponse();
+        response.setOldmanVoList(oldmanService.getBirthdayOldman(request.getDate()));
         return response;
     }
 }

@@ -1,9 +1,10 @@
 var map;
 var timestamp=new Date().getTime();
 var interval;
+var time;
 $(document).ready(function(){
     map = new BMap.Map("map",{enableMapClick:false});
-    map.centerAndZoom(new BMap.Point(121.390421, 31.157395), 16);
+    map.centerAndZoom(new BMap.Point(121.85444, 31.016693), 15);
     map.setMapStyle({style:'midnight'});
     map.enableScrollWheelZoom(true);
 
@@ -18,6 +19,9 @@ $(document).ready(function(){
                 createLocationMarker(positions[i],map);
             }
             interval =self.setInterval("pollOldmanStatus()",30*1000);
+            $('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'));
+            time=self.setInterval("$('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'))",1000);
+            pollOldmanStatus(true);
         }
     });
 });
@@ -25,18 +29,24 @@ $(document).ready(function(){
 /**
  * 轮询老人状态
  */
-function pollOldmanStatus() {
-    console.info("start job");
+function pollOldmanStatus(sync) {
+    // console.info("start job");
     $.ajax({
-        url: "/location/pollStatus",
+        url: "/main/poll",
         type: 'post',
         dataType: 'json',
         data :JSON.stringify({
-            "timestamp": timestamp
+            "timestamp": timestamp,
+            "oldmanSearchParam":{
+                "areaCustomOne":areaCustomOne
+            }
         }),
+        sync:sync,
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
-            $("#serviceNum").html(result.serviceOldmanCount);
+            $("#serviceNum").html(result.yellowOldmanCount);
+            $("#historyServiceNum").html(result.workerCheckInCount);
+            $("#warnNum").html(result.alarmCount);
             var positions = result.locationVoList;
             var allOverlay = map.getOverlays();
             if(positions!=null && positions.length>0){
@@ -61,6 +71,8 @@ function pollOldmanStatus() {
             }
         }
     });
+    // console.info("pollOldmanStatus");
+
 }
 
 /**
@@ -81,14 +93,52 @@ function createLocationMarker(position,map) {
     var marker = new BMap.Marker(pt, {
         icon: myIcon
     });  // 创建标注
+    if(position.locationTypeEnum == "RED"){
+        marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+    }
     marker.setTitle(position.desc);
     marker.disableMassClear();
     marker.id=position.id;
+    marker.type=position.locationTypeEnum;
     map.addOverlay(marker);
 
     marker.addEventListener("click", function(){
         var infoWindow = createInfoWindow(position);
         map.openInfoWindow(infoWindow, pt); //开启信息窗口
+        // 红灯处理
+        if(position.locationTypeEnum == "RED"){
+            //该楼对应的老人 报警都为已处理
+            $.ajax({
+                url: "/alarm/updateHandleByLocationId",
+                type: 'post',
+                dataType: 'json',
+                data :JSON.stringify({
+                    "locationId": marker.id,
+                    "isHandle":1
+                }),
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {}
+            });
+            //该楼所有老人变成 绿色
+            $.ajax({
+                url: "/oldman/updateStatusByLocationId",
+                type: 'post',
+                dataType: 'json',
+                data :JSON.stringify({
+                    "locationId": marker.id,
+                    "status":1
+                }),
+                async:false,
+                contentType: "application/json;charset=UTF-8",
+                success: function (result) {
+                    if(result.success==true){
+                        map.removeOverlay(marker);
+                        position.locationTypeEnum = "GREEN";
+                        createLocationMarker(position,map);
+                    }
+                }
+            });
+        }
     });
 }
 
@@ -115,7 +165,7 @@ function createInfoWindow(position) {
                 title : position.desc, // 信息窗口标题
                 message:""
             };
-            var data = "<div class='container' style='width: 100%'>";
+            var data = "<div class='container' style='width: 100%;overflow-y: scroll' >";
             var oldmanList = result.oldmanVoList;
             for(var i=0;i<oldmanList.length;i++){
                 var oldman = oldmanList[i];
@@ -140,19 +190,26 @@ function oldmanInfo(oid) {
     });
 }
 
+function workerInfo(wid) {
+    $("#oldmanInfo").hide();
+    $("#oldmanInfo").attr("src","/workerInfo?wid="+wid);
+    $("#oldmanInfo").load(function(){                             //  等iframe加载完毕
+        $("#oldmanInfo").show();
+    });
+}
+
 // 展示所有服务人员及其特定时间段内的位置
 function showAllWorker() {
     $.ajax({
-        url: "/worker/getWorkerByPage",
+        url: "/worker/getWorkerPositionByPage",
         type: 'post',
         data :JSON.stringify({
             "pageParam": {
                 "pageNo": 0,
-                "pageSize": 100
+                "pageSize": 10
             },
-            "startTime":"2020-01-01 00:00:00",
-            "endTime":"2020-12-01 00:00:00",
-            "location":true
+            "startTime": new Date(new Date(new Date().toLocaleDateString()).getTime()).Format('yyyy-MM-dd HH:mm:ss'),
+            "endTime":new Date(new Date(new Date().toLocaleDateString()).getTime()+24*60*60*1000-1).Format('yyyy-MM-dd HH:mm:ss')
         }),
         dataType: 'json',
         contentType: "application/json;charset=UTF-8",
@@ -163,7 +220,7 @@ function showAllWorker() {
                 var worker = workerList[i];
                 data += '<div class="row worker-highlight" id="row'+worker.id+'">' +
                     '<div class="col-sm-6" style="padding-top: 1%">'+worker.name+'</div>' +
-                    '<div class="col-sm-6"><button class="btn btn-primary" onclick="showOneWorker('+worker.id+')" >路线</button><button class="btn btn-primary" onclick="openQQ('+worker.qq+')">语音</button></div>' +
+                    '<div class="col-sm-6"><button class="btn btn-primary" onclick=workerInfo('+worker.id+')>查看</button><button class="btn btn-primary" onclick="showOneWorker('+worker.id+')" >路线</button><button class="btn btn-primary" onclick="openQQ('+worker.qq+')">语音</button></div>' +
                     '</div>';
                 if(worker.positionList.length>0){
                     var location = worker.positionList[0];

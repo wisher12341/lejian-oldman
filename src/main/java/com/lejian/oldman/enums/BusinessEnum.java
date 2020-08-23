@@ -33,6 +33,9 @@ public interface BusinessEnum {
 
 
     static BusinessEnum find(Integer value, Class<? extends BusinessEnum> enumClass){
+        if (value==null){
+            return BusinessEnum.DefaultValue.NULL;
+        }
         for(BusinessEnum businessEnum: enumClass.getEnumConstants()){
             if(businessEnum.getValue().intValue()==value){
                 return businessEnum;
@@ -43,7 +46,7 @@ public interface BusinessEnum {
 
     static BusinessEnum find(String desc, Class<? extends BusinessEnum> enumClass){
         for(BusinessEnum businessEnum: enumClass.getEnumConstants()){
-            if(businessEnum.getValue().equals(desc)){
+            if(businessEnum.getDesc().equals(desc)){
                 return businessEnum;
             }
         }

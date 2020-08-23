@@ -65,4 +65,6 @@ public class WorkerEntity {
     private Timestamp datachangeTime;
     @Column
     private String qq;
+    @Column
+    private Integer type;
 }

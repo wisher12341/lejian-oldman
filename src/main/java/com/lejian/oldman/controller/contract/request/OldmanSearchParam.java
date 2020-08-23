@@ -1,23 +1,46 @@
 package com.lejian.oldman.controller.contract.request;
 
 import com.lejian.oldman.bo.JpaSpecBo;
+import com.lejian.oldman.enums.BusinessEnum;
+import com.lejian.oldman.enums.OldmanEnum;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
+
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Data
 public class OldmanSearchParam {
     private String oid;
     private String areaCustomOne;
+    private Integer status;
     private String birthdayLike;
+    private String sex;
+    private String age;
+    private String householdType;
+    private String familyType;
     /**
      * 是否过滤 有智能设备
      */
     private Boolean equip;
+    /**
+     * 是否过滤 有养老服务
+     */
+    private Boolean homeService;
+    /**
+     * 居家养老服务类型
+     */
+    private Integer serviceType;
 
+    /**
+     * 智能设备类型
+     * 传entity 属性 名
+     */
+    private String equipType;
 
     public static JpaSpecBo convert(OldmanSearchParam oldmanSearchParam){
         if(oldmanSearchParam == null){
-            return null;
+            return new JpaSpecBo();
         }
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
         if(StringUtils.isNotBlank(oldmanSearchParam.getOid())) {
@@ -29,13 +52,51 @@ public class OldmanSearchParam {
         if(StringUtils.isNotBlank(oldmanSearchParam.getBirthdayLike())){
             jpaSpecBo.getLikeMap().put("birthday",oldmanSearchParam.getBirthdayLike());
         }
+        if(oldmanSearchParam.getStatus()!=null){
+            jpaSpecBo.getEqualMap().put("status",oldmanSearchParam.getStatus());
+        }
         if(oldmanSearchParam.getEquip()!=null && oldmanSearchParam.getEquip()){
             jpaSpecBo.getOrNotEquipMap().put("careGatewayId",0);
             jpaSpecBo.getOrNotEquipMap().put("cameraId",0);
             jpaSpecBo.getOrNotEquipMap().put("xjbId",0);
         }
-
+        if (oldmanSearchParam.getHomeService()!=null && oldmanSearchParam.getHomeService()){
+            jpaSpecBo.getGreatMap().put("serviceType",0);
+        }
+        if (oldmanSearchParam.getServiceType()!=null){
+            jpaSpecBo.getInMap().put("serviceType",((OldmanEnum.ServiceType)BusinessEnum.find(oldmanSearchParam.getServiceType(),OldmanEnum.ServiceType.class)).getSearchValue().stream().map(item-> (Object)item).collect(Collectors.toList()));
+        }
+        if(StringUtils.isNotBlank(oldmanSearchParam.getEquipType())){
+            jpaSpecBo.getOrNotEquipMap().put(oldmanSearchParam.getEquipType(),0);
+        }
+        if(StringUtils.isNotBlank(oldmanSearchParam.getSex())){
+            jpaSpecBo.getEqualMap().put("sex", BusinessEnum.find(oldmanSearchParam.getSex(), OldmanEnum.Sex.class).getValue());
+        }
+        if(StringUtils.isNotBlank(oldmanSearchParam.getHouseholdType())){
+            jpaSpecBo.getEqualMap().put("householdType", BusinessEnum.find(oldmanSearchParam.getHouseholdType(), OldmanEnum.HouseholdType.class).getValue());
+        }
+        if(StringUtils.isNotBlank(oldmanSearchParam.getFamilyType())){
+            jpaSpecBo.getEqualMap().put("family", BusinessEnum.find(oldmanSearchParam.getFamilyType(), OldmanEnum.FamilyType.class).getValue());
+        }
+        if(StringUtils.isNotBlank(oldmanSearchParam.getAge())){
+            String start=oldmanSearchParam.getAge().split("-")[0];
+            String end="";
+            if(oldmanSearchParam.getAge().split("-").length>1) {
+                end = oldmanSearchParam.getAge().split("-")[1];
+            }
+            jpaSpecBo.getLessEMap().put("birthday", LocalDateTime.now().minusYears(Integer.valueOf(start)).toLocalDate());
+            if(StringUtils.isNotBlank(end)) {
+                jpaSpecBo.getGreatEMap().put("birthday", LocalDateTime.now().minusYears(Integer.valueOf(end)).toLocalDate());
+            }
+        }
         return jpaSpecBo;
     }
 
+    public String getSql() {
+        String where="";
+        if(StringUtils.isNotBlank(getAreaCustomOne())){
+            where+=" area_custom_one='"+getAreaCustomOne()+"'";
+        }
+        return where;
+    }
 }

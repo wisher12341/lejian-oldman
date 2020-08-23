@@ -1,8 +1,13 @@
 package com.lejian.oldman.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.*;
+import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.request.PageParam;
+import com.lejian.oldman.controller.contract.request.WorkerSearchParam;
+import com.lejian.oldman.enums.BusinessEnum;
+import com.lejian.oldman.enums.WorkerEnum;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.WorkerVo;
 import com.lejian.oldman.enums.OldmanEnum;
@@ -14,11 +19,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -156,13 +163,13 @@ public class WorkerService {
     }
 
     /**
-     * 获取某个时间段 全部阿姨  最后一次 位置信息
+     * 分页获取某个时间段  最后一次 位置信息
      * @param startTime
      * @param endTime
      * @return
      */
-    public List<WorkerCheckinBo> getWorkerLatestPositionByTime(String startTime, String endTime,List<Integer> workerIdList) {
-        List<WorkerCheckinBo> latestWorkerList = workerCheckinRepository.getAllLatestTimeByTime(startTime,endTime,workerIdList);
+    public List<WorkerCheckinBo> getWorkerLatestPositionByPage(String startTime, String endTime,PageParam pageParam) {
+        List<WorkerCheckinBo> latestWorkerList = workerCheckinRepository.getLatestTimeByTimeAndPage(startTime,endTime,pageParam);
         if(CollectionUtils.isNotEmpty(latestWorkerList)) {
             return workerCheckinRepository.getAllPositionByTime(latestWorkerList);
         }
@@ -172,13 +179,20 @@ public class WorkerService {
 
     private WorkerVo convert(WorkerBo workerBo, List<WorkerCheckinBo> workerCheckinBoList) {
         WorkerVo workerVo = new WorkerVo();
+        workerVo.setSex(BusinessEnum.find(workerBo.getSex(),OldmanEnum.Sex.class).getDesc());
+        workerVo.setAge(DateUtils.birthdayToAge(workerVo.getBirthday()));
         BeanUtils.copyProperties(workerBo,workerVo);
-        List<WorkerVo.Position> positionList = Lists.newArrayList();
-        workerCheckinBoList.forEach(checkinBo-> positionList.add(new WorkerVo.Position(checkinBo.getLng(),checkinBo.getLat(),checkinBo.getCreateTime().toLocalDateTime().format(YYMMDDHHMMSS))));
-        workerVo.setPositionList(positionList.stream().sorted(Comparator.comparing(WorkerVo.Position::getTime)).collect(Collectors.toList()));
+        if(CollectionUtils.isNotEmpty(workerCheckinBoList)) {
+            List<WorkerVo.Position> positionList = Lists.newArrayList();
+            workerCheckinBoList.forEach(checkinBo -> positionList.add(new WorkerVo.Position(checkinBo.getLng(), checkinBo.getLat(), checkinBo.getCreateTime().toLocalDateTime().format(YYMMDDHHMMSS))));
+            workerVo.setPositionList(positionList.stream().sorted(Comparator.comparing(WorkerVo.Position::getTime)).collect(Collectors.toList()));
+        }
         return workerVo;
     }
 
+    private WorkerVo convert(WorkerBo workerBo) {
+        return convert(workerBo,null);
+    }
 
     public WorkerVo getWorkerPositionByTime(String startTime, String endTime, Integer workerId) {
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
@@ -192,17 +206,61 @@ public class WorkerService {
     }
 
 
-    public List<WorkerVo> getWorkerByPage(PageParam pageParam, String startTime, String endTime, Boolean location) {
-        List<WorkerBo> workerBoList = workerRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),null);
-        if(location) {
-            List<Integer> workerIdList = workerBoList.stream().map(WorkerBo::getId).collect(Collectors.toList());
-            List<WorkerCheckinBo> workerCheckinBoList = getWorkerLatestPositionByTime(startTime, endTime, workerIdList);
+    /**
+     * 1. 获取签到表，该时间范围内 服务人员id (分页)
+     * 2. 根据服务人员id 获取这些服务人员的最新位置
+     *
+     * @param pageParam
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    public List<WorkerVo> getWorkerPositionByPage(PageParam pageParam, String startTime, String endTime) {
+        List<WorkerCheckinBo> workerCheckinBoList = getWorkerLatestPositionByPage(startTime, endTime, pageParam);
+        if(CollectionUtils.isNotEmpty(workerCheckinBoList)) {
             Map<Integer, WorkerCheckinBo> workerPositionMap = workerCheckinBoList.stream().collect(Collectors.toMap(WorkerCheckinBo::getWorkerId, Function.identity()));
+            List<WorkerBo> workerBoList = workerRepository.getByPkIds(Lists.newArrayList(workerPositionMap.keySet()));
             return workerBoList.stream().map(bo -> {
                 WorkerCheckinBo workerCheckinBo = workerPositionMap.get(bo.getId());
+                if (workerCheckinBo == null) {
+                    return null;
+                }
                 return convert(bo, Lists.newArrayList(workerCheckinBo));
             }).collect(Collectors.toList());
         }
-        return workerBoList.stream().map(bo -> convert(bo, Lists.newArrayList())).collect(Collectors.toList());
+        return Lists.newArrayList();
+    }
+
+    public WorkerVo getWorkerByWid(Integer workerId) {
+        return convert(workerRepository.getByPkId(workerId));
+    }
+
+
+    public Long getCheckinCount(OldmanSearchParam oldmanSearchParam) {
+        return workerCheckinRepository.getCheckinCount(oldmanSearchParam);
+    }
+
+    public List<WorkerVo> getWorkerByPage(PageParam pageParam, WorkerSearchParam param) {
+        JpaSpecBo jpaSpecBo=new JpaSpecBo();
+        if(param!=null) {
+            jpaSpecBo = param.convert();
+        }
+        return workerRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),jpaSpecBo).stream().map(this::convert).collect(Collectors.toList());
+    }
+
+    public Map<String, Long> getTypeCount() {
+        Map<String, Long> map = Maps.newHashMap();
+        for(WorkerEnum workerEnum: WorkerEnum.Type.values()){
+            map.put(workerEnum.getDesc(),0L);
+        }
+        List<Map<String,Object>> typeMapList=workerRepository.getTypeCount();
+
+        typeMapList.forEach(item->{
+            Integer type= (Integer) item.get("type");
+            Long b=((BigInteger)item.get("count")).longValue();
+
+            map.put(BusinessEnum.find(type, WorkerEnum.Type.class).getDesc(),b);
+        });
+        return map;
     }
 }

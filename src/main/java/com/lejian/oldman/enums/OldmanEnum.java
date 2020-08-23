@@ -1,7 +1,10 @@
 package com.lejian.oldman.enums;
 
+import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.List;
 
 /**
  * 老人属性 枚举
@@ -82,24 +85,123 @@ public interface OldmanEnum extends BusinessEnum{
         private String desc;
     }
 
-        /**
-         * 家庭结构
-         */
-        @Getter
-        @AllArgsConstructor
-        enum FamilyType implements OldmanEnum{
-            CHUNLAO(1,"纯老"),
-            DUJU(2,"独居"),
-            SHUDU(3,"失独"),
-            GULAO(4,"孤老"),
-            YLYYL(5,"一老养一老"),
-            SZRY(6,"三支人员"),
-            OTHER(0,"其他"),
-            ;
+    /**
+     * 家庭结构
+     */
+    @Getter
+    @AllArgsConstructor
+    enum FamilyType implements OldmanEnum{
+        CHUNLAO(1,"纯老"),
+        DUJU(2,"独居"),
+        SHUDU(3,"失独"),
+        GULAO(4,"孤老"),
+        YLYYL(5,"一老养一老"),
+        SZRY(6,"三支人员"),
+        OTHER(0,"其他"),
+        ;
         private Integer value;
         private String desc;
     }
 
+    /**
+     * 居家养老服务类型
+     */
+    @Getter
+    @AllArgsConstructor
+    enum ServiceType implements OldmanEnum {
+        CHX(1, "长护险") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(CHX);
+            }
 
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(1,101,102,104);
+            }
+        },
+        JTFW(2, "家庭服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(JTFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(2,101,103,104);
+            }
+        },
+        JJYLFW(3, "居家养老服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(JJYLFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(3,102,103,104);
+            }
+        },
+        CHX_JTFW(101, "长护险+家庭服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(CHX, JTFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(101);
+            }
+        },
+        CHX_JJYLFW(102, "长护险+居家养老服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(CHX, JJYLFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(102);
+            }
+        },
+        JTFW_JJYLFW(103, "家庭服务+居家养老服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(JTFW, JJYLFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(103);
+            }
+        },
+        CHX_JTFW_JJYLFW(104, "家庭服务+家庭服务+居家养老服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(CHX, JTFW, JJYLFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(104);
+            }
+        },;
+        private Integer value;
+        private String desc;
+
+        /**
+         * 拆除组合
+         *
+         * @return
+         */
+        public abstract List<ServiceType> map();
+
+        /**
+         * 获取查询数据库的 list值
+         *
+         * @return
+         */
+        public abstract List<Integer> getSearchValue();
+    }
 
 }

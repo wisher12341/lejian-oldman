@@ -97,4 +97,8 @@ public abstract class AbstractRepository<Bo,Entity> {
         List<Entity> entityList =getDao().findAllById(pkIds);
         return entityList.stream().map(this::convertEntity).collect(Collectors.toList());
     }
+
+    public Long count() {
+        return getDao().count();
+    }
 }

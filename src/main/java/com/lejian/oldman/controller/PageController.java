@@ -28,6 +28,12 @@ public class PageController {
         return mv;
     }
 
+    @GetMapping("/workerInfo")
+    public ModelAndView workerInfo(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/worker_info");
+        return mv;
+    }
 
     @GetMapping("/main")
     public ModelAndView main(){

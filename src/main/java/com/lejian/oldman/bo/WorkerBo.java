@@ -1,5 +1,6 @@
 package com.lejian.oldman.bo;
 
+import com.lejian.oldman.enums.BusinessEnum;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -28,4 +29,5 @@ public class WorkerBo {
     private Integer star;
     private Integer userId;
     private String qq;
+    private BusinessEnum type;
 }

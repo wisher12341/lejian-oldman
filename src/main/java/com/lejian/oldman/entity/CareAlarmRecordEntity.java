@@ -25,6 +25,10 @@ public class CareAlarmRecordEntity {
     private String content;
     @Column
     private String handle;
+    @Column(name = "is_read")
+    private Integer isRead;
+    @Column(name = "is_handle")
+    private Integer isHandle;
     @Column(name = "create_time")
     private Timestamp createTime;
 }

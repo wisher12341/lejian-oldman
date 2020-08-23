@@ -37,7 +37,7 @@ public class JpaSpecBo {
      */
     Map<String,Object> greatMap = new HashMap<>();
     /**
-     * or
+     * or (!=)
      * and ( or or or )
      */
     Map<String,Object> orNotEquipMap = new HashMap<>();

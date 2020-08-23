@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
+
         #oldmanInfo{
             display: none;
             position:absolute;
@@ -14,7 +15,7 @@
         }
         #workerIcon{
             position: absolute;
-            height: 10%;
+            height: 6%;
             width: 15%;
             z-index: 9998;
             background-color: #0e3954;
@@ -24,7 +25,23 @@
             font-size: x-large;
             margin: 1%;
             text-align: center;
-            padding-top: 2%;
+            padding-top: 1%;
+            border-radius: 10%;
+            right: 1.5%;
+        }
+        #timeIcon{
+            position: absolute;
+            height: 6%;
+            width: 30%;
+            z-index: 9998;
+            background-color: #0e3954;
+            opacity: 0.8;
+            color: white;
+            font-weight: bold;
+            font-size: x-large;
+            margin: 1%;
+            text-align: center;
+            padding-top: 1%;
             border-radius: 10%;
         }
         #map{
@@ -49,6 +66,7 @@
             position: absolute;
             z-index: 9998;
             margin: 1%;
+            right: 1.5%;
         }
         #workerList{
             border-radius: 10%;
@@ -76,12 +94,16 @@
             height: -webkit-fill-available;
             text-align: center;
         }
+        .mengceng{
+            box-shadow: inset 0px 0px 2px 0px rgb(4, 17, 25);
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            height: -webkit-fill-available;
+            text-align: center;
+        }
         .word{
             color: white;
             font-weight: bolder;
-        }
-        li{
-            border-bottom: 1px solid #fff;
         }
         .firstceng{
             height: 11%;
@@ -125,6 +147,40 @@
         li{
             padding-top: 3%;
             list-style: none;
+            border-bottom: 1px solid #fff;
+        }
+        #adminNumber .num{
+            margin-left: 16%;
+        }
+        .aaaa{
+            display: inline-block;
+            width: 24%;
+            text-align: center;
+        }
+        .bbbb{
+            display: inline-block;
+            text-align: left;
+        }
+        .cccc,.dddd{
+            display: inline-block;
+        }
+        .cccc{
+            width: 70%;
+            text-align: left;
+            padding-left: 3%;
+        }
+        .dddd{
+            width: 20%;
+            text-align: right;
+        }
+        /*#secondFirst{*/
+            /*margin-top: 5%;*/
+        /*}*/
+        #secondFirst div{
+            margin-top: 2%;
+        }
+        [onclick]{
+            cursor: pointer;
         }
     </style>
 
@@ -137,23 +193,35 @@
 <div class="container">
     <div class="row" style="height: 100%">
         <div class="col-xs-2" style="height: 100%;">
-            <div class="row mengceng" style="margin-top: 10%;height: 16%">
+            <div class="row mengceng" style="margin-top: 1%;height: 16%">
                 <div class="col-xs-12" style="padding: 3%">
                     <span class="word" style="font-size: larger;display: block;">服务总人数</span>
                     <span class="word num" style="font-size: -webkit-xxx-large;display: block;"  id="totalNumber"></span>
                 </div>
             </div>
-            <div class="row mengceng" style="margin-top: 5%;height: 70%">
+            <div class="row mengceng" style="margin-top: 2%;height: 74%">
                 <div class="col-xs-12" style="text-align: center;padding: 5%;height: 100%">
-                    <span class="word" style="font-size: larger;">浦东新区老港镇</span>
-                    <span class="word" style="font-size: xx-large;display: block">大河村</span>
-                    <ul id="adminNumber" style="margin-top: 4%;height: 85%"></ul>
+                    <span class="word" style="font-size: larger;">浦&nbsp;东&nbsp;新&nbsp;区&nbsp;老&nbsp;港&nbsp;镇</span>
+                    <span class="word" style="font-size: xx-large;display: block" onclick="selectAreaCustomOne(null,null)">大河村</span>
+                    <ul id="adminNumber" style="margin-top: 4%;height: 83%;overflow-x: hidden"></ul>
+                </div>
+            </div>
+            <div class="row mengceng" style="margin-top:1%;height: 8%">
+                <div class="col-xs-4" style="text-align: center;height: 100%;padding: 5%">
+                    <span class="word" style="font-size: x-large;">省</span>
+                </div>
+                <div class="col-xs-4" style="text-align: center;height: 100%;padding: 5%">
+                    <span class="word" style="font-size: x-large">市</span>
+                </div>
+                <div class="col-xs-4" style="text-align: center;height: 100%;padding: 5%">
+                    <span class="word" style="font-size: x-large">区</span>
                 </div>
             </div>
         </div>
         <div class="col-xs-7" style="height: 100%" onclick=$("#oldmanInfo").css("display","none")>
             <iframe id="oldmanInfo"></iframe>
-            <div id="workerIcon" onclick="showAllWorker()">服务人员</div>
+            <div id="workerIcon" onclick="showAllWorker()">乐健为老</div>
+            <div id="timeIcon" ></div>
             <div id="workerDiv">
                 <div id="workerList" class='container'></div>
             </div>
@@ -164,38 +232,39 @@
             <div class="row mengceng firstceng">
                 <div class="col-xs-12" style="padding: 1%">
                     <span class="word" style="font-size: larger;display: block;">历史累计服务总频次</span>
-                    <span class="word num"  style="font-size: xx-large;display: block;" id="historyServiceNum">210,000</span>
+                    <!--<span class="word num"  style="font-size: xx-large;display: block;" id="historyServiceNum"></span>-->
+                    <span class="word num"  style="font-size: xx-large;display: block;" >210000</span>
                 </div>
             </div>
 
             <div class="row mengceng firstceng">
                 <div class="col-xs-12" style="padding: 1%">
                     <span class="word" style="font-size: larger;display: block;">实时服务人数</span>
-                    <span class="word num"  style="font-size: xx-large;display: block;" id="serviceNum">1</span>
+                    <span class="word num"  style="font-size: xx-large;display: block;" id="serviceNum"></span>
                 </div>
             </div>
 
-            <div class="row mengceng secondceng" id="sencondAll">
+            <div class="row mengceng secondceng" id="sencondAll" style="text-align: left!important;">
                 <div class="col-xs-12 w3" id="secondFirst">
                     <div onclick="secondceng(this,1)">
-                        <span class="word" style="font-size: larger">居家上门服务总人数</span>
-                        <span class="word num" id="homeServiceNum"></span>
+                        <div class="cccc"><span class="word" style="font-size: larger">居家上门服务总人数</span></div>
+                        <div class="dddd"><span class="word num" id="homeServiceNum"></span></div>
                     </div>
                     <div onclick="secondceng(this,2)">
-                        <span class="word" style="font-size: larger">智能设备安装人数</span>
-                        <span class="word num" id="equipNum"></span>
+                        <div class="cccc"><span class="word" style="font-size: larger">智能设备安装人数</span></div>
+                        <div class="dddd"><span class="word num" id="equipNum"></span></div>
                     </div>
-                    <div onclick="secondceng(this,3)">
-                        <span class="word" style="font-size: larger">应急响应次数</span>
-                        <span class="word num"  id="warnNum"></span>
+                    <div onclick="alarmClick(this)">
+                        <div class="cccc"><span class="word" style="font-size: larger">应急响应次数</span></div>
+                        <div class="dddd"><span class="word num"  id="warnNum"></span></div>
                     </div>
                     <div onclick="secondceng(this,4)">
-                        <span class="word" style="font-size: larger">服务人员人数</span>
-                        <span class="word num"  id="workerNum"></span>
+                        <div class="cccc"><span class="word" style="font-size: larger">服务人员人数</span></div>
+                        <div class="dddd"><span class="word num"  id="workerNum"></span></div>
                     </div>
                 </div>
-                <div class="col-xs-12 w3" style="display: none" id="secondSecond">
-                    <span class="word"onclick="secondReturn()" style="font-size: larger;" id="secondcengName"></span>
+                <div class="col-xs-12 w3" style="display: none;text-align: center" id="secondSecond">
+                    <span class="word" onclick="secondReturn()" style="font-size: larger;" id="secondcengName"></span>
                     <span class="word num" style="font-size: xx-large;" id="secondcengNum"></span>
                     <div id="chart"></div>
                 </div>
@@ -228,12 +297,19 @@
             <div class="row fourceng" onclick="birthdayOldman()">
                 <div class="col-xs-12 mengceng w3">
                     <span class="word" style="font-size: larger;">当日老人生日信息</span>
+                    <span class="word num" style="font-size:  xx-large;"  id="birthdayNum" ></span>
                 </div>
             </div>
 
             <div class="row fiveceng" style="display:none;">
                 <div class="col-xs-12 mengceng w3">
-                    <span class="word" style="font-size:medium;" id="manName"></span>
+                    <span class="word" style="font-size:medium;" id="manName" onclick="oldmanInfoReturn();"></span>
+                    <div style="text-align: left;margin-left: 3%">
+                        <div class="aaaa"><span class="word" >编号</span></div>
+                        <div class="aaaa"><span class="word" >姓名</span></div>
+                        <div class="aaaa"><span class="word" >年龄</span></div>
+                        <div class="aaaa"><span class="word" >性别</span></div>
+                    </div>
                     <ul id="manList" style="height: 80%"></ul>
                 </div>
             </div>
@@ -241,6 +317,12 @@
                 <div class="col-xs-12 mengceng w3">
                     <span class="word" style="font-size: larger;display: block" onclick="sixReturn()">当日老人生日总人数</span>
                     <span class="word num"  id="birthdayOldmanNumber"></span>
+                    <div style="text-align: left;margin-left: 3%">
+                        <div class="aaaa"><span class="word" >编号</span></div>
+                        <div class="aaaa"><span class="word" >姓名</span></div>
+                        <div class="aaaa"><span class="word" >年龄</span></div>
+                        <div class="aaaa"><span class="word" >性别</span></div>
+                    </div>
                     <ul id="birthdayOldmanList" style="height: 80%"></ul>
                 </div>
             </div>

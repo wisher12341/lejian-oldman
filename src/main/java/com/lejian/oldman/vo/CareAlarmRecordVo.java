@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 public class CareAlarmRecordVo {
 
     private Integer id;
-    private String oid;
+    private OldmanVo oldmanVo;
     private String type;
     private String content;
     private String handle;
@@ -17,4 +17,5 @@ public class CareAlarmRecordVo {
      * 是否已处理
      */
     private Boolean isHandle;
+    private Boolean isRead;
 }

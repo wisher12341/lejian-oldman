@@ -5,23 +5,17 @@ import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.GetWorkerListResponse;
 import com.lejian.oldman.controller.contract.response.GetWorkerResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;
-import com.lejian.oldman.controller.contract.response.WorkerCheckInResponse;
 import com.lejian.oldman.repository.UserRepository;
 import com.lejian.oldman.service.WorkerService;
 import com.lejian.oldman.utils.CookieUtils;
-import com.lejian.oldman.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -68,7 +62,17 @@ public class WorkerController {
     @RequestMapping("getWorkerByPage")
     public GetWorkerListResponse getWorkerByPage(@RequestBody GetWorkerByPageRequest request){
         GetWorkerListResponse response= new GetWorkerListResponse();
-        response.setWorkerVoList(workerService.getWorkerByPage(request.getPageParam(),request.getStartTime(),request.getEndTime(),request.getLocation()));
+        response.setWorkerVoList(workerService.getWorkerByPage(request.getPageParam(),request.getWorkerSearchParam()));
+        return response;
+    }
+
+    /**
+     * 分页获取服务人员某个时间段的地理位置
+     */
+    @RequestMapping("getWorkerPositionByPage")
+    public GetWorkerListResponse getWorkerPositionByPage(@RequestBody GetWorkerPositionByPageRequest request){
+        GetWorkerListResponse response= new GetWorkerListResponse();
+        response.setWorkerVoList(workerService.getWorkerPositionByPage(request.getPageParam(),request.getStartTime(),request.getEndTime()));
         return response;
     }
 
@@ -80,6 +84,14 @@ public class WorkerController {
     public GetWorkerResponse getWorkerPositionByTime(@RequestBody GetWorkerPositionByTimeAndIdRequest request){
         GetWorkerResponse response=new GetWorkerResponse();
         response.setWorkerVo(workerService.getWorkerPositionByTime(request.getStartTime(),request.getEndTime(),request.getWorkerId()));
+        return response;
+    }
+
+
+    @RequestMapping("/getWorkerByWid")
+    public GetWorkerResponse getWorkerByWid(@RequestBody GetWorkerByWidRequest request){
+        GetWorkerResponse response = new GetWorkerResponse();
+        response.setWorkerVo(workerService.getWorkerByWid(request.getWorkerId()));
         return response;
     }
 

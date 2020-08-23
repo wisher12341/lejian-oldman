@@ -3,8 +3,8 @@ package com.lejian.oldman.controller.contract.request;
 import lombok.Data;
 
 @Data
-public class GetWorkerByPageRequest {
+public class GetWorkerPositionByPageRequest {
     private PageParam pageParam;
-    private WorkerSearchParam workerSearchParam;
-
+    private String startTime;
+    private String endTime;
 }

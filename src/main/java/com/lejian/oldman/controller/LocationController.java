@@ -1,5 +1,6 @@
 package com.lejian.oldman.controller;
 
+import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.request.PollLocationStatusRequest;
 import com.lejian.oldman.controller.contract.response.GetLocationListResponse;
 import com.lejian.oldman.enums.OldmanEnum;
@@ -34,20 +35,10 @@ public class LocationController {
         return response;
     }
 
-
-
-    /**
-     * 轮询楼最新状态
-     */
-    @RequestMapping("/pollStatus")
-    public GetLocationListResponse pollStatus(@RequestBody PollLocationStatusRequest request){
+    @RequestMapping("/getLocationByAreaCustomOne")
+    public GetLocationListResponse getLocationByAreaCustomOne(@RequestBody OldmanSearchParam oldmanSearchParam){
         GetLocationListResponse response=new GetLocationListResponse();
-        response.setServiceOldmanCount(oldmanService.getOldmanByStatus(OldmanEnum.Status.YELLOW));
-        Pair<Long,List<LocationVo>> pair = service.pollStatus(request.getTimestamp());
-        if(pair!=null) {
-            response.setLocationVoList(pair.getSecond());
-            response.setTimestamp(pair.getFirst());
-        }
+        response.setLocationVoList(service.getLocationByAreaCustomOne(oldmanSearchParam.getAreaCustomOne()));
         return response;
     }
 

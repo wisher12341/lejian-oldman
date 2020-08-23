@@ -9,9 +9,10 @@ import java.util.List;
 @Data
 public class WorkerVo {
     private Integer id;
-    private Integer sex;
+    private String sex;
     private String name;
     private LocalDate birthday;
+    private Integer age;
     private String nation;
     private String country;
     private String idCard;
@@ -19,16 +20,17 @@ public class WorkerVo {
     private String birthplaceCity;
     private String address;
     private String picUrl;
-    private Integer education;
+    private String education;
     private String phone;
     private String mary;
-    private Integer retiredStatus;
-    private Integer reserve;
+    private String retiredStatus;
+    private String reserve;
     private String housekeepingInsurance;
     private Double salary;
-    private Integer organId;
+    private String organName;
     private List<Position> positionList;
     private String qq;
+    private String type;
 
 
     @Data

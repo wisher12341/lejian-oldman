@@ -2,17 +2,21 @@ package com.lejian.oldman.repository;
 
 import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.WorkerCheckinBo;
+import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
+import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.dao.WorkerCheckinDao;
 import com.lejian.oldman.entity.WorkerCheckinEntity;
 import com.lejian.oldman.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Query;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,21 +61,26 @@ public class WorkerCheckinRepository extends AbstractSpecificationRepository<Wor
 
 
     /**
-     * 获取时间范围内，服务人员签到最近时间
+     * 分页获取时间范围内，服务人员签到最近时间
      * @param startTime
      * @param endTime
-     * @param workerIdList
+     * @param pageParam
      * @return
      */
-    public List<WorkerCheckinBo> getAllLatestTimeByTime(String startTime, String endTime,List<Integer> workerIdList) {
-        List<Map<String,Object>> mapList = workerCheckinDao.getAllLatestTimeByTime(startTime,endTime,workerIdList);
-        if(CollectionUtils.isNotEmpty(mapList)){
-            return mapList.stream().map(item->{
+    public List<WorkerCheckinBo> getLatestTimeByTimeAndPage(String startTime, String endTime,PageParam pageParam) {
+        try {
+            String sql = String.format("select worker_id,max(create_time) as create_time from worker_checkin" +
+                    " where create_time>='%s' and create_time<='%s' group by worker_id order by worker_id limit %s,%s",startTime,endTime,pageParam.getPageNo(),pageParam.getPageSize());
+            Query query =entityManager.createNativeQuery(sql);
+            return (List<WorkerCheckinBo>) query.getResultList().stream().map(object->{
                 WorkerCheckinBo workerCheckinBo=new WorkerCheckinBo();
-                workerCheckinBo.setWorkerId((Integer) item.get("worker_id"));
-                workerCheckinBo.setCreateTime(((Timestamp) item.get("create_time")));
+                Object[] cells = (Object[]) object;
+                workerCheckinBo.setWorkerId((Integer) cells[0]);
+                workerCheckinBo.setCreateTime(Timestamp.valueOf(String.valueOf(cells[1])));
                 return workerCheckinBo;
             }).collect(Collectors.toList());
+        }catch (Exception e){
+            REPOSITORY_ERROR.doThrowException("getLatestTimeByTimeAndPageFromDb",e);
         }
         return Lists.newArrayList();
     }
@@ -115,4 +124,19 @@ public class WorkerCheckinRepository extends AbstractSpecificationRepository<Wor
         return workerCheckinEntity;
     }
 
+    public Long getCheckinCount(OldmanSearchParam oldmanSearchParam) {
+        try {
+            String sql = "select count(1) from worker_checkin ";
+
+            if(oldmanSearchParam!=null && StringUtils.isNotBlank(oldmanSearchParam.getSql())){
+                sql+="where oid in (select oid from oldman where "+oldmanSearchParam.getSql()+")";
+            }
+
+            Query query =entityManager.createNativeQuery(sql);
+            return ((BigInteger) query.getResultList().get(0)).longValue();
+        }catch (Exception e){
+            REPOSITORY_ERROR.doThrowException("getAllPositonByTime",e);
+        }
+        return 0L;
+    }
 }

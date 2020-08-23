@@ -13,6 +13,7 @@ import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.OldmanVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,9 @@ public class OldmanService {
         return oldmanRepository.countWithSpec(OldmanSearchParam.convert(oldmanSearchParam));
     }
 
+    public Long getOldmanCount() {
+        return oldmanRepository.count();
+    }
 
     private OldmanVo convert(OldmanBo oldmanBo) {
         OldmanVo oldmanVo = new OldmanVo();
@@ -114,7 +118,7 @@ public class OldmanService {
      * 1. 老人状态变成红色
      * 2. 记录报警记录
      */
-    public void alarm(String gatewayId, String type, String content) throws UnsupportedEncodingException {
+    public void alarm(Integer gatewayId, String type, String content) throws UnsupportedEncodingException {
         BusinessEnum alarmType=BusinessEnum.find(type, CareSystemEnum.AlarmType.class);
         if(alarmType==BusinessEnum.DefaultValue.NULL) {
             type = new String(type.getBytes("ISO-8859-1"), "UTF-8");
@@ -137,9 +141,6 @@ public class OldmanService {
 
     }
 
-    public Long getOldmanByStatus(BusinessEnum status) {
-        return oldmanRepository.countByStatus(status.getValue());
-    }
 
     /**
      * 老人表， 根据 数据库字段 group 查数量
@@ -148,5 +149,43 @@ public class OldmanService {
      */
     public Map<String, Long> getGroupCount(String groupFieldName) {
         return oldmanRepository.getGroupCount(groupFieldName);
+    }
+
+    public void updateStatusByLocationId(Integer locationId,Integer status) {
+        oldmanRepository.updateStatusByLocationId(locationId,status);
+    }
+
+    public Long getEquipCount(OldmanSearchParam oldmanSearchParam) {
+        oldmanSearchParam.setEquip(true);
+        return oldmanRepository.countWithSpec(OldmanSearchParam.convert(oldmanSearchParam));
+    }
+
+    public List<OldmanVo> getBirthdayOldman(String date) {
+        return oldmanRepository.getBirthdayOldman(date).stream().map(this::convert).collect(Collectors.toList());
+    }
+
+    public Long getBirthdayOldmanCount(String birthdayLike) {
+        return oldmanRepository.getBirthdayOldmanCount(birthdayLike);
+    }
+
+    public Map<String, Long> getHomeServiceCount(OldmanSearchParam oldmanSearchParam) {
+        Map<String, Long> map = Maps.newHashMap();
+        for(OldmanEnum oldmanEnum:OldmanEnum.ServiceType.values()){
+            if(oldmanEnum.getValue()<100) {
+                map.put(oldmanEnum.getDesc(), 0L);
+            }
+        }
+        Map<Integer, Long> mapInt =oldmanRepository.getOldmanGroup(oldmanSearchParam,"service_type");
+        mapInt.forEach((k,v)->{
+            BusinessEnum businessEnum=BusinessEnum.find(k,OldmanEnum.ServiceType.class);
+            if(businessEnum!=BusinessEnum.DefaultValue.NULL) {
+                List<OldmanEnum.ServiceType> serviceTypeList = ((OldmanEnum.ServiceType) businessEnum).map();
+                serviceTypeList.forEach(item -> {
+                    map.put(item.getDesc(), map.get(item.getDesc()) + v);
+                });
+            }
+
+        });
+        return map;
     }
 }

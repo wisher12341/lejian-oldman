@@ -100,4 +100,13 @@ public class LocationService {
         }
         return null;
     }
+
+    public List<LocationVo> getLocationByAreaCustomOne(String areaCustomOne) {
+        return oldmanRepository.getLocationIdByAreaCustomOne(areaCustomOne).stream().map(id->{
+            LocationVo locationVo=new LocationVo();
+            locationVo.setId(id);
+            return locationVo;
+        }).collect(Collectors.toList());
+    }
+
 }

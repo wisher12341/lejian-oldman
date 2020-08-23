@@ -76,4 +76,6 @@ public class OldmanEntity {
     private Integer cameraId;
     @Column(name = "xjb_id")
     private Integer xjbId;
+    @Column(name = "service_type")
+    private Integer serviceType;
 }

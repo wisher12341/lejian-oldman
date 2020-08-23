@@ -37,5 +37,6 @@ public class OldmanVo {
     private Integer xjbId;
     private Timestamp datachangeTime;
     private String family;
+    private String serviceType;
 
 }

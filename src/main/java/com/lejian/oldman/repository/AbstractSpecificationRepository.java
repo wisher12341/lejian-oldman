@@ -8,6 +8,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.util.ObjectUtils;
@@ -17,6 +18,7 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,15 +41,24 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
      * @param jpaSpecBo
      * @return
      */
-    public List<Bo> findByPageWithSpec(Integer pageNo, Integer pageSize, JpaSpecBo jpaSpecBo) {
+    public List<Bo> findByPageWithSpec(Integer pageNo, Integer pageSize, JpaSpecBo jpaSpecBo,Sort sort) {
         try {
-            Pageable pageable = PageRequest.of(pageNo, pageSize);
+            Pageable pageable;
+            if(sort!=null){
+                pageable= PageRequest.of(pageNo, pageSize,sort);
+            }else {
+                pageable= PageRequest.of(pageNo, pageSize);
+            }
             Page<Entity> page = getSpecDao().findAll(createSpec(jpaSpecBo), pageable);
             return page.get().map(this::convertEntity).collect(Collectors.toList());
         }catch (Exception e){
             REPOSITORY_ERROR.doThrowException("findByPageWithSpec",e);
         }
         return Lists.newArrayList();
+    }
+
+    public List<Bo> findByPageWithSpec(Integer pageNo, Integer pageSize, JpaSpecBo jpaSpecBo) {
+        return findByPageWithSpec( pageNo,  pageSize,  jpaSpecBo,null);
     }
 
     /**
@@ -108,6 +119,9 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
         jpaSpecBo.getInMap().forEach((k,v)->{
             if (CollectionUtils.isNotEmpty(v)){
                 CriteriaBuilder.In<Integer> in = criteriaBuilder.in(root.get(k));
+                for (Object item : v) {
+                    in.value((int)item);
+                }
                 predicateList.add(in);
             }
         });
@@ -115,6 +129,8 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             if(!ObjectUtils.isEmpty(v)) {
                 if(v instanceof Timestamp) {
                     predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (Timestamp) v));
+                }else if(v instanceof LocalDate){
+                    predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (LocalDate) v));
                 }else{
                     predicateList.add(criteriaBuilder.greaterThanOrEqualTo(root.get(k), (String) v));
                 }
@@ -124,6 +140,10 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             if(!ObjectUtils.isEmpty(v)) {
                 if(v instanceof Timestamp) {
                     predicateList.add(criteriaBuilder.greaterThan(root.get(k), (Timestamp) v));
+                }else if(v instanceof LocalDate){
+                    predicateList.add(criteriaBuilder.greaterThan(root.get(k), (LocalDate) v));
+                }else if(v instanceof Integer){
+                    predicateList.add(criteriaBuilder.greaterThan(root.get(k), (Integer) v));
                 }else{
                     predicateList.add(criteriaBuilder.greaterThan(root.get(k), (String) v));
                 }
@@ -133,6 +153,8 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
             if(!ObjectUtils.isEmpty(v)) {
                 if(v instanceof Timestamp) {
                     predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (Timestamp) v));
+                }else if(v instanceof LocalDate){
+                    predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (LocalDate) v));
                 }else{
                     predicateList.add(criteriaBuilder.lessThanOrEqualTo(root.get(k), (String) v));
                 }
