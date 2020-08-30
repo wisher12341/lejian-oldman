@@ -116,7 +116,7 @@ public class OldmanController {
         GetCountResponse response= new GetCountResponse();
         response.setCountMap(oldmanService.getGroupCount(request.getGroupFieldName()));
         response.sum();
-        response.sort(true);
+        response.sortByKey(true);
         return response;
     }
 

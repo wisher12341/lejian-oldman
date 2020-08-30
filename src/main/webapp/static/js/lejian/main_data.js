@@ -186,7 +186,7 @@ function secondceng(obj,type) {
     var oldmanSearchParam={
         "pageParam": {
             "pageNo": 0,
-            "pageSize": 40
+            "pageSize": 50
         },
         "oldmanSearchParam": {
             "areaCustomOne":areaCustomOne
@@ -249,7 +249,7 @@ function selectManType(name) {
     var param={
         "pageParam": {
             "pageNo": 0,
-            "pageSize": 40
+            "pageSize": 50
         },
         "oldmanSearchParam": {
             "areaCustomOne":areaCustomOne
@@ -328,7 +328,7 @@ function createAlarmData(type,clear) {
         data :JSON.stringify({
             "pageParam":{
                 "pageNo":0,
-                "pageSize":10
+                "pageSize":100
             },
             "needOldmanInfo":true,
             "needCount":false,
@@ -435,7 +435,7 @@ function oldmanInfoChartSelect(title,value) {
     var param={
         "pageParam": {
             "pageNo": 0,
-            "pageSize": 40
+            "pageSize": 50
         },
         "oldmanSearchParam": {
             "areaCustomOne":areaCustomOne
@@ -500,7 +500,7 @@ function createWorker(param,id,clear) {
         data :JSON.stringify({
             "pageParam": {
                 "pageNo": 0,
-                "pageSize": 40
+                "pageSize": 50
             },
             "workerSearchParam":param
         }),
