@@ -56,7 +56,7 @@ public class LocationService {
                         if(vo.getLocationTypeEnum()== LocationVo.LocationTypeEnum.RANDY){
                             break;
                         }
-                        OldmanEnum.Status oldmanStatus = (OldmanEnum.Status) oldmanBo.getStatus();
+                        OldmanEnum.Status oldmanStatus = (OldmanEnum.Status) oldmanBo.getStatusEnum();
                         vo.setLocationTypeEnum(vo.getLocationTypeEnum().convert(oldmanStatus));
                     }
                 }
@@ -89,7 +89,7 @@ public class LocationService {
                     if(locationVo.getLocationTypeEnum()== LocationVo.LocationTypeEnum.RANDY){
                         break;
                     }
-                    OldmanEnum.Status oldmanStatus = (OldmanEnum.Status) oldmanBo.getStatus();
+                    OldmanEnum.Status oldmanStatus = (OldmanEnum.Status) oldmanBo.getStatusEnum();
                     locationVo.setLocationTypeEnum(locationVo.getLocationTypeEnum().convert(oldmanStatus));
                 }
                 locationVoList.add(locationVo);

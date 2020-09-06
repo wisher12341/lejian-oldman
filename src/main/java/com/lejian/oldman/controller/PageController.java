@@ -28,6 +28,14 @@ public class PageController {
         return mv;
     }
 
+    @GetMapping("/oldmanAdd")
+    public ModelAndView oldmanAdd(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/oldman_add");
+        return mv;
+    }
+
+
     @GetMapping("/workerInfo")
     public ModelAndView workerInfo(){
         ModelAndView mv = new ModelAndView();
@@ -53,6 +61,13 @@ public class PageController {
     public ModelAndView login(){
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/login");
+        return mv;
+    }
+
+    @GetMapping("/config/area")
+    public ModelAndView configArea(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/config/area");
         return mv;
     }
 }

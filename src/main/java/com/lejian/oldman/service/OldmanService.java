@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
+import com.lejian.oldman.controller.contract.request.OldmanParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.CareSystemEnum;
@@ -19,12 +20,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.lejian.oldman.common.ComponentRespCode.NO_DATA_FOUND;
+import static com.lejian.oldman.utils.DateUtils.YYMMDD;
 
 @Slf4j
 @Service
@@ -68,12 +71,12 @@ public class OldmanService {
         oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
         oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
         oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
-        oldmanVo.setStatus(oldmanBo.getStatus().getDesc());
-        oldmanVo.setSex(oldmanBo.getSex().getDesc());
-        oldmanVo.setPolitics(oldmanBo.getPolitics().getDesc());
-        oldmanVo.setEducation(oldmanBo.getEducation().getDesc());
-        oldmanVo.setHouseholdType(oldmanBo.getHouseholdType().getDesc());
-        oldmanVo.setFamily(oldmanBo.getFamily().getDesc());
+        oldmanVo.setStatus(oldmanBo.getStatusEnum().getDesc());
+        oldmanVo.setSex(oldmanBo.getSexEnum().getDesc());
+        oldmanVo.setPolitics(oldmanBo.getPoliticsEnum().getDesc());
+        oldmanVo.setEducation(oldmanBo.getEducationEnum().getDesc());
+        oldmanVo.setHouseholdType(oldmanBo.getHouseholdTypeEnum().getDesc());
+        oldmanVo.setFamily(oldmanBo.getFamilyEnum().getDesc());
         return oldmanVo;
     }
 
@@ -187,5 +190,18 @@ public class OldmanService {
 
         });
         return map;
+    }
+
+
+    public void addOldman(OldmanParam oldmanParam) {
+        oldmanRepository.save(convert(oldmanParam));
+    }
+
+    private OldmanBo convert(OldmanParam oldmanParam) {
+        OldmanBo oldmanBo=new OldmanBo();
+        BeanUtils.copyProperties(oldmanParam,oldmanBo);
+        oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanParam.getIdCard().substring(6,14),YYMMDD));
+        oldmanBo.setOid(oldmanParam.getIdCard().substring(oldmanParam.getIdCard().length()-10,oldmanParam.getIdCard().length()));
+        return oldmanBo;
     }
 }

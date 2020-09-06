@@ -101,12 +101,12 @@ public class CareAlarmRecordService {
         oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
         oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
         oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
-        oldmanVo.setStatus(oldmanBo.getStatus().getDesc());
-        oldmanVo.setSex(oldmanBo.getSex().getDesc());
-        oldmanVo.setPolitics(oldmanBo.getPolitics().getDesc());
-        oldmanVo.setEducation(oldmanBo.getEducation().getDesc());
-        oldmanVo.setHouseholdType(oldmanBo.getHouseholdType().getDesc());
-        oldmanVo.setFamily(oldmanBo.getFamily().getDesc());
+        oldmanVo.setStatus(oldmanBo.getStatusEnum().getDesc());
+        oldmanVo.setSex(oldmanBo.getSexEnum().getDesc());
+        oldmanVo.setPolitics(oldmanBo.getPoliticsEnum().getDesc());
+        oldmanVo.setEducation(oldmanBo.getEducationEnum().getDesc());
+        oldmanVo.setHouseholdType(oldmanBo.getHouseholdTypeEnum().getDesc());
+        oldmanVo.setFamily(oldmanBo.getFamilyEnum().getDesc());
         return oldmanVo;
     }
 

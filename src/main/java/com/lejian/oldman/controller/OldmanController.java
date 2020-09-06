@@ -135,4 +135,15 @@ public class OldmanController {
         response.setOldmanVoList(oldmanService.getBirthdayOldman(request.getDate()));
         return response;
     }
+
+    /**
+     * 添加老人
+     * @return
+     */
+    @RequestMapping("/add")
+    public ResultResponse add(@RequestBody AddOldmanRequest request){
+        ResultResponse response=new ResultResponse();
+        oldmanService.addOldman(request.getOldmanParam());
+        return response;
+    }
 }

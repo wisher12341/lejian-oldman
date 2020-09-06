@@ -76,7 +76,6 @@ function selectAreaCustomOne(name,obj) {
     pollOldmanStatus(false);
     createOldmanChart(false);
 
-    console.info("1");
 
     $.ajax({
         url: "/location/getLocationByAreaCustomOne",

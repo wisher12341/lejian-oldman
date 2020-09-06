@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/static/css/plugins/chosen/chosen.css" rel="stylesheet">
+
+    <script type="text/javascript" src="/static/js/lejian/common.js"></script>
+
+    <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
+    <!--<link href="/static/css/style.min.css?v=4.0.0" rel="stylesheet">-->
+
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>添加老人</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">县（区）</label>
+
+                            <div class="col-sm-10">
+                                <select  class="chosen-select" style="width: 100%"  tabindex="2" name="areaCountry"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">乡镇（街道）</label>
+
+                            <div class="col-sm-10">
+                                <select  class="chosen-select" style="width: 100%"  tabindex="2"  name="areaTown"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">社区（村）</label>
+
+                            <div class="col-sm-10">
+                                <select  class="chosen-select" style="width: 100%"  tabindex="2"  name="areaVillage"></select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" name="idCard"  class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary"  onclick="submitOldman()">保存内容</button>
+                                <button class="btn btn-white" >取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/lejian/oldman_add.js"></script>
+<script src="/static/js/plugins/chosen/chosen.jquery.js"></script>
+</body>
+
+</html>

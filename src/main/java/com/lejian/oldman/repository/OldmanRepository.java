@@ -44,11 +44,11 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     protected OldmanEntity convertBo(OldmanBo oldmanBo) {
         OldmanEntity oldmanEntity= new OldmanEntity();
         BeanUtils.copyProperties(oldmanBo,oldmanEntity);
-        if(oldmanBo.getEducation()!=null) {
-            oldmanEntity.setEducation(oldmanBo.getEducation().getValue());
+        if(oldmanBo.getEducationEnum()!=null) {
+            oldmanEntity.setEducation(oldmanBo.getEducationEnum().getValue());
         }
-        if(oldmanBo.getStatus()!=null) {
-            oldmanEntity.setStatus(oldmanBo.getStatus().getValue());
+        if(oldmanBo.getStatusEnum()!=null) {
+            oldmanEntity.setStatus(oldmanBo.getStatusEnum().getValue());
         }
         return oldmanEntity;
     }
@@ -60,12 +60,12 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
             return null;
         }
         BeanUtils.copyProperties(oldmanEntity,oldmanBo);
-        oldmanBo.setStatus(BusinessEnum.find(oldmanEntity.getStatus(),OldmanEnum.Status.class));
-        oldmanBo.setEducation(BusinessEnum.find(oldmanEntity.getEducation(),OldmanEnum.Education.class));
-        oldmanBo.setHouseholdType(BusinessEnum.find(oldmanEntity.getHouseholdType(),OldmanEnum.HouseholdType.class));
-        oldmanBo.setPolitics(BusinessEnum.find(oldmanEntity.getPolitics(),OldmanEnum.Politics.class));
-        oldmanBo.setSex(BusinessEnum.find(oldmanEntity.getSex(),OldmanEnum.Sex.class));
-        oldmanBo.setFamily(BusinessEnum.find(oldmanEntity.getFamily(),OldmanEnum.FamilyType.class));
+        oldmanBo.setStatusEnum(BusinessEnum.find(oldmanEntity.getStatus(),OldmanEnum.Status.class));
+        oldmanBo.setEducationEnum(BusinessEnum.find(oldmanEntity.getEducation(),OldmanEnum.Education.class));
+        oldmanBo.setHouseholdTypeEnum(BusinessEnum.find(oldmanEntity.getHouseholdType(),OldmanEnum.HouseholdType.class));
+        oldmanBo.setPoliticsEnum(BusinessEnum.find(oldmanEntity.getPolitics(),OldmanEnum.Politics.class));
+        oldmanBo.setSexEnum(BusinessEnum.find(oldmanEntity.getSex(),OldmanEnum.Sex.class));
+        oldmanBo.setFamilyEnum(BusinessEnum.find(oldmanEntity.getFamily(),OldmanEnum.FamilyType.class));
         return oldmanBo;
     }
 

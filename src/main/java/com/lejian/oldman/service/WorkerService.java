@@ -112,10 +112,10 @@ public class WorkerService {
         OldmanBo param = new OldmanBo();
         param.setId(oldmanBo.getId());
         //step 1
-        if(oldmanBo.getStatus()== OldmanEnum.Status.YELLOW){
-            param.setStatus(OldmanEnum.Status.GREEN);
+        if(oldmanBo.getStatusEnum()== OldmanEnum.Status.YELLOW){
+            param.setStatusEnum(OldmanEnum.Status.GREEN);
         }else{
-            param.setStatus(OldmanEnum.Status.YELLOW);
+            param.setStatusEnum(OldmanEnum.Status.YELLOW);
         }
         oldmanRepository.dynamicUpdateByPkId(param);
     }

@@ -13,6 +13,7 @@ public final class DateUtils {
             "猴", "鸡", "狗", "猪" };
 
     public final static DateTimeFormatter YYMMDDHHMMSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public final static DateTimeFormatter YYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
 
 
     /**
@@ -75,5 +76,9 @@ public final class DateUtils {
 
     public static Timestamp toTimeStamp(String time) {
         return Timestamp.valueOf(time);
+    }
+
+    public static LocalDate stringToLocalDate(String date, DateTimeFormatter dateTimeFormatter) {
+        return LocalDate.parse(date, dateTimeFormatter);
     }
 }
