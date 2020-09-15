@@ -202,4 +202,12 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     public Map<Integer, Long> getHomeServiceCount(OldmanSearchParam oldmanSearchParam) {
         return null;
     }
+
+    /**
+     * 老人状态 黄变绿
+     */
+    @Transactional
+    public void updateStatusYtoG() {
+        oldmanDao.updateStatusYtoG();
+    }
 }

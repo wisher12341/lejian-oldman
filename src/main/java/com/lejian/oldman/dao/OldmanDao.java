@@ -50,4 +50,9 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
 
     @Query(value = "select DISTINCT location_id from oldman where area_custom_one=?1",nativeQuery = true)
     List<Integer> getLocationIdByAreaCustomOne(String areaCustomOne);
+
+    @Modifying
+    @Query(value = "update oldman set status=1 where status=2",nativeQuery = true)
+    void updateStatusYtoG();
+
 }
