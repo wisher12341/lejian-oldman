@@ -1,0 +1,76 @@
+package com.lejian.oldman.enums;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import static com.lejian.oldman.common.ComponentRespCode.UN_KNOW_COLUMN;
+
+/**
+ * 老人excel表  表列名和 BO映射关系
+ */
+@Getter
+@AllArgsConstructor
+public enum OldmanExcelEnum {
+
+    NAME("姓名","name"),
+    SEX("性别","sex"){
+
+        @Override
+        public Class<? extends BusinessEnum> getEnumType(){
+            return OldmanEnum.Sex.class;
+        }
+    },
+    ID_CARD("身份证号","idCard"),
+    AREA_COUNTRY("区县级行政区","areaCountry"),
+    AREA_TOWN("乡镇（街道）级行政区","areaTown"),
+    AREA_VILLAGE("社区级行政区","areaVillage"),
+    AREA_CUSTOM_ONE("自定义行政区","areaCustomOne"),
+    Family("家庭结构","family"){
+
+        @Override
+        public Class<? extends BusinessEnum> getEnumType(){
+            return OldmanEnum.FamilyType.class;
+        }
+    },
+    HOUSEHOLD_TYPE("户口性质","householdType"){
+
+        @Override
+        public Class<? extends BusinessEnum> getEnumType(){
+            return OldmanEnum.HouseholdType.class;
+        }
+    },
+    SERVICE_TYPE("居家养老服务类型","serviceType"){
+
+        @Override
+        public Class<? extends BusinessEnum> getEnumType(){
+            return OldmanEnum.ServiceType.class;
+        }
+    },
+    ADDRESS("详细住址","address")
+
+    ;
+
+    private String columnName;
+    private String fieldName;
+
+
+    public static OldmanExcelEnum findFieldName(String columnName){
+        columnName = columnName.split("【")[0].trim();
+        for(OldmanExcelEnum oldmanExcelEnum: OldmanExcelEnum.values()){
+            if(oldmanExcelEnum.getColumnName().equals(columnName)){
+                return oldmanExcelEnum;
+            }
+        }
+        UN_KNOW_COLUMN.doThrowException();
+        return null;
+    }
+
+    /**
+     * 获取 枚举值类型
+     * @return
+     */
+    public Class<? extends BusinessEnum> getEnumType(){
+        return null;
+    }
+}

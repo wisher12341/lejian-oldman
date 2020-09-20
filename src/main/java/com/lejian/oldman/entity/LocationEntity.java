@@ -16,7 +16,7 @@ public class LocationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column
+    @Column(name = "description")
     private String desc;
     @Column(name = "position_x")
     private String positionX;

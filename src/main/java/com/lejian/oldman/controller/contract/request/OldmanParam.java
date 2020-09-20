@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 
 @Data
 public class OldmanParam {
-
+    private String oid;
     private Integer sex;
     private String name;
     private String phone;

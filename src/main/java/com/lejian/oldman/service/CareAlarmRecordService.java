@@ -85,7 +85,7 @@ public class CareAlarmRecordService {
         careAlarmRecordVo.setIsRead(BusinessEnum.find(careAlarmRecordBo.getIsRead(),CareSystemEnum.ReadType.class)==CareSystemEnum.ReadType.READ);
         if(MapUtils.isNotEmpty(oldmanBoMap)){
             OldmanBo oldmanBo=oldmanBoMap.get(careAlarmRecordBo.getOid());
-            careAlarmRecordVo.setOldmanVo(convertOldman(oldmanBo));
+            careAlarmRecordVo.setOldmanVo(OldmanBo.createVo(oldmanBo));
         }
         return careAlarmRecordVo;
     }
@@ -94,21 +94,6 @@ public class CareAlarmRecordService {
         return convert(careAlarmRecordBo,null);
     }
 
-    private OldmanVo convertOldman(OldmanBo oldmanBo) {
-        OldmanVo oldmanVo = new OldmanVo();
-        BeanUtils.copyProperties(oldmanBo,oldmanVo);
-        oldmanVo.setBirthday(oldmanBo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
-        oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
-        oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
-        oldmanVo.setStatus(oldmanBo.getStatusEnum().getDesc());
-        oldmanVo.setSex(oldmanBo.getSexEnum().getDesc());
-        oldmanVo.setPolitics(oldmanBo.getPoliticsEnum().getDesc());
-        oldmanVo.setEducation(oldmanBo.getEducationEnum().getDesc());
-        oldmanVo.setHouseholdType(oldmanBo.getHouseholdTypeEnum().getDesc());
-        oldmanVo.setFamily(oldmanBo.getFamilyEnum().getDesc());
-        return oldmanVo;
-    }
 
     public void updateHandleByLocationId(Integer locationId, Integer isHandle) {
         careAlarmRecordRepository.updateIsHandleByLocationId(locationId, isHandle);

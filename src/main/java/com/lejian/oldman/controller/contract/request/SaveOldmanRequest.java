@@ -3,7 +3,7 @@ package com.lejian.oldman.controller.contract.request;
 import lombok.Data;
 
 @Data
-public class AddOldmanRequest {
+public class SaveOldmanRequest {
     OldmanParam oldmanParam;
 
 

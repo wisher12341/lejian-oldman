@@ -10,6 +10,6 @@ public class GetEnumResponse {
     Map<Integer,String> politics;
     Map<Integer,String> education;
     Map<Integer,String> householdType;
-    Map<Integer,String> familyType;
+    Map<Integer,String> family;
 
 }

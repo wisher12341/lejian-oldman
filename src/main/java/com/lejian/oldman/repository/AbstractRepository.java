@@ -1,5 +1,6 @@
 package com.lejian.oldman.repository;
 
+import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.utils.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -47,27 +48,32 @@ public abstract class AbstractRepository<Bo,Entity> {
         getDao().save(entity);
     }
 
+    @Transactional
+    public void dynamicUpdateByPkId(Bo bo){
+        dynamicUpdate(bo,"id");
+    }
+
     /**
-     * 动态根据主键id更新 过滤非null字段
+     * 动态根据某个值更新 过滤非null字段
      * jpa 拼接 update 语句
      * 要加事务  不然会报错
      * @param bo
      */
     @Transactional
-    public void dynamicUpdateByPkId(Bo bo){
+    public void dynamicUpdate(Bo bo,String fieldName){
         try {
-            String sqlFormat = "update %s set %s where id=%s";
+            String sqlFormat = "update %s set %s where %s='%s'";
 
             StringBuilder updateStr=new StringBuilder();
             Entity entity = convertBo(bo);
-            Object pkId =null;
+            Object searchValue =null;
             Field[] fields = entity.getClass().getDeclaredFields();
             for(Field field:fields){
                 field.setAccessible(true);
                 Object fieldValue = field.get(entity);
                 if(fieldValue!=null){
-                    if(field.getName().equals("id")){
-                        pkId = fieldValue;
+                    if(field.getName().equals(fieldName)){
+                        searchValue = fieldValue;
                     }else {
                         updateStr.append(field.getName() + "='" + fieldValue + "'");
                         updateStr.append(",");
@@ -77,19 +83,19 @@ public abstract class AbstractRepository<Bo,Entity> {
             updateStr.deleteCharAt(updateStr.length()-1);
 
 
-            REPOSITORY_ERROR.checkNotNull(pkId,
-                    "dynamicUpdateByPkId, no pk id found,"+this.getClass().getSimpleName());
+            REPOSITORY_ERROR.checkNotNull(searchValue,
+                    "dynamicUpdate, no searchValue id found,"+this.getClass().getSimpleName());
 
             String sql = String.format(sqlFormat,
                     entity.getClass().getAnnotation(Table.class).name(),
                     StringUtils.camelToUnderline(updateStr.toString()),
-                    pkId);
+                    fieldName,searchValue);
 
             Query query =entityManager.createNativeQuery(sql);
             query.executeUpdate();
 
         }catch (Exception e){
-            REPOSITORY_ERROR.doThrowException("dynamicUpdateByPkId,"+this.getClass().getSimpleName(),e);
+            REPOSITORY_ERROR.doThrowException("dynamicUpdate,"+this.getClass().getSimpleName(),e);
         }
     }
 
@@ -100,5 +106,10 @@ public abstract class AbstractRepository<Bo,Entity> {
 
     public Long count() {
         return getDao().count();
+    }
+
+    public void batchAdd(List<Bo> boList) {
+        List<Entity> entityList = boList.stream().map(this::convertBo).collect(Collectors.toList());
+        getDao().saveAll(entityList);
     }
 }

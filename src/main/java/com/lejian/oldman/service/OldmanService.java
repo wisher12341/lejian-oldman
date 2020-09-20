@@ -1,5 +1,6 @@
 package com.lejian.oldman.service;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
 import com.lejian.oldman.bo.JpaSpecBo;
@@ -9,24 +10,31 @@ import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.CareSystemEnum;
 import com.lejian.oldman.enums.OldmanEnum;
+import com.lejian.oldman.enums.OldmanExcelEnum;
 import com.lejian.oldman.repository.CareAlarmRecordRepository;
+import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
+import com.lejian.oldman.utils.LjReflectionUtils;
 import com.lejian.oldman.vo.OldmanVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.lejian.oldman.common.ComponentRespCode.NO_DATA_FOUND;
+import static com.lejian.oldman.common.ComponentRespCode.REFLECTION_ERROR;
 import static com.lejian.oldman.utils.DateUtils.YYMMDD;
 
 @Slf4j
@@ -37,6 +45,10 @@ public class OldmanService {
     private OldmanRepository oldmanRepository;
     @Autowired
     private CareAlarmRecordRepository careAlarmRecordRepository;
+    @Autowired
+    private LocationRepository locationRepository;
+
+    private static final String EXCEL_EMPTY="无";
 
     /**
      * 分页获取老人信息
@@ -47,7 +59,7 @@ public class OldmanService {
      */
     public List<OldmanVo> getOldmanByPage(Integer pageNo, Integer pageSize, OldmanSearchParam oldmanSearchParam) {
         List<OldmanBo> oldmanBoList = oldmanRepository.findByPageWithSpec(pageNo,pageSize,OldmanSearchParam.convert(oldmanSearchParam));
-        return oldmanBoList.stream().map(this::convert).collect(Collectors.toList());
+        return oldmanBoList.stream().map(OldmanBo::createVo).collect(Collectors.toList());
     }
 
 
@@ -64,21 +76,7 @@ public class OldmanService {
         return oldmanRepository.count();
     }
 
-    private OldmanVo convert(OldmanBo oldmanBo) {
-        OldmanVo oldmanVo = new OldmanVo();
-        BeanUtils.copyProperties(oldmanBo,oldmanVo);
-        oldmanVo.setBirthday(oldmanBo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-        oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
-        oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
-        oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
-        oldmanVo.setStatus(oldmanBo.getStatusEnum().getDesc());
-        oldmanVo.setSex(oldmanBo.getSexEnum().getDesc());
-        oldmanVo.setPolitics(oldmanBo.getPoliticsEnum().getDesc());
-        oldmanVo.setEducation(oldmanBo.getEducationEnum().getDesc());
-        oldmanVo.setHouseholdType(oldmanBo.getHouseholdTypeEnum().getDesc());
-        oldmanVo.setFamily(oldmanBo.getFamilyEnum().getDesc());
-        return oldmanVo;
-    }
+
 
     /**
      * 只填充部分
@@ -93,12 +91,12 @@ public class OldmanService {
     }
 
     public List<OldmanVo> getOldmanByLocationId(Integer locationId) {
-        return oldmanRepository.findByLocationId(locationId).stream().map(this::convert).collect(Collectors.toList());
+        return oldmanRepository.findByLocationId(locationId).stream().map(OldmanBo::createVo).collect(Collectors.toList());
     }
 
 
     public OldmanVo getOldmanByOid(String oid) {
-        return convert(oldmanRepository.findByOid(oid));
+        return OldmanBo.createVo(oldmanRepository.findByOid(oid));
     }
 
     /**
@@ -164,7 +162,7 @@ public class OldmanService {
     }
 
     public List<OldmanVo> getBirthdayOldman(String date) {
-        return oldmanRepository.getBirthdayOldman(date).stream().map(this::convert).collect(Collectors.toList());
+        return oldmanRepository.getBirthdayOldman(date).stream().map(OldmanBo::createVo).collect(Collectors.toList());
     }
 
     public Long getBirthdayOldmanCount(String birthdayLike) {
@@ -203,5 +201,67 @@ public class OldmanService {
         oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanParam.getIdCard().substring(6,14),YYMMDD));
         oldmanBo.setOid(oldmanParam.getIdCard().substring(oldmanParam.getIdCard().length()-10,oldmanParam.getIdCard().length()));
         return oldmanBo;
+    }
+
+    /**
+     * 老人excel表导入 添加老人
+     * @param excelData
+     */
+    public void addOldmanByExcel(Pair<List<String>, List<List<String>>> excelData) {
+        List<String> titleList=excelData.getFirst();
+        List<List<String>> valueList=excelData.getSecond();
+
+        List<OldmanBo> oldmanBoList = Lists.newArrayList();
+
+        IntStream.range(0,valueList.size()).forEach(item->{
+            OldmanBo oldmanBo=new OldmanBo();
+            oldmanBoList.add(oldmanBo);
+        });
+
+        Map<String,Field> fieldMap= LjReflectionUtils.getFieldToMap(OldmanBo.class);
+
+        try {
+            for (int i = 0; i < titleList.size(); i++) {
+                OldmanExcelEnum oldmanExcelEnum = OldmanExcelEnum.findFieldName(titleList.get(i));
+                Field field = fieldMap.get(oldmanExcelEnum.getFieldName());
+                field.setAccessible(true);
+                //纵向 遍历每个对象，一个属性一个属性 纵向赋值
+                for (int j = 0; j < valueList.size(); j++) {
+                    Object value=valueList.get(j).get(i);
+                    if(!value.toString().equals(EXCEL_EMPTY)) {
+                        //转换成枚举值
+                        Class<? extends BusinessEnum> enumClass = oldmanExcelEnum.getEnumType();
+                        if (enumClass != null) {
+                            //需要 枚举转换
+                            for (BusinessEnum businessEnum : enumClass.getEnumConstants()) {
+                                if (businessEnum.getDesc().equals(value)) {
+                                    value = businessEnum.getValue();
+                                    break;
+                                }
+                            }
+                        }
+                        field.set(oldmanBoList.get(j), value);
+                    }
+                }
+            }
+        }catch (IllegalArgumentException | IllegalAccessException e){
+            REFLECTION_ERROR.doThrowException("fail to addOldmanByExcel",e);
+        }
+        oldmanBoList.forEach(this::supplement);
+        oldmanRepository.batchAdd(oldmanBoList);
+
+    }
+
+    /**
+     * 补全数据
+     */
+    public void supplement(OldmanBo oldmanBo){
+        oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanBo.getIdCard().substring(6,14),YYMMDD));
+        oldmanBo.setOid(oldmanBo.getIdCard().substring(oldmanBo.getIdCard().length()-10,oldmanBo.getIdCard().length()));
+        oldmanBo.setLocationId(locationRepository.getByDesc(oldmanBo.getAddress()));
+    }
+
+    public void editOldman(OldmanParam oldmanParam) {
+        oldmanRepository.dynamicUpdate(convert(oldmanParam),"oid");
     }
 }

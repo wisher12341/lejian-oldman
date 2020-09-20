@@ -31,7 +31,14 @@ public class PageController {
     @GetMapping("/oldmanAdd")
     public ModelAndView oldmanAdd(){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/oldman_add");
+        mv.setViewName("/oldman_add_edit");
+        return mv;
+    }
+
+    @GetMapping("/oldmanEdit")
+    public ModelAndView oldmanEdit(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/oldman_add_edit");
         return mv;
     }
 

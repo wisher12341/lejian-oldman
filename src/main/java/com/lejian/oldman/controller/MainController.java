@@ -1,18 +1,15 @@
 package com.lejian.oldman.controller;
 
-import com.google.common.collect.Maps;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.request.OldmanSerachParmRequest;
 import com.lejian.oldman.controller.contract.request.PollRequest;
 import com.lejian.oldman.controller.contract.response.GetMainOldmanDataResponse;
-import com.lejian.oldman.controller.contract.response.GetMainSecondAllCountResponse;
 import com.lejian.oldman.controller.contract.response.GetMainStaticDataResponse;
 import com.lejian.oldman.controller.contract.response.PollResponse;
 import com.lejian.oldman.enums.OldmanEnum;
-import com.lejian.oldman.service.*;
 
+import com.lejian.oldman.service.*;
 import com.lejian.oldman.vo.LocationVo;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
@@ -21,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**
