@@ -7,6 +7,9 @@ import java.util.List;
 
 @Data
 public class PollResponse {
+    /**
+     * 状态变化的楼
+     */
     private List<LocationVo> locationVoList;
     /**
      * 用于轮询接口， 数据的最新时间

@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.bo.OldmanBo;
+import com.lejian.oldman.config.VarConfig;
+import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
@@ -29,12 +31,12 @@ public class LocationService {
     private OldmanRepository oldmanRepository;
 
     /**
-     * 获取全部位置
+     * 获取 配置区域 全部位置
      * 同时查询红灯和黄灯老人
      * @return
      */
-    public List<LocationVo> getAllLocation() {
-        List<LocationBo> locationBoList = locationRepository.getAll();
+    public List<LocationVo> getAllLocationByConfig() {
+        List<LocationBo> locationBoList = locationRepository.getAllLocationByConfig(VarConfig.areaCountry,VarConfig.areaTown,VarConfig.areaVillage);
         Map<Integer,List<OldmanBo>> locationOldmanMap = getRedAndYellowLocation();
         return classifyLocation(locationBoList,locationOldmanMap);
     }
@@ -75,8 +77,15 @@ public class LocationService {
 
     public Pair<Long, List<LocationVo>> pollStatus(long timestamp) {
         List<LocationVo> locationVoList = Lists.newArrayList();
-        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+
+        OldmanSearchParam oldmanSearchParam=new OldmanSearchParam();
+        oldmanSearchParam.setAreaCountry(VarConfig.areaCountry);
+        oldmanSearchParam.setAreaTown(VarConfig.areaTown);
+        oldmanSearchParam.setAreaVillage(VarConfig.areaVillage);
+
+        JpaSpecBo jpaSpecBo = OldmanSearchParam.convert(oldmanSearchParam);
         jpaSpecBo.getGreatMap().put("datachangeTime", new Timestamp(timestamp));
+
         List<OldmanBo> oldmanBoList = oldmanRepository.findWithSpec(jpaSpecBo);
         if(CollectionUtils.isNotEmpty(oldmanBoList)){
             Map<Integer,List<OldmanBo>> map = oldmanBoList.stream()
@@ -101,8 +110,12 @@ public class LocationService {
         return null;
     }
 
-    public List<LocationVo> getLocationByAreaCustomOne(String areaCustomOne) {
-        return oldmanRepository.getLocationIdByAreaCustomOne(areaCustomOne).stream().map(id->{
+    public List<LocationVo> getLocationByArea(OldmanSearchParam oldmanSearchParam) {
+        return oldmanRepository.getLocationIdByArea(
+                oldmanSearchParam.getAreaCountry(),
+                oldmanSearchParam.getAreaTown(),
+                oldmanSearchParam.getAreaVillage(),
+                oldmanSearchParam.getAreaCustomOne()).stream().map(id->{
             LocationVo locationVo=new LocationVo();
             locationVo.setId(id);
             return locationVo;

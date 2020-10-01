@@ -2,6 +2,7 @@ package com.lejian.oldman.service;
 
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.JpaSpecBo;
+import com.lejian.oldman.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
@@ -36,7 +37,8 @@ public class MainService {
          * 2. 摄像头系统
          * 3. 想家宝系统
          */
-        List<Long> countList=oldmanRepository.getEquipCountByArea(oldmanSearchParam.getAreaCustomOne());
+        List<Long> countList=oldmanRepository.getEquipCountByArea(
+                oldmanSearchParam.getAreaCustomOne(),oldmanSearchParam.getAreaVillage(),oldmanSearchParam.getAreaTown(),oldmanSearchParam.getAreaCountry());
         map.put("关怀系统",countList.get(0));
         map.put("摄像头",countList.get(1));
         map.put("想家宝",countList.get(2));
@@ -78,4 +80,5 @@ public class MainService {
 
         return map;
     }
+
 }

@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 public class OldmanSearchParam {
     private String oid;
     private String areaCustomOne;
+    private String areaCountry;
+    private String areaTown;
+    private String areaVillage;
     private Integer status;
     private String birthdayLike;
     private String sex;
@@ -49,6 +52,17 @@ public class OldmanSearchParam {
         if(StringUtils.isNotBlank(oldmanSearchParam.getAreaCustomOne())){
             jpaSpecBo.getEqualMap().put("areaCustomOne", oldmanSearchParam.getAreaCustomOne());
         }
+        if (StringUtils.isNotBlank(oldmanSearchParam.getAreaVillage())){
+            jpaSpecBo.getEqualMap().put("areaVillage", oldmanSearchParam.getAreaVillage());
+        }
+        if (StringUtils.isNotBlank(oldmanSearchParam.getAreaTown())){
+            jpaSpecBo.getEqualMap().put("areaTown", oldmanSearchParam.getAreaTown());
+        }
+        if (StringUtils.isNotBlank(oldmanSearchParam.getAreaCountry())){
+            jpaSpecBo.getEqualMap().put("areaCountry", oldmanSearchParam.getAreaCountry());
+        }
+
+
         if(StringUtils.isNotBlank(oldmanSearchParam.getBirthdayLike())){
             jpaSpecBo.getLikeMap().put("birthday",oldmanSearchParam.getBirthdayLike());
         }
@@ -95,8 +109,20 @@ public class OldmanSearchParam {
     public String getSql() {
         String where="";
         if(StringUtils.isNotBlank(getAreaCustomOne())){
-            where+=" area_custom_one='"+getAreaCustomOne()+"'";
+            where+=" area_custom_one='"+getAreaCustomOne()+"' and ";
         }
+        if (StringUtils.isNotBlank(getAreaVillage())){
+            where+=" area_village='"+getAreaVillage()+"' and ";
+        }
+        if (StringUtils.isNotBlank(getAreaTown())){
+            where+=" area_town='"+getAreaTown()+"' and ";
+        }
+        if (StringUtils.isNotBlank(getAreaCountry())){
+            where+=" area_country='"+getAreaCountry()+"' and ";
+        }
+
+        where+=" 1=1 ";
+
         return where;
     }
 }

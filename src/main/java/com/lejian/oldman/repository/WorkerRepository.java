@@ -43,7 +43,7 @@ public class WorkerRepository extends AbstractSpecificationRepository<WorkerBo,W
         return workerEntity;
     }
 
-    public List<Map<String,Object>> getTypeCount() {
-        return workerDao.getTypeCount();
+    public List<Map<String,Object>> getTypeCountByBeyond(String workerBeyond) {
+        return workerDao.getTypeCountByBeyond(workerBeyond);
     }
 }

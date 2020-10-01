@@ -67,4 +67,6 @@ public class WorkerEntity {
     private String qq;
     @Column
     private Integer type;
+    @Column
+    private String beyond;
 }

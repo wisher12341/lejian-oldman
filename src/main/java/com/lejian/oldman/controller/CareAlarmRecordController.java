@@ -26,10 +26,10 @@ public class CareAlarmRecordController {
      * 获取可视化页面 区域三 中间的 应急报警 统计数据
      * @return
      */
-    @RequestMapping("/getAllTypeCount")
+    @RequestMapping("/getAllTypeCountByArea")
     public GetMainSecondAllCountResponse getAllTypeCount(@RequestBody GetMainSecondAllCountRequest request){
         GetMainSecondAllCountResponse response=new GetMainSecondAllCountResponse();
-        response.setSMap(service.getAllTypeCount(request.getAreaCustomOne()));
+        response.setSMap(service.getAllTypeCount(request.getAreaCustomOne(),request.getAreaVillage(),request.getAreaTown(),request.getAreaCountry()));
         response.sum();
         return response;
 

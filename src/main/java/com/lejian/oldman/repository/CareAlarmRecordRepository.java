@@ -52,13 +52,30 @@ public class CareAlarmRecordRepository extends AbstractSpecificationRepository<C
         return careAlarmRecordEntity;
     }
 
-    public Map<Integer, Map<Integer,Long>> getWarnCountByArea(String areaCustomOne) {
+    public Map<Integer, Map<Integer,Long>> getWarnCountByArea(String areaCustomOne, String areaVillage, String areaTown, String areaCountry) {
         Map<Integer, Map<Integer,Long>> map=Maps.newHashMap();
         try {
-            String sql ="";
+            String areaWhere="";
             if(StringUtils.isNotBlank(areaCustomOne)){
+                areaWhere+=" area_custom_one='"+areaCustomOne+"' and ";
+            }
+            if (StringUtils.isNotBlank(areaVillage)){
+                areaWhere+=" area_village='"+areaVillage+"' and ";
+            }
+            if (StringUtils.isNotBlank(areaTown)){
+                areaWhere+=" area_town='"+areaTown+"' and ";
+            }
+            if (StringUtils.isNotBlank(areaCountry)){
+                areaWhere+=" area_country='"+areaCountry+"' and ";
+            }
+            if(StringUtils.isNotBlank(areaWhere)) {
+                areaWhere += " 1=1 ";
+            }
+
+            String sql ="";
+            if(StringUtils.isNotBlank(areaWhere)){
                 sql=String.format("select `type`,is_handle,count(`type`) from care_alarm_record " +
-                        "where oid in (select oid from oldman where area_custom_one='"+areaCustomOne+"')"+
+                        "where oid in (select oid from oldman where "+areaWhere+")"+
                         " group by `type`,is_handle",areaCustomOne);
             }else{
                 sql="select `type`,is_handle,count(`type`) from care_alarm_record group by `type`,is_handle";
@@ -86,8 +103,8 @@ public class CareAlarmRecordRepository extends AbstractSpecificationRepository<C
             if(param!=null) {
                 String oldmanWhere = "";
                 String alaramWhere = "";
-                if (StringUtils.isNotBlank(param.getAreaCustomOne())) {
-                    oldmanWhere = "area_custom_one='" + param.getAreaCustomOne() + "'";
+                if (StringUtils.isNotBlank(param.getOldManSql())) {
+                    oldmanWhere = param.getOldManSql();
                 }
                 if (param.getType() != null) {
                     alaramWhere = "type=" + param.getType();

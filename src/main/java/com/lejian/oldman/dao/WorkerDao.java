@@ -13,6 +13,6 @@ import java.util.Map;
 public interface WorkerDao extends JpaRepository<WorkerEntity,Long>,JpaSpecificationExecutor<WorkerEntity> {
     WorkerEntity findByUserId(Integer userId);
 
-    @Query(value = "select `type`,count(`type`) as count from worker group by `type`",nativeQuery = true)
-    List<Map<String,Object>> getTypeCount();
+    @Query(value = "select `type`,count(`type`) as count from worker where beyond=?1 group by `type`",nativeQuery = true)
+    List<Map<String,Object>> getTypeCountByBeyond(String workerBeyond);
 }

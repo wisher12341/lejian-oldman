@@ -65,12 +65,13 @@ public class WorkerCheckinRepository extends AbstractSpecificationRepository<Wor
      * @param startTime
      * @param endTime
      * @param pageParam
+     * @param beyond
      * @return
      */
-    public List<WorkerCheckinBo> getLatestTimeByTimeAndPage(String startTime, String endTime,PageParam pageParam) {
+    public List<WorkerCheckinBo> getLatestTimeByTimeAndAreaAndPage(String startTime, String endTime, PageParam pageParam, String beyond) {
         try {
             String sql = String.format("select worker_id,max(create_time) as create_time from worker_checkin" +
-                    " where create_time>='%s' and create_time<='%s' group by worker_id order by worker_id limit %s,%s",startTime,endTime,pageParam.getPageNo(),pageParam.getPageSize());
+                    " where worker_id in (select id from worker where beyond='"+beyond+"') and create_time>='%s' and create_time<='%s' group by worker_id order by worker_id limit %s,%s",startTime,endTime,pageParam.getPageNo(),pageParam.getPageSize());
             Query query =entityManager.createNativeQuery(sql);
             return (List<WorkerCheckinBo>) query.getResultList().stream().map(object->{
                 WorkerCheckinBo workerCheckinBo=new WorkerCheckinBo();

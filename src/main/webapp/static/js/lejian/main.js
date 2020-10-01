@@ -3,13 +3,16 @@ var timestamp=new Date().getTime();
 var interval;
 var time;
 $(document).ready(function(){
+    getConfigData();
+
+
     map = new BMap.Map("map",{enableMapClick:false});
     map.centerAndZoom(new BMap.Point(121.85444, 31.016693), 15);
     map.setMapStyle({style:'midnight'});
     map.enableScrollWheelZoom(true);
 
     $.ajax({
-        url: "/location/getAllLocation",
+        url: "/location/getAllLocationByConfig",
         type: 'post',
         dataType: 'json',
         contentType: "application/json;charset=UTF-8",
@@ -21,10 +24,54 @@ $(document).ready(function(){
             interval =self.setInterval("pollOldmanStatus()",30*1000);
             $('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'));
             time=self.setInterval("$('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'))",1000);
-            pollOldmanStatus(true);
         }
     });
 });
+
+function getConfigData() {
+    $.ajax({
+        url: "/config/getMainConfigData",
+        type: 'post',
+        dataType: 'json',
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            areaCountry=result.map.areaCountry;
+            areaTown=result.map.areaTown;
+            areaVillage=result.map.areaVillage;
+            areaCustomOne=result.map.areaCustomOne;
+
+            if(areaCountry!==undefined &&areaCountry!==null && areaCountry!==""){
+                currentArea="areaCountry";
+                workerBeyond+=result.map.areaCountry+"-";
+            }
+            if(areaTown!==undefined &&areaTown!==null && areaTown!==""){
+                currentArea="areaTown";
+                workerBeyond+=result.map.areaTown+"-";
+            }
+            if(areaVillage!==undefined &&areaVillage!==null && areaVillage!==""){
+                currentArea="areaVillage";
+                workerBeyond+=result.map.areaVillage+"-";
+            }
+            if(areaCustomOne!==undefined && areaCustomOne!==null && areaCustomOne!==""){
+                currentArea="areaCustomOne";
+            }
+            workerBeyond=workerBeyond.substr(0,workerBeyond.length-1);
+
+            if(currentArea==="areaTown"){
+                $("#areaTitle1").html(areaCountry);
+                $("#areaTitle2").html(areaTown);
+            }
+            if (currentArea==="areaVillage"){
+                $("#areaTitle1").html(areaCountry+areaTown);
+                $("#areaTitle2").html(areaVillage);
+            }
+            pollOldmanStatus(true);
+            createAdminNumber();
+            createStaticCount(true);
+            createOldmanChart(true);
+        }
+    });
+}
 
 /**
  * 轮询老人状态
@@ -38,7 +85,10 @@ function pollOldmanStatus(sync) {
         data :JSON.stringify({
             "timestamp": timestamp,
             "oldmanSearchParam":{
-                "areaCustomOne":areaCustomOne
+                "areaCustomOne":areaCustomOne,
+                "areaCountry":areaCountry,
+                "areaTown":areaTown,
+                "areaVillage":areaVillage
             }
         }),
         sync:sync,
@@ -198,10 +248,10 @@ function workerInfo(wid) {
     });
 }
 
-// 展示所有服务人员及其特定时间段内的位置
+// 展示该行政单位所有服务人员及其特定时间段内的位置
 function showAllWorker() {
     $.ajax({
-        url: "/worker/getWorkerPositionByPage",
+        url: "/worker/getWorkerPositionByPageAndArea",
         type: 'post',
         data :JSON.stringify({
             "pageParam": {

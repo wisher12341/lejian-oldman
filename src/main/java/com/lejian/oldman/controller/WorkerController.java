@@ -67,9 +67,9 @@ public class WorkerController {
     }
 
     /**
-     * 分页获取服务人员某个时间段的地理位置
+     * 分页获取 该行政单位所属的服务人员某个时间段的地理位置
      */
-    @RequestMapping("getWorkerPositionByPage")
+    @RequestMapping("getWorkerPositionByPageAndArea")
     public GetWorkerListResponse getWorkerPositionByPage(@RequestBody GetWorkerPositionByPageRequest request){
         GetWorkerListResponse response= new GetWorkerListResponse();
         response.setWorkerVoList(workerService.getWorkerPositionByPage(request.getPageParam(),request.getStartTime(),request.getEndTime()));

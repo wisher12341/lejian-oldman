@@ -36,10 +36,13 @@ public class CareAlarmRecordService {
 
     /**
      * 获取所有类型的数量
+     *
      * @param areaCustomOne
-     * @return
+     * @param areaVillage
+     *@param areaTown
+     * @param areaCountry  @return
      */
-    public Map<String, Map<String,Long>> getAllTypeCount(String areaCustomOne) {
+    public Map<String, Map<String,Long>> getAllTypeCount(String areaCustomOne, String areaVillage, String areaTown, String areaCountry) {
         Map<String, Map<String,Long>> map= Maps.newHashMap();
         Map<String,Long> map2=Maps.newHashMap();
         for(BusinessEnum businessEnum:CareSystemEnum.HandleType.values()){
@@ -48,7 +51,7 @@ public class CareAlarmRecordService {
         for(BusinessEnum businessEnum:CareSystemEnum.AlarmType.values()){
             map.put(businessEnum.getDesc(),map2);
         }
-        Map<Integer, Map<Integer,Long>> countMap= careAlarmRecordRepository.getWarnCountByArea(areaCustomOne);
+        Map<Integer, Map<Integer,Long>> countMap= careAlarmRecordRepository.getWarnCountByArea(areaCustomOne,areaVillage,areaTown,areaCountry);
 
         if(MapUtils.isNotEmpty(countMap)){
             countMap.forEach((k,v)->{

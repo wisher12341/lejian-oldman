@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
+import com.lejian.oldman.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.BusinessEnum;
@@ -148,8 +149,8 @@ public class OldmanService {
      * @param groupFieldName
      * @return
      */
-    public Map<String, Long> getGroupCount(String groupFieldName) {
-        return oldmanRepository.getGroupCount(groupFieldName);
+    public Map<String, Long> getGroupCount(String groupFieldName,Map<String, String> where) {
+        return oldmanRepository.getGroupCount(groupFieldName,where);
     }
 
     public void updateStatusByLocationId(Integer locationId,Integer status) {
@@ -165,8 +166,8 @@ public class OldmanService {
         return oldmanRepository.getBirthdayOldman(date).stream().map(OldmanBo::createVo).collect(Collectors.toList());
     }
 
-    public Long getBirthdayOldmanCount(String birthdayLike) {
-        return oldmanRepository.getBirthdayOldmanCount(birthdayLike);
+    public Long getBirthdayOldmanCount(String birthdayLike, OldmanSearchParam oldmanSearchParam) {
+        return oldmanRepository.getBirthdayOldmanCount(birthdayLike,oldmanSearchParam.getSql());
     }
 
     public Map<String, Long> getHomeServiceCount(OldmanSearchParam oldmanSearchParam) {
@@ -264,4 +265,28 @@ public class OldmanService {
     public void editOldman(OldmanParam oldmanParam) {
         oldmanRepository.dynamicUpdate(convert(oldmanParam),"oid");
     }
+
+    public Map<String,Long> getOldmanAreaGroupCount(String areaCountry, String areaTown, String areaVillage) {
+        String groupField;
+        Map<String,String> where=Maps.newHashMap();
+
+        if (StringUtils.isNotBlank(areaVillage)){
+            groupField="area_custom_one";
+            where.put("area_village",areaVillage);
+            where.put("area_town",areaTown);
+            where.put("area_country",areaCountry);
+        }else if (StringUtils.isNotBlank(areaTown)){
+            groupField="area_village";
+            where.put("area_town",areaTown);
+            where.put("area_country",areaCountry);
+        }else if (StringUtils.isNotBlank(areaCountry)){
+            groupField="area_town";
+            where.put("area_country",areaCountry);
+        }else{
+            groupField="area_country";
+        }
+
+        return this.getGroupCount(groupField,where);
+    }
+
 }

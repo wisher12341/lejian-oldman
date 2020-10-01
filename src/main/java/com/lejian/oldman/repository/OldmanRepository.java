@@ -10,6 +10,7 @@ import com.lejian.oldman.entity.WorkerCheckinEntity;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.vo.LocationVo;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -104,10 +106,22 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     }
 
 
-    public Map<String,Long> getGroupCount(String groupFieldName) {
+    public Map<String,Long> getGroupCount(String groupFieldName, Map<String, String> where) {
         try {
             Map<String,Long> map= Maps.newHashMap();
-            String sql = String.format("select %s,count(%s) from oldman group by %s",groupFieldName,groupFieldName,groupFieldName);
+            StringBuilder whereCase=new StringBuilder("");
+            if(MapUtils.isNotEmpty(where)){
+                Iterator iterator= where.keySet().iterator();
+                String key= (String) iterator.next();
+                whereCase.append("where ").append(key).append("='").append(where.get(key)).append("'");
+                while (iterator.hasNext()){
+                    whereCase.append(" and ");
+                    key= (String) iterator.next();
+                    whereCase.append(key).append("='").append(where.get(key)).append("'");
+                }
+            };
+            String sql = String.format("select %s,count(%s) from oldman %s group by %s",
+                    groupFieldName,groupFieldName,whereCase,groupFieldName);
             Query query =entityManager.createNativeQuery(sql);
             query.getResultList().forEach(object->{
                 Object[] cells = (Object[]) object;
@@ -126,11 +140,15 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
      * 1. 长者关怀系统
      * 2. 摄像头系统
      * 3. 想家宝系统
+     *
      * @param areaCustomOne
+     * @param areaVillage
+     *@param areaTown
+     * @param areaCountry
      * @return
      */
-    public List<Long> getEquipCountByArea(String areaCustomOne) {
-        return oldmanDao.getEquipCountByArea(areaCustomOne);
+    public List<Long> getEquipCountByArea(String areaCustomOne, String areaVillage, String areaTown, String areaCountry) {
+        return oldmanDao.getEquipCountByArea(areaCustomOne,areaVillage,areaTown,areaCountry);
     }
 
     public List<OldmanBo> getByOids(List<String> oidList) {
@@ -184,13 +202,16 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         return Lists.newArrayList();
     }
 
-    public List<Integer> getLocationIdByAreaCustomOne(String areaCustomOne) {
-        return oldmanDao.getLocationIdByAreaCustomOne(areaCustomOne);
+    public List<Integer> getLocationIdByArea(String areaCountry, String areaTown, String areaVillage, String areaCustomOne) {
+        return oldmanDao.getLocationIdByArea(areaCountry,areaTown,areaVillage,areaCustomOne);
     }
 
-    public Long getBirthdayOldmanCount(String birthdayLike) {
+    public Long getBirthdayOldmanCount(String birthdayLike,String whereCase) {
         try {
             String sql = "select count(1) from oldman where birthday like '%"+birthdayLike+"%'";
+            if (StringUtils.isNotBlank(whereCase)){
+                sql+=" and "+whereCase;
+            }
             Query query =entityManager.createNativeQuery(sql);
             return ((BigInteger) query.getResultList().get(0)).longValue();
         }catch (Exception e){

@@ -3,6 +3,7 @@ package com.lejian.oldman.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.*;
+import com.lejian.oldman.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.controller.contract.request.WorkerSearchParam;
@@ -15,6 +16,7 @@ import com.lejian.oldman.repository.*;
 import com.lejian.oldman.utils.MapUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -169,7 +171,8 @@ public class WorkerService {
      * @return
      */
     public List<WorkerCheckinBo> getWorkerLatestPositionByPage(String startTime, String endTime,PageParam pageParam) {
-        List<WorkerCheckinBo> latestWorkerList = workerCheckinRepository.getLatestTimeByTimeAndPage(startTime,endTime,pageParam);
+        String beyond= VarConfig.getWorkerBeyond();
+        List<WorkerCheckinBo> latestWorkerList = workerCheckinRepository.getLatestTimeByTimeAndAreaAndPage(startTime,endTime,pageParam,beyond);
         if(CollectionUtils.isNotEmpty(latestWorkerList)) {
             return workerCheckinRepository.getAllPositionByTime(latestWorkerList);
         }
@@ -207,6 +210,7 @@ public class WorkerService {
 
 
     /**
+     * 该行政单位所属的服务人员 (key： VarConfig的值)
      * 1. 获取签到表，该时间范围内 服务人员id (分页)
      * 2. 根据服务人员id 获取这些服务人员的最新位置
      *
@@ -253,7 +257,7 @@ public class WorkerService {
         for(WorkerEnum workerEnum: WorkerEnum.Type.values()){
             map.put(workerEnum.getDesc(),0L);
         }
-        List<Map<String,Object>> typeMapList=workerRepository.getTypeCount();
+        List<Map<String,Object>> typeMapList=workerRepository.getTypeCountByBeyond(VarConfig.getWorkerBeyond());
 
         typeMapList.forEach(item->{
             Integer type= (Integer) item.get("type");

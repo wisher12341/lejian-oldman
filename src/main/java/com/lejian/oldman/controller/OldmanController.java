@@ -126,10 +126,11 @@ public class OldmanController {
      * @return
      */
     @ResponseBody
-    @RequestMapping("/getOldmanGroupCount")
-    public GetCountResponse getOldmanGroupCount(@RequestBody GetGroupCountRequest request){
+    @RequestMapping("/getOldmanAreaGroupCount")
+    public GetCountResponse getOldmanAreaGroupCount(@RequestBody GetOldmanAreaGroupCountRequest request){
         GetCountResponse response= new GetCountResponse();
-        response.setCountMap(oldmanService.getGroupCount(request.getGroupFieldName()));
+        response.setCountMap(oldmanService.getOldmanAreaGroupCount(
+                request.getAreaCountry(),request.getAreaTown(),request.getAreaVillage()));
         response.sum();
         response.sortByKey(true);
         return response;

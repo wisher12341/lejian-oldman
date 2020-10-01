@@ -21,17 +21,17 @@ public class LocationController {
     @Autowired
     private OldmanService oldmanService;
 
-    @RequestMapping("/getAllLocation")
-    public GetLocationListResponse getAllLocation(){
+    @RequestMapping("/getAllLocationByConfig")
+    public GetLocationListResponse getAllLocationByConfig(){
         GetLocationListResponse response = new GetLocationListResponse();
-        response.setLocationVoList(service.getAllLocation());
+        response.setLocationVoList(service.getAllLocationByConfig());
         return response;
     }
 
-    @RequestMapping("/getLocationByAreaCustomOne")
-    public GetLocationListResponse getLocationByAreaCustomOne(@RequestBody OldmanSearchParam oldmanSearchParam){
+    @RequestMapping("/getLocationByArea")
+    public GetLocationListResponse getLocationByArea(@RequestBody OldmanSearchParam oldmanSearchParam){
         GetLocationListResponse response=new GetLocationListResponse();
-        response.setLocationVoList(service.getLocationByAreaCustomOne(oldmanSearchParam.getAreaCustomOne()));
+        response.setLocationVoList(service.getLocationByArea(oldmanSearchParam));
         return response;
     }
 

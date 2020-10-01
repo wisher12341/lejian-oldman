@@ -5,6 +5,7 @@ import com.lejian.oldman.controller.contract.request.OldmanSerachParmRequest;
 import com.lejian.oldman.controller.contract.request.PollRequest;
 import com.lejian.oldman.controller.contract.response.GetMainOldmanDataResponse;
 import com.lejian.oldman.controller.contract.response.GetMainStaticDataResponse;
+import com.lejian.oldman.controller.contract.response.MapResponse;
 import com.lejian.oldman.controller.contract.response.PollResponse;
 import com.lejian.oldman.enums.OldmanEnum;
 
@@ -84,10 +85,17 @@ public class MainController {
          */
         OldmanSearchParam oldmanSearchParam=new OldmanSearchParam();
         oldmanSearchParam.setStatus(OldmanEnum.Status.YELLOW.getValue());
-
+        /**
+         * 以下三个需要跟着 行政区域变更 而变化，所以area取自request
+         */
         response.setYellowOldmanCount(oldmanService.getOldmanCount(oldmanSearchParam));
+
+
         response.setAlarmCount(careAlarmRecordService.getCount(request.getOldmanSearchParam()));
         response.setWorkerCheckInCount(workerService.getCheckinCount(null)/2);
+        /**
+         * 该信息不需要跟着 变更， area取 VarConfig中的
+         */
         Pair<Long,List<LocationVo>> pair = locationService.pollStatus(request.getTimestamp());
         if(pair!=null) {
             response.setLocationVoList(pair.getSecond());
@@ -106,7 +114,7 @@ public class MainController {
         response.setHomeServiceMap(oldmanService.getHomeServiceCount(request.getOldmanSearchParam()));
         response.setEquipCount(oldmanService.getEquipCount(request.getOldmanSearchParam()));
         response.setEquipMap(mainService.getOldmanEquipCount(request.getOldmanSearchParam()));
-        response.setBirthdayCount(oldmanService.getBirthdayOldmanCount(request.getBirthdayLike()));
+        response.setBirthdayCount(oldmanService.getBirthdayOldmanCount(request.getBirthdayLike(),request.getOldmanSearchParam()));
         response.sum();
         return response;
     }
@@ -123,4 +131,5 @@ public class MainController {
         response.setJtMap(mainService.getOldmanGroup(request.getOldmanSearchParam(),OldmanEnum.FamilyType.class,"family"));
         return response;
     }
+
 }

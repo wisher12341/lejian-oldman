@@ -13,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import javax.xml.stream.Location;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class LocationRepository extends AbstractRepository<LocationBo,LocationEntity>{
@@ -69,5 +71,9 @@ public class LocationRepository extends AbstractRepository<LocationBo,LocationEn
             return result.getId();
         }
         return null;
+    }
+
+    public List<LocationBo> getAllLocationByConfig(String areaCountry, String areaTown, String areaVillage) {
+        return dao.getAllLocationByConfig(areaCountry,areaTown,areaVillage).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 }

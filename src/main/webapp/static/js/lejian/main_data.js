@@ -1,10 +1,14 @@
-$(document).ready(function(){
-    createAdminNumber();
-    createStaticCount(true);
-    createOldmanChart(true);
-});
-var areaCustomOne=null;
+
+var areaCountry,areaTown,areaVillage,areaCustomOne;
 var homeServiceData,equipData,workerData;
+var workerBeyond="";
+
+/**
+ * 当前展示的行政区域 级别
+ */
+var currentArea;
+
+
 function createStaticCount(sync) {
     $.ajax({
         url: "/main/getMainStaticData",
@@ -12,7 +16,10 @@ function createStaticCount(sync) {
         dataType: 'json',
         data :JSON.stringify({
             "oldmanSearchParam":{
-                "areaCustomOne":areaCustomOne
+                "areaCustomOne":areaCustomOne,
+                "areaCountry":areaCountry,
+                "areaTown":areaTown,
+                "areaVillage":areaVillage
             },
             "birthdayLike":new Date().Format("MM-dd")
         }),
@@ -38,11 +45,13 @@ function createStaticCount(sync) {
  */
 function createAdminNumber() {
     $.ajax({
-        url: "/oldman/getOldmanGroupCount",
+        url: "/oldman/getOldmanAreaGroupCount",
         type: 'post',
         dataType: 'json',
         data :JSON.stringify({
-            "groupFieldName":"area_custom_one"
+            "areaCountry":areaCountry,
+            "areaTown":areaTown,
+            "areaVillage":areaVillage
         }),
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
@@ -53,7 +62,7 @@ function createAdminNumber() {
                 // var li="<li class='adminNumber' onclick=selectAreaCustomOne('"+map[i].first+"',this)><div class='row'>" +
                 //     "<div class='col-xs-1'></div><div class='col-xs-7'><span class='word' style='font-size: large;display: inline;'>"+map[i].first+"</span></div>" +
                 //     "<div class='col-xs-2' style='text-align: right'><span class='word num' style='display: inline'>"+map[i].second+"</span></div><div class='col-xs-2'></div></div></li>";
-                var li="<li class='adminNumber' onclick=selectAreaCustomOne('"+map[i].first+"',this)>" +
+                var li="<li class='adminNumber' onclick=selectArea('"+map[i].first+"',this)>" +
                     "<div style='width: 70%;padding-left: 15%;display: inline-block'><span class='word' style='font-size: large;display: inline;'>"+map[i].first+"</span></div>" +
                     "<div style='width: 30%;display: inline-block'><span class='word num' style='display: inline'>"+map[i].second+"</span></div></li>";
 
@@ -70,37 +79,56 @@ function oldmanInfoReturn() {
     $(".fourceng").show();
 }
 
-function selectAreaCustomOne(name,obj) {
-    areaCustomOne=name;
+function selectArea(name,obj) {
+    if(currentArea==="areaCountry"){
+        areaTown=name;
+    }
+    if(currentArea==="areaTown"){
+        areaVillage=name;
+    }
+    if(currentArea==="areaVillage"){
+        areaCustomOne=name;
+    }
     createStaticCount(false);
     pollOldmanStatus(false);
     createOldmanChart(false);
 
-
-    $.ajax({
-        url: "/location/getLocationByAreaCustomOne",
-        type: 'post',
-        dataType: 'json',
-        data :JSON.stringify({
-            "areaCustomOne":areaCustomOne
-        }),
-        async:false,
-        contentType: "application/json;charset=UTF-8",
-        success: function (result) {
-            var data=result.locationVoList;
-            var allOverlay = map.getOverlays();
-            for(var i = 0;i<allOverlay.length;i++) {
-                if(allOverlay[i].id !=undefined && allOverlay[i].id!=null && allOverlay[i].type!="RED"){
-                    allOverlay[i].setAnimation(null);
-                    for(var j=0;j<data.length;j++){
-                        if(data[j].id==allOverlay[i].id){
-                            allOverlay[i].setAnimation(BMAP_ANIMATION_BOUNCE);
+    if(name==null){
+        var allOverlay = map.getOverlays();
+        for(var i = 0;i<allOverlay.length;i++) {
+            if(allOverlay[i].id !=undefined && allOverlay[i].id!=null && allOverlay[i].type!="RED"){
+                allOverlay[i].setAnimation(null);
+            }
+        }
+    }else{
+        $.ajax({
+            url: "/location/getLocationByArea",
+            type: 'post',
+            dataType: 'json',
+            data :JSON.stringify({
+                "areaCustomOne":areaCustomOne,
+                "areaCountry":areaCountry,
+                "areaTown":areaTown,
+                "areaVillage":areaVillage
+            }),
+            async:false,
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                var data=result.locationVoList;
+                var allOverlay = map.getOverlays();
+                for(var i = 0;i<allOverlay.length;i++) {
+                    if(allOverlay[i].id !=undefined && allOverlay[i].id!=null && allOverlay[i].type!="RED"){
+                        allOverlay[i].setAnimation(null);
+                        for(var j=0;j<data.length;j++){
+                            if(data[j].id==allOverlay[i].id){
+                                allOverlay[i].setAnimation(BMAP_ANIMATION_BOUNCE);
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
+    }
 
     $(".adminNumber").css("background-color","");
     if(obj!=null){
@@ -188,7 +216,10 @@ function secondceng(obj,type) {
             "pageSize": 50
         },
         "oldmanSearchParam": {
-            "areaCustomOne":areaCustomOne
+            "areaCustomOne":areaCustomOne,
+            "areaCountry":areaCountry,
+            "areaTown":areaTown,
+            "areaVillage":areaVillage
         },
         "needCount": false
     };
@@ -215,7 +246,7 @@ function secondceng(obj,type) {
     createHeightAndWidthFromSourceDoc("sencondAll","chart",0.7,0.8);
     if(type==4) {
         createBarChart(null,chartData,document.getElementById('chart'),selectWorkerType);
-        createWorker(null,"manList",true);
+        createWorker({"beyond":workerBeyond},"manList",true);
         $("#manName").html("工作人员");
     }else{
         createBarChart(null,chartData,document.getElementById('chart'),selectManType);
@@ -234,13 +265,13 @@ function secondceng(obj,type) {
 function selectWorkerType(name) {
     $("#manName").html("工作人员："+name);
     if(name=="送餐"){
-        createWorker({"type":1},"manList",true);
+        createWorker({"type":1,"beyond":workerBeyond},"manList",true);
     }else if(name=="长护险"){
-        createWorker({"type":2},"manList",true);
+        createWorker({"type":2,"beyond":workerBeyond},"manList",true);
     }else if(name=="医疗"){
-        createWorker({"type":3},"manList",true);
+        createWorker({"type":3,"beyond":workerBeyond},"manList",true);
     }else if(name=="居家养老"){
-        createWorker({"type":4},"manList",true);
+        createWorker({"type":4,"beyond":workerBeyond},"manList",true);
     }
 }
 
@@ -251,7 +282,10 @@ function selectManType(name) {
             "pageSize": 50
         },
         "oldmanSearchParam": {
-            "areaCustomOne":areaCustomOne
+            "areaCustomOne":areaCustomOne,
+            "areaCountry":areaCountry,
+            "areaTown":areaTown,
+            "areaVillage":areaVillage
         },
         "needCount": false
     };
@@ -292,11 +326,14 @@ function selectAlarmType(name) {
 
 function alarmClick(obj) {
     $.ajax({
-        url: "/alarm/getAllTypeCount",
+        url: "/alarm/getAllTypeCountByArea",
         type: 'post',
         dataType: 'json',
         data :JSON.stringify({
-            "areaCustomOne":areaCustomOne
+            "areaCustomOne":areaCustomOne,
+            "areaCountry":areaCountry,
+            "areaTown":areaTown,
+            "areaVillage":areaVillage
         }),
         async:false,
         contentType: "application/json;charset=UTF-8",
@@ -304,7 +341,6 @@ function alarmClick(obj) {
             var map=result.smap;
             $("#secondcengNum").html(result.sum);
             createHeightAndWidthFromSourceDoc("sencondAll","chart",0.7,0.8);
-            console.info(JSON.stringify(map));
             createBarChartWithLegend(null,map,document.getElementById('chart'),selectAlarmType);
         }
     });
@@ -333,6 +369,9 @@ function createAlarmData(type,clear) {
             "needCount":false,
             "alarmSearchParam":{
                 "areaCustomOne":areaCustomOne,
+                "areaCountry":areaCountry,
+                "areaTown":areaTown,
+                "areaVillage":areaVillage,
                 "type":type
             }
         }),
@@ -366,7 +405,10 @@ function createOldmanChart(sync) {
         dataType: 'json',
         data :JSON.stringify({
             "oldmanSearchParam": {
-                "areaCustomOne":areaCustomOne
+                "areaCustomOne":areaCustomOne,
+                "areaCountry":areaCountry,
+                "areaTown":areaTown,
+                "areaVillage":areaVillage
             }
         }),
         sync:sync,
@@ -405,7 +447,7 @@ function createOldmanChart(sync) {
                 i++;
             }
 
-            createPieChart("男女",sex,document.getElementById('oldmanAge'),oldmanInfoChartSelect);
+            createPieChart("性别",sex,document.getElementById('oldmanAge'),oldmanInfoChartSelect);
             createPieChart("年龄",age,document.getElementById('oldmanSex'),oldmanInfoChartSelect);
             createPieChart("户籍",hj,document.getElementById('oldmanHuji'),oldmanInfoChartSelect);
             var legend= {
@@ -437,11 +479,14 @@ function oldmanInfoChartSelect(title,value) {
             "pageSize": 50
         },
         "oldmanSearchParam": {
-            "areaCustomOne":areaCustomOne
+            "areaCustomOne":areaCustomOne,
+            "areaCountry":areaCountry,
+            "areaTown":areaTown,
+            "areaVillage":areaVillage
         },
         "needCount": false
     };
-    if(title=="男女"){
+    if(title=="性别"){
         param.oldmanSearchParam.sex=value;
     }else if(title=="年龄"){
         param.oldmanSearchParam.age=value;
@@ -485,7 +530,7 @@ function createOldman(param,id,clear) {
 }
 
 /**
- * 获取老人
+ * 获取工作人员
  */
 function createWorker(param,id,clear) {
     if(clear){

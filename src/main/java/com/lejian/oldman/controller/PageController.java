@@ -77,4 +77,11 @@ public class PageController {
         mv.setViewName("/config/area");
         return mv;
     }
+
+    @GetMapping("/config/visual")
+    public ModelAndView configVisual(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/config/visual");
+        return mv;
+    }
 }
