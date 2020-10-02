@@ -24,9 +24,9 @@ public class VarConfig {
     public static String areaVillage;
 
     public VarConfig() {
-        areaCountry="闵行区";
-        areaTown="古美路街道";
-        areaVillage="";
+        areaCountry="浦东新区";
+        areaTown="老港镇";
+        areaVillage="大河村";
     }
 
     public Map<String, String> getMainConfigData() {

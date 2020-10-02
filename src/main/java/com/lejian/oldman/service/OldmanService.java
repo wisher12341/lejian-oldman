@@ -249,6 +249,7 @@ public class OldmanService {
             REFLECTION_ERROR.doThrowException("fail to addOldmanByExcel",e);
         }
         oldmanBoList.forEach(this::supplement);
+        //todo 验证bo数据
         oldmanRepository.batchAdd(oldmanBoList);
 
     }
@@ -259,7 +260,10 @@ public class OldmanService {
     public void supplement(OldmanBo oldmanBo){
         oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanBo.getIdCard().substring(6,14),YYMMDD));
         oldmanBo.setOid(oldmanBo.getIdCard().substring(oldmanBo.getIdCard().length()-10,oldmanBo.getIdCard().length()));
-        oldmanBo.setLocationId(locationRepository.getByDesc(oldmanBo.getAddress()));
+        /**
+         * 老人导入时， address字段  默认就是坐标的描述
+         */
+        oldmanBo.setLocationId(locationRepository.getByDescOrCreate(oldmanBo.getAddress(),oldmanBo.getLng(),oldmanBo.getLat()));
     }
 
     public void editOldman(OldmanParam oldmanParam) {

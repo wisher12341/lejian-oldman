@@ -54,6 +54,9 @@ public class OldmanBo {
     private BusinessEnum serviceTypeEnum;
     private Integer serviceType;
 
+    private String lng;
+    private String lat;
+
     public static OldmanVo createVo(OldmanBo oldmanBo){
         OldmanVo oldmanVo = new OldmanVo();
         BeanUtils.copyProperties(oldmanBo,oldmanVo);

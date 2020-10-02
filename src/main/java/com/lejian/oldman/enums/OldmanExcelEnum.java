@@ -15,7 +15,6 @@ public enum OldmanExcelEnum {
 
     NAME("姓名","name"),
     SEX("性别","sex"){
-
         @Override
         public Class<? extends BusinessEnum> getEnumType(){
             return OldmanEnum.Sex.class;
@@ -47,7 +46,9 @@ public enum OldmanExcelEnum {
             return OldmanEnum.ServiceType.class;
         }
     },
-    ADDRESS("详细住址","address")
+    ADDRESS("详细住址","address"),
+    LNG("经度","lng"),
+    LAT("纬度","lat")
 
     ;
 

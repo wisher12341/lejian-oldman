@@ -5,6 +5,7 @@ import com.lejian.oldman.dao.LocationDao;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.entity.LocationEntity;
 import com.lejian.oldman.handler.BaiduMapHandler;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -50,26 +51,43 @@ public class LocationRepository extends AbstractRepository<LocationBo,LocationEn
 
     /**
      * 根据desc 获取id
-     * 如果不存在 则调用百度api获取坐标
+     * 如果不存在
+     *  如果填写了坐标 则直接创建
+     *  反之，则调用百度api获取坐标
+     *
      * @param desc
-     * @return
+     * @param lng
+     *@param lat  @return
      */
     @Transactional
-    public Integer getByDesc(String desc) {
+    public Integer getByDescOrCreate(String desc, String lng, String lat) {
         LocationEntity locationEntity=dao.findByDesc(desc);
         if(locationEntity!=null){
             return locationEntity.getId();
         }
-        //todo 后面 city 传入
-        Pair<String,String> location= baiduMapHandler.geocoding(desc,"上海市");
-        if (location!=null){
-            LocationEntity locationEntitySave=new LocationEntity();
+        String positionX= null;
+        String positionY=null;
+        if(StringUtils.isNotBlank(lng) && StringUtils.isNotBlank(lat)){
+            positionX=lng;
+            positionY=lat;
+        }else {
+            //todo 后面 city 传入
+            Pair<String, String> location = baiduMapHandler.geocoding(desc, "上海市");
+            if (location != null) {
+                positionX=location.getFirst();
+                positionY=location.getSecond();
+            }
+        }
+
+        if(StringUtils.isNotBlank(positionX) && StringUtils.isNotBlank(positionY)){
+            LocationEntity locationEntitySave = new LocationEntity();
             locationEntitySave.setDesc(desc);
-            locationEntitySave.setPositionX(location.getFirst());
-            locationEntitySave.setPositionY(location.getSecond());
-            LocationEntity result=dao.save(locationEntitySave);
+            locationEntitySave.setPositionX(positionX);
+            locationEntitySave.setPositionY(positionY);
+            LocationEntity result = dao.save(locationEntitySave);
             return result.getId();
         }
+
         return null;
     }
 
