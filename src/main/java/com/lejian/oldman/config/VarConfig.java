@@ -22,11 +22,15 @@ public class VarConfig {
     public static String areaCountry;
     public static String areaTown;
     public static String areaVillage;
+    public static String lng;
+    public static String lat;
 
     public VarConfig() {
         areaCountry="浦东新区";
         areaTown="老港镇";
         areaVillage="大河村";
+        lng="121.85444";
+        lat="31.016693";
     }
 
     public Map<String, String> getMainConfigData() {
@@ -34,6 +38,8 @@ public class VarConfig {
         map.put("areaVillage", areaVillage);
         map.put("areaTown", areaTown);
         map.put("areaCountry", areaCountry);
+        map.put("lng", lng);
+        map.put("lat", lat);
         return map;
     }
 

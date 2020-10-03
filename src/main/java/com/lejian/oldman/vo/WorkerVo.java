@@ -16,8 +16,7 @@ public class WorkerVo {
     private String nation;
     private String country;
     private String idCard;
-    private String birthplaceProvince;
-    private String birthplaceCity;
+    private String birthplace;
     private String address;
     private String picUrl;
     private String education;
@@ -31,6 +30,7 @@ public class WorkerVo {
     private List<Position> positionList;
     private String qq;
     private String type;
+    private String beyond;
 
 
     @Data

@@ -9,13 +9,16 @@ public class WorkerSearchParam {
     private Integer type;
     private String beyond;
 
-    public JpaSpecBo convert() {
-        JpaSpecBo jpaSpecBo=new JpaSpecBo();
-        if(type!=null){
-            jpaSpecBo.getEqualMap().put("type",type);
+    public static JpaSpecBo convert(WorkerSearchParam param) {
+        if(param==null){
+            return null;
         }
-        if(StringUtils.isNotBlank(beyond)){
-            jpaSpecBo.getEqualMap().put("beyond",beyond);
+        JpaSpecBo jpaSpecBo=new JpaSpecBo();
+        if(param.getType()!=null){
+            jpaSpecBo.getEqualMap().put("type",param.getType());
+        }
+        if(StringUtils.isNotBlank(param.getBeyond())){
+            jpaSpecBo.getEqualMap().put("beyond",param.getBeyond());
 
         }
         return jpaSpecBo;

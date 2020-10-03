@@ -3,6 +3,8 @@ package com.lejian.oldman.repository;
 import com.lejian.oldman.bo.WorkerBo;
 import com.lejian.oldman.dao.WorkerDao;
 import com.lejian.oldman.entity.WorkerEntity;
+import com.lejian.oldman.enums.BusinessEnum;
+import com.lejian.oldman.enums.WorkerEnum;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;

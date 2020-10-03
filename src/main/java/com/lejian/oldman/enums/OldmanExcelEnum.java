@@ -11,7 +11,7 @@ import static com.lejian.oldman.common.ComponentRespCode.UN_KNOW_COLUMN;
  */
 @Getter
 @AllArgsConstructor
-public enum OldmanExcelEnum {
+public enum OldmanExcelEnum implements ExcelEnum{
 
     NAME("姓名","name"),
     SEX("性别","sex"){
@@ -55,23 +55,4 @@ public enum OldmanExcelEnum {
     private String columnName;
     private String fieldName;
 
-
-    public static OldmanExcelEnum findFieldName(String columnName){
-        columnName = columnName.split("【")[0].trim();
-        for(OldmanExcelEnum oldmanExcelEnum: OldmanExcelEnum.values()){
-            if(oldmanExcelEnum.getColumnName().equals(columnName)){
-                return oldmanExcelEnum;
-            }
-        }
-        UN_KNOW_COLUMN.doThrowException();
-        return null;
-    }
-
-    /**
-     * 获取 枚举值类型
-     * @return
-     */
-    public Class<? extends BusinessEnum> getEnumType(){
-        return null;
-    }
 }

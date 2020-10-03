@@ -8,10 +8,7 @@ import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
-import com.lejian.oldman.enums.BusinessEnum;
-import com.lejian.oldman.enums.CareSystemEnum;
-import com.lejian.oldman.enums.OldmanEnum;
-import com.lejian.oldman.enums.OldmanExcelEnum;
+import com.lejian.oldman.enums.*;
 import com.lejian.oldman.repository.CareAlarmRecordRepository;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
@@ -223,7 +220,7 @@ public class OldmanService {
 
         try {
             for (int i = 0; i < titleList.size(); i++) {
-                OldmanExcelEnum oldmanExcelEnum = OldmanExcelEnum.findFieldName(titleList.get(i));
+                ExcelEnum oldmanExcelEnum = ExcelEnum.findFieldName(titleList.get(i),OldmanExcelEnum.class);
                 Field field = fieldMap.get(oldmanExcelEnum.getFieldName());
                 field.setAccessible(true);
                 //纵向 遍历每个对象，一个属性一个属性 纵向赋值
@@ -257,7 +254,7 @@ public class OldmanService {
     /**
      * 补全数据
      */
-    public void supplement(OldmanBo oldmanBo){
+    private void supplement(OldmanBo oldmanBo){
         oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanBo.getIdCard().substring(6,14),YYMMDD));
         oldmanBo.setOid(oldmanBo.getIdCard().substring(oldmanBo.getIdCard().length()-10,oldmanBo.getIdCard().length()));
         /**

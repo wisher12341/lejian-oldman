@@ -31,10 +31,8 @@ public class WorkerEntity {
     private String country;
     @Column(name = "id_card")
     private String idCard;
-    @Column(name = "birthplace_province")
-    private String birthplaceProvince;
-    @Column(name = "birthplace_city")
-    private String birthplaceCity;
+    @Column(name = "birthplace")
+    private String birthplace;
     @Column
     private String address;
     @Column(name = "pic_url")

@@ -4,28 +4,6 @@ var interval;
 var time;
 $(document).ready(function(){
     getConfigData();
-
-
-    map = new BMap.Map("map",{enableMapClick:false});
-    map.centerAndZoom(new BMap.Point(121.85444, 31.016693), 15);
-    map.setMapStyle({style:'midnight'});
-    map.enableScrollWheelZoom(true);
-
-    $.ajax({
-        url: "/location/getAllLocationByConfig",
-        type: 'post',
-        dataType: 'json',
-        contentType: "application/json;charset=UTF-8",
-        success: function (result) {
-            var positions = result.locationVoList;
-            for(var i=0;i<positions.length;i++){
-                createLocationMarker(positions[i],map);
-            }
-            interval =self.setInterval("pollOldmanStatus()",30*1000);
-            $('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'));
-            time=self.setInterval("$('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'))",1000);
-        }
-    });
 });
 
 function getConfigData() {
@@ -35,6 +13,8 @@ function getConfigData() {
         dataType: 'json',
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
+            createMap(result.map.lng,result.map.lat);
+
             areaCountry=result.map.areaCountry;
             areaTown=result.map.areaTown;
             areaVillage=result.map.areaVillage;
@@ -69,6 +49,29 @@ function getConfigData() {
             createAdminNumber();
             createStaticCount(true);
             createOldmanChart(true);
+        }
+    });
+}
+
+function createMap(lng,lat) {
+    map = new BMap.Map("map",{enableMapClick:false});
+    map.centerAndZoom(new BMap.Point(lng,lat), 15);
+    map.setMapStyle({style:'midnight'});
+    map.enableScrollWheelZoom(true);
+
+    $.ajax({
+        url: "/location/getAllLocationByConfig",
+        type: 'post',
+        dataType: 'json',
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            var positions = result.locationVoList;
+            for(var i=0;i<positions.length;i++){
+                createLocationMarker(positions[i],map);
+            }
+            interval =self.setInterval("pollOldmanStatus()",30*1000);
+            $('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'));
+            time=self.setInterval("$('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'))",1000);
         }
     });
 }
@@ -297,8 +300,8 @@ function showOneWorker(id) {
         url: "/worker/getWorkerPositionByTime",
         type: 'post',
         data :JSON.stringify({
-            "startTime":"2020-01-01 00:00:00",
-            "endTime":"2020-12-01 00:00:00",
+            "startTime": new Date(new Date(new Date().toLocaleDateString()).getTime()).Format('yyyy-MM-dd HH:mm:ss'),
+            "endTime":new Date(new Date(new Date().toLocaleDateString()).getTime()+24*60*60*1000-1).Format('yyyy-MM-dd HH:mm:ss'),
             "workerId":id
         }),
         dataType: 'json',

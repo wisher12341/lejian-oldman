@@ -6,12 +6,12 @@ import com.lejian.oldman.bo.*;
 import com.lejian.oldman.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.request.PageParam;
+import com.lejian.oldman.controller.contract.request.WorkerParam;
 import com.lejian.oldman.controller.contract.request.WorkerSearchParam;
-import com.lejian.oldman.enums.BusinessEnum;
-import com.lejian.oldman.enums.WorkerEnum;
+import com.lejian.oldman.enums.*;
 import com.lejian.oldman.utils.DateUtils;
+import com.lejian.oldman.utils.LjReflectionUtils;
 import com.lejian.oldman.vo.WorkerVo;
-import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.*;
 import com.lejian.oldman.utils.MapUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +19,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,10 +33,10 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static com.lejian.oldman.common.ComponentRespCode.ACCOUNT_ERROR;
-import static com.lejian.oldman.common.ComponentRespCode.CHECKIN_OVER_DISTANCE;
-import static com.lejian.oldman.common.ComponentRespCode.CHECKIN_SHORT_TIME;
+import static com.lejian.oldman.common.ComponentRespCode.*;
+import static com.lejian.oldman.utils.DateUtils.YYMMDD;
 import static com.lejian.oldman.utils.DateUtils.YYMMDDHHMMSS;
 
 @Slf4j
@@ -52,6 +54,7 @@ public class WorkerService {
     @Autowired
     private LocationRepository locationRepository;
 
+    private static final String EXCEL_EMPTY="无";
     /**
      * 服务人员签到签出 最小的时间间隔 分钟
      */
@@ -183,7 +186,9 @@ public class WorkerService {
     private WorkerVo convert(WorkerBo workerBo, List<WorkerCheckinBo> workerCheckinBoList) {
         WorkerVo workerVo = new WorkerVo();
         workerVo.setSex(BusinessEnum.find(workerBo.getSex(),OldmanEnum.Sex.class).getDesc());
+        workerVo.setEducation(BusinessEnum.find(workerBo.getEducation(),OldmanEnum.Education.class).getDesc());
         workerVo.setAge(DateUtils.birthdayToAge(workerVo.getBirthday()));
+        workerVo.setType(BusinessEnum.find(workerBo.getType(),WorkerEnum.Type.class).getDesc());
         BeanUtils.copyProperties(workerBo,workerVo);
         if(CollectionUtils.isNotEmpty(workerCheckinBoList)) {
             List<WorkerVo.Position> positionList = Lists.newArrayList();
@@ -247,7 +252,7 @@ public class WorkerService {
     public List<WorkerVo> getWorkerByPage(PageParam pageParam, WorkerSearchParam param) {
         JpaSpecBo jpaSpecBo=new JpaSpecBo();
         if(param!=null) {
-            jpaSpecBo = param.convert();
+            jpaSpecBo = WorkerSearchParam.convert(param);
         }
         return workerRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),jpaSpecBo).stream().map(this::convert).collect(Collectors.toList());
     }
@@ -266,5 +271,74 @@ public class WorkerService {
             map.put(BusinessEnum.find(type, WorkerEnum.Type.class).getDesc(),b);
         });
         return map;
+    }
+
+    public void addWorkerByExcel(Pair<List<String>, List<List<String>>> excelData) {
+        List<String> titleList=excelData.getFirst();
+        List<List<String>> valueList=excelData.getSecond();
+
+        List<WorkerBo> workerBoList = Lists.newArrayList();
+
+        IntStream.range(0,valueList.size()).forEach(item->{
+            WorkerBo workerBo=new WorkerBo();
+            workerBoList.add(workerBo);
+        });
+
+        Map<String,Field> fieldMap= LjReflectionUtils.getFieldToMap(WorkerBo.class);
+
+        try {
+            for (int i = 0; i < titleList.size(); i++) {
+                ExcelEnum excelEnum = ExcelEnum.findFieldName(titleList.get(i),WorkerExcelEnum.class);
+                Field field = fieldMap.get(excelEnum.getFieldName());
+                field.setAccessible(true);
+                //纵向 遍历每个对象，一个属性一个属性 纵向赋值
+                for (int j = 0; j < valueList.size(); j++) {
+                    Object value=valueList.get(j).get(i);
+                    if(!value.toString().equals(EXCEL_EMPTY)) {
+                        //转换成枚举值
+                        Class<? extends BusinessEnum> enumClass = excelEnum.getEnumType();
+                        if (enumClass != null) {
+                            //需要 枚举转换
+                            for (BusinessEnum businessEnum : enumClass.getEnumConstants()) {
+                                if (businessEnum.getDesc().equals(value)) {
+                                    value = businessEnum.getValue();
+                                    break;
+                                }
+                            }
+                        }
+                        field.set(workerBoList.get(j), value);
+                    }
+                }
+            }
+        }catch (IllegalArgumentException | IllegalAccessException e){
+            REFLECTION_ERROR.doThrowException("fail to addWorkerByExcel",e);
+        }
+        workerBoList.forEach(this::supplement);
+        //todo 验证bo数据
+        workerRepository.batchAdd(workerBoList);
+
+    }
+
+    /**
+     * 补全数据
+     */
+    private void supplement(WorkerBo workerBo){
+        workerBo.setBirthday(DateUtils.stringToLocalDate(workerBo.getIdCard().substring(6,14),YYMMDD));
+    }
+
+    public Long getWorkerCount(WorkerSearchParam workerSearchParam) {
+        return workerRepository.countWithSpec(WorkerSearchParam.convert(workerSearchParam));
+    }
+
+    public void editWorker(WorkerParam workerParam) {
+        workerRepository.dynamicUpdateByPkId(convert(workerParam));
+    }
+
+
+    private WorkerBo convert(WorkerParam workerParam) {
+        WorkerBo workerBo=new WorkerBo();
+        BeanUtils.copyProperties(workerParam,workerBo);
+        workerBo.setBirthday(DateUtils.stringToLocalDate(workerParam.getIdCard().substring(6,14),YYMMDD));
+        return workerBo;
     }
 }

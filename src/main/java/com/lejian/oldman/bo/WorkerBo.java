@@ -14,8 +14,7 @@ public class WorkerBo {
     private String nation;
     private String country;
     private String idCard;
-    private String birthplaceProvince;
-    private String birthplaceCity;
+    private String birthplace;
     private String address;
     private String picUrl;
     private Integer education;
@@ -29,5 +28,6 @@ public class WorkerBo {
     private Integer star;
     private Integer userId;
     private String qq;
-    private BusinessEnum type;
+    private String beyond;
+    private Integer type;
 }

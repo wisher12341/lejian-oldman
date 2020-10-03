@@ -5,19 +5,23 @@ import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.GetWorkerListResponse;
 import com.lejian.oldman.controller.contract.response.GetWorkerResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;
+import com.lejian.oldman.handler.ExcelHandler;
 import com.lejian.oldman.repository.UserRepository;
 import com.lejian.oldman.service.WorkerService;
 import com.lejian.oldman.utils.CookieUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 
 import static com.lejian.oldman.common.ComponentRespCode.ACCOUNT_ERROR;
 
@@ -28,6 +32,9 @@ public class WorkerController {
 
     @Autowired
     private WorkerService workerService;
+
+    @Autowired
+    private ExcelHandler excelHandler;
 
     //todo 后面加了权限后 删掉
     @Autowired
@@ -63,6 +70,9 @@ public class WorkerController {
     public GetWorkerListResponse getWorkerByPage(@RequestBody GetWorkerByPageRequest request){
         GetWorkerListResponse response= new GetWorkerListResponse();
         response.setWorkerVoList(workerService.getWorkerByPage(request.getPageParam(),request.getWorkerSearchParam()));
+        if(request.getNeedCount()) {
+            response.setCount(workerService.getWorkerCount(request.getWorkerSearchParam()));
+        }
         return response;
     }
 
@@ -92,6 +102,35 @@ public class WorkerController {
     public GetWorkerResponse getWorkerByWid(@RequestBody GetWorkerByWidRequest request){
         GetWorkerResponse response = new GetWorkerResponse();
         response.setWorkerVo(workerService.getWorkerByWid(request.getWorkerId()));
+        return response;
+    }
+
+
+    /**
+     * excel导入
+     * @param file
+     * @return
+     */
+    //todo 限制  数量限制 一次1000？ 参数限制
+    @RequestMapping(value = "/importExcel",method = RequestMethod.POST)
+    public ModelAndView importExcel(@RequestParam MultipartFile file) {
+        Pair<List<String>,List<List<String>>> excelData=excelHandler.parse(file,2);
+        if(CollectionUtils.isNotEmpty(excelData.getSecond())) {
+            workerService.addWorkerByExcel(excelData);
+        }
+        ModelAndView mv=new ModelAndView("/worker");
+        return mv;
+    }
+
+    /**
+     * 编辑
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/edit")
+    public ResultResponse edit(@RequestBody SaveWorkerRequest request){
+        ResultResponse response=new ResultResponse();
+        workerService.editWorker(request.getWorkerParam());
         return response;
     }
 

@@ -43,10 +43,24 @@ public class PageController {
     }
 
 
+    @GetMapping("/worker")
+    public ModelAndView worker(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/worker");
+        return mv;
+    }
+
     @GetMapping("/workerInfo")
     public ModelAndView workerInfo(){
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/worker_info");
+        return mv;
+    }
+
+    @GetMapping("/workerEdit")
+    public ModelAndView workerEdit(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/worker_add_edit");
         return mv;
     }
 

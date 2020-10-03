@@ -2,6 +2,7 @@ package com.lejian.oldman.controller;
 
 import com.lejian.oldman.controller.contract.response.GetEnumResponse;
 import com.lejian.oldman.enums.OldmanEnum;
+import com.lejian.oldman.enums.WorkerEnum;
 import com.lejian.oldman.service.EnumService;
 import com.lejian.oldman.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,13 @@ public class EnumController {
         return response;
     }
 
+    @RequestMapping("/workerAdd")
+    public GetEnumResponse workerAdd(){
+        GetEnumResponse response=new GetEnumResponse();
+        response.setWorkerType(CollectionUtils.enumToMap(WorkerEnum.Type.values()));
+        response.setSex(CollectionUtils.enumToMap(OldmanEnum.Sex.values()));
+        response.setEducation(CollectionUtils.enumToMap(OldmanEnum.Education.values()));
+        return response;
+    }
 
 }

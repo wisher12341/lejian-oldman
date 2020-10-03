@@ -8,4 +8,8 @@ import java.util.List;
 @Data
 public class GetWorkerListResponse {
     private List<WorkerVo> workerVoList;
+    /**
+     * 总数量
+     */
+    private Long count;
 }
