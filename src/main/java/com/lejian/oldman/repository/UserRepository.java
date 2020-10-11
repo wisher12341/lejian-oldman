@@ -39,4 +39,8 @@ public class UserRepository extends AbstractSpecificationRepository<UserBo,UserE
         BeanUtils.copyProperties(userBo,userEntity);
         return userEntity;
     }
+
+    public UserBo getByUsername(String username) {
+        return convertEntity(userDao.findByUsername(username));
+    }
 }

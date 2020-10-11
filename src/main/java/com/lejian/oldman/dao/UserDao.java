@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface UserDao extends JpaRepository<UserEntity,Long>,JpaSpecificationExecutor<UserEntity> {
 
     UserEntity findByUsernameAndPassword(String username, String password);
+
+    UserEntity findByUsername(String username);
 }

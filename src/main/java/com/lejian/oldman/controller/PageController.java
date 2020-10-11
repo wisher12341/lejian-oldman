@@ -71,6 +71,13 @@ public class PageController {
         return mv;
     }
 
+    @GetMapping("/visual")
+    public ModelAndView visual(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/visual");
+        return mv;
+    }
+
     @GetMapping("/worker/checkin")
     public ModelAndView workerCheckin(){
         ModelAndView mv = new ModelAndView();
@@ -96,6 +103,27 @@ public class PageController {
     public ModelAndView configVisual(){
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/config/visual");
+        return mv;
+    }
+
+    @GetMapping("/user")
+    public ModelAndView user(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/user");
+        return mv;
+    }
+
+    @GetMapping("/userAdd")
+    public ModelAndView userAdd(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/user_add_edit");
+        return mv;
+    }
+
+    @GetMapping("/userEdit")
+    public ModelAndView userEdit(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/user_add_edit");
         return mv;
     }
 }

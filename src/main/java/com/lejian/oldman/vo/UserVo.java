@@ -1,12 +1,11 @@
-package com.lejian.oldman.bo;
+package com.lejian.oldman.vo;
 
 import lombok.Data;
 
 @Data
-public class UserBo {
+public class UserVo {
     private Integer id;
     private String username;
     private String password;
-    private Integer role;
-
+    private String role;
 }

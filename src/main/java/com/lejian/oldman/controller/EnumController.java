@@ -2,6 +2,7 @@ package com.lejian.oldman.controller;
 
 import com.lejian.oldman.controller.contract.response.GetEnumResponse;
 import com.lejian.oldman.enums.OldmanEnum;
+import com.lejian.oldman.enums.UserEnum;
 import com.lejian.oldman.enums.WorkerEnum;
 import com.lejian.oldman.service.EnumService;
 import com.lejian.oldman.utils.CollectionUtils;
@@ -39,6 +40,13 @@ public class EnumController {
         response.setWorkerType(CollectionUtils.enumToMap(WorkerEnum.Type.values()));
         response.setSex(CollectionUtils.enumToMap(OldmanEnum.Sex.values()));
         response.setEducation(CollectionUtils.enumToMap(OldmanEnum.Education.values()));
+        return response;
+    }
+
+    @RequestMapping("/user")
+    public GetEnumResponse user(){
+        GetEnumResponse response=new GetEnumResponse();
+        response.setRoleType(CollectionUtils.enumToMap(UserEnum.Role.values()));
         return response;
     }
 

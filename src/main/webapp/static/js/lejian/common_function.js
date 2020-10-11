@@ -46,8 +46,9 @@ function getQueryVariable(variable)
         var pair = vars[i].split("=");
         if(pair[0] == variable){return pair[1];}
     }
-    return(false);
+    return null;
 }
+
 Date.prototype.Format = function (fmt) {
     var o = {
         "M+": this.getMonth() + 1, //月份

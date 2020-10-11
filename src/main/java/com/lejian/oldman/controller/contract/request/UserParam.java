@@ -1,9 +1,9 @@
-package com.lejian.oldman.bo;
+package com.lejian.oldman.controller.contract.request;
 
 import lombok.Data;
 
 @Data
-public class UserBo {
+public class UserParam {
     private Integer id;
     private String username;
     private String password;

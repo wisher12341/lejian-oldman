@@ -27,12 +27,16 @@ public enum ComponentRespCode implements IRespCode {
      */
     NO_DATA_FOUND("300","没找到数据"),
     PARSE_DATA_ERROR("301","数据解析错误"),
+    NOT_MATCH_DATA("302","枚举数据不匹配"),
 
 
     /**
      * 6xx 业务错误
      */
-    UN_KNOW_COLUMN("601","不能识别 excel表的列名")
+    UN_KNOW_COLUMN("601","不能识别 excel表的列名"),
+    ACCOUNT_REPEAT("602","账号重复"),
+    ACCOUNT_UPDATE_ERROR("603","账号更新失败")
+
     ;
 
     private String code;

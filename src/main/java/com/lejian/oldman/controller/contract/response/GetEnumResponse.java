@@ -12,5 +12,5 @@ public class GetEnumResponse {
     Map<Integer,String> householdType;
     Map<Integer,String> family;
     Map<Integer,String> workerType;
-
+    Map<Integer,String> roleType;
 }

@@ -23,7 +23,7 @@ public class UserEntity {
     @Column
     private String password;
     @Column
-    private Integer type;
+    private Integer role;
     @Column(name = "create_time")
     private Timestamp createTime;
     @Column(name = "datachange_time")
