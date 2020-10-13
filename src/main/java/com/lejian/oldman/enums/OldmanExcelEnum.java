@@ -25,6 +25,7 @@ public enum OldmanExcelEnum implements ExcelEnum{
     AREA_TOWN("乡镇（街道）级行政区","areaTown"),
     AREA_VILLAGE("社区级行政区","areaVillage"),
     AREA_CUSTOM_ONE("自定义行政区","areaCustomOne"),
+    LOCATION_ADDRESS("坐标地址","locationAddress"),
     Family("家庭结构","family"){
 
         @Override

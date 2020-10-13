@@ -61,16 +61,18 @@ public class LocationRepository extends AbstractRepository<LocationBo,LocationEn
      */
     @Transactional
     public Integer getByDescOrCreate(String desc, String lng, String lat) {
-        LocationEntity locationEntity=dao.findByDesc(desc);
-        if(locationEntity!=null){
-            return locationEntity.getId();
+        if(StringUtils.isNotBlank(desc)) {
+            LocationEntity locationEntity = dao.findByDesc(desc);
+            if (locationEntity != null) {
+                return locationEntity.getId();
+            }
         }
         String positionX= null;
         String positionY=null;
         if(StringUtils.isNotBlank(lng) && StringUtils.isNotBlank(lat)){
             positionX=lng;
             positionY=lat;
-        }else {
+        }else if(StringUtils.isNotBlank(desc)) {
             //todo 后面 city 传入
             Pair<String, String> location = baiduMapHandler.geocoding(desc, "上海市");
             if (location != null) {

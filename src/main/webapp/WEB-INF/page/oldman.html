@@ -44,6 +44,25 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <input type="text" name="areaCountry"  class="form-control" placeholder="县（区）">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" name="areaTown"  class="form-control" placeholder="乡镇（街道）">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" name="areaVillage"  class="form-control" placeholder="社区（村委、居委）">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" name="areaCustomOne"  class="form-control" placeholder="自定义分组">
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class='btn btn-primary' id="search" >查询</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
                             <!--<button class='btn btn-primary' onclick=newPage(1,'添加老人','/oldmanAdd')>添加</button>-->
                             <form action="/oldman/importExcel" method="post" enctype="multipart/form-data" id="importForm" style="display: inline">
                                 <input type="button" style="display:inline" class="btn btn-primary" onclick="$('#formFile').trigger('click');" value="导入">

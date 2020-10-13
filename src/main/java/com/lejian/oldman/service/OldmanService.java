@@ -248,7 +248,6 @@ public class OldmanService {
         oldmanBoList.forEach(this::supplement);
         //todo 验证bo数据
         oldmanRepository.batchAdd(oldmanBoList);
-
     }
 
     /**
@@ -260,7 +259,7 @@ public class OldmanService {
         /**
          * 老人导入时， address字段  默认就是坐标的描述
          */
-        oldmanBo.setLocationId(locationRepository.getByDescOrCreate(oldmanBo.getAddress(),oldmanBo.getLng(),oldmanBo.getLat()));
+        oldmanBo.setLocationId(locationRepository.getByDescOrCreate(oldmanBo.getLocationAddress(),oldmanBo.getLng(),oldmanBo.getLat()));
     }
 
     public void editOldman(OldmanParam oldmanParam) {

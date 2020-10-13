@@ -185,7 +185,19 @@ public interface OldmanEnum extends BusinessEnum{
             public List<Integer> getSearchValue() {
                 return Lists.newArrayList(104);
             }
-        },;
+        },
+        //todo 组合 开会确认 哪些会交叉
+        RZZ(4,"认知症老人") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(RZZ);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(4);
+            }
+        };
         private Integer value;
         private String desc;
 

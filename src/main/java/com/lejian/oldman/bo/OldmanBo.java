@@ -54,6 +54,8 @@ public class OldmanBo {
     private BusinessEnum serviceTypeEnum;
     private Integer serviceType;
 
+    private String locationAddress;
+
     private String lng;
     private String lat;
 

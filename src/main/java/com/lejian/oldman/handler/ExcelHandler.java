@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.lejian.oldman.common.ComponentRespCode.PARSE_DATA_ERROR;
 
@@ -46,6 +47,9 @@ public class ExcelHandler {
                     while (iterable.hasNext()) {
                         Cell cell = iterable.next();
                         cell.setCellType(Cell.CELL_TYPE_STRING);
+                        if(StringUtils.isBlank(cell.getStringCellValue().trim())){
+                            continue;
+                        }
                         if (start == i) {
                             //表名 结束
                             if(StringUtils.isBlank(cell.getStringCellValue())){
@@ -56,7 +60,7 @@ public class ExcelHandler {
                             list.add(cell.getStringCellValue().trim());
                         }
                     }
-                    if (CollectionUtils.isNotEmpty(list)) {
+                    if (CollectionUtils.isNotEmpty(list.stream().filter(StringUtils::isNotBlank).collect(Collectors.toList()))) {
                         valueList.add(list);
                     }
                 }

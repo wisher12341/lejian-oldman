@@ -54,6 +54,12 @@ $(document).ready(function(){
                 "pageParam": {
                     "pageNo": aoData.iDisplayStart / aoData.iDisplayLength,
                     "pageSize": aoData.iDisplayLength
+                },
+                "oldmanSearchParam":{
+                    "areaCountry":$("input[name='areaCountry']").val(),
+                    "areaTown":$("input[name='areaTown']").val(),
+                    "areaVillage":$("input[name='areaVillage']").val(),
+                    "areaCustomOne":$("input[name='areaCustomOne']").val()
                 }
             }),
             type: 'post',
@@ -72,6 +78,11 @@ $(document).ready(function(){
             }
         });
     }
+
+
+    $('#search').click(function () {
+        table.fnFilter();
+    });
 
     var oTable=$("#editable").dataTable();
     oTable.$("td").editable("",{
