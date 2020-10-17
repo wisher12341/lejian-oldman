@@ -8,5 +8,9 @@ public class UserParam {
     private String username;
     private String password;
     private Integer role;
+    /**
+     * 绑定的服务人员id
+     */
+    private Integer wid;
 
 }

@@ -43,9 +43,9 @@ public abstract class AbstractRepository<Bo,Entity> {
     }
 
 
-    public void save(Bo bo) {
+    public Bo save(Bo bo) {
         Entity entity = convertBo(bo);
-        getDao().save(entity);
+        return convertEntity((Entity) getDao().save(entity));
     }
 
     @Transactional

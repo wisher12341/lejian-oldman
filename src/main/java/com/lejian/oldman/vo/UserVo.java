@@ -8,4 +8,8 @@ public class UserVo {
     private String username;
     private String password;
     private String role;
+    /**
+     * 绑定的服务人员id
+     */
+    private Integer wid;
 }

@@ -1,16 +1,19 @@
 package com.lejian.oldman.service;
 
 import com.lejian.oldman.bo.UserBo;
+import com.lejian.oldman.bo.WorkerBo;
 import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.controller.contract.request.UserParam;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.UserEnum;
 import com.lejian.oldman.repository.UserRepository;
+import com.lejian.oldman.repository.WorkerRepository;
 import com.lejian.oldman.vo.UserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +26,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private WorkerRepository workerRepository;
+
 
     public List<UserVo> getUserByPage(PageParam pageParam) {
         return userRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),null).stream().map(this::convert).collect(Collectors.toList());
@@ -40,13 +46,31 @@ public class UserService {
     }
 
     public UserVo getUserByUid(Integer uid) {
-        return convert(userRepository.getByPkId(uid));
+        UserVo userVo= convert(userRepository.getByPkId(uid));
+        if(userVo.getRole().equals(UserEnum.Role.WORKER.getDesc())){
+            WorkerBo workerBo=workerRepository.getWorkerByUid(userVo.getId());
+            if(workerBo!=null) {
+                userVo.setWid(workerBo.getId());
+            }
+        }
+        return userVo;
     }
 
+    @Transactional
     public void add(UserParam userParam) {
         UserBo userBo=convert(userParam);
         verify(userBo);
-        userRepository.save(userBo);
+        UserBo resultBo=userRepository.save(userBo);
+        if(userBo.getRole().intValue()==UserEnum.Role.WORKER.getValue()) {
+            updateWorker(resultBo, userParam.getWid());
+        }
+    }
+
+    private void updateWorker(UserBo userBo,Integer wid) {
+        WorkerBo workerBo=new WorkerBo();
+        workerBo.setUserId(userBo.getId());
+        workerBo.setId(wid);
+        workerRepository.dynamicUpdateByPkId(workerBo);
     }
 
     private void verify(UserBo userBo) {
@@ -67,10 +91,14 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void edit(UserParam userParam) {
         UserBo userBo=convert(userParam);
         verify(userBo);
         userRepository.dynamicUpdateByPkId(userBo);
+        if(userBo.getRole().intValue()==UserEnum.Role.WORKER.getValue()) {
+            updateWorker(userBo, userParam.getWid());
+        }
     }
 
     private UserBo convert(UserParam userParam) {

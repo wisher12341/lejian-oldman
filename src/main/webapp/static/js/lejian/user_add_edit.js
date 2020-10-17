@@ -40,6 +40,7 @@ function loadUserInfo(uid) {
                     });
                 }
             });
+            roleChange($("[name='role']"));
         }
     });
 }
@@ -92,4 +93,13 @@ function submitUser() {
             }
         }
     });
+}
+
+function roleChange(obj) {
+    //服务人员
+    if($(obj).val()==="2"){
+        $("#bindWorker").show();
+    }else{
+        $("#bindWorker").hide();
+    }
 }
