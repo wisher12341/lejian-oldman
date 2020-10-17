@@ -1,6 +1,6 @@
 package com.lejian.oldman.controller;
 
-import com.lejian.oldman.config.VarConfig;
+import com.lejian.oldman.bussiness.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.MapRequest;
 import com.lejian.oldman.controller.contract.response.MapResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;

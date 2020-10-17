@@ -1,4 +1,4 @@
-package com.lejian.oldman.config;
+package com.lejian.oldman.bussiness.config;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang.StringUtils;

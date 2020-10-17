@@ -3,9 +3,7 @@ package com.lejian.oldman.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
-import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.*;
@@ -21,13 +19,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -47,6 +45,8 @@ public class OldmanService {
     private LocationRepository locationRepository;
 
     private static final String EXCEL_EMPTY="无";
+
+    private static final int PART_NUM=100;
 
     /**
      * 分页获取老人信息
@@ -202,9 +202,10 @@ public class OldmanService {
     }
 
     /**
-     * 老人excel表导入 添加老人
+     * 老人excel表导入
      * @param excelData
      */
+    @Transactional
     public void addOldmanByExcel(Pair<List<String>, List<List<String>>> excelData) {
         List<String> titleList=excelData.getFirst();
         List<List<String>> valueList=excelData.getSecond();
@@ -247,7 +248,35 @@ public class OldmanService {
         }
         oldmanBoList.forEach(this::supplement);
         //todo 验证bo数据
-        oldmanRepository.batchAdd(oldmanBoList);
+        // left 添加 right更新
+        Pair<List<OldmanBo>,List<OldmanBo>> pair = classifyDbType(oldmanBoList);
+        oldmanRepository.batchAdd(pair.getFirst());
+        oldmanRepository.batchUpdate(pair.getSecond());
+    }
+
+    /**
+     * 区分 哪些老人 添加 哪些老人更新
+     * @param oldmanBoList
+     * @return
+     */
+    private Pair<List<OldmanBo>,List<OldmanBo>> classifyDbType(List<OldmanBo> oldmanBoList) {
+        List<OldmanBo> addList=Lists.newArrayList();
+        List<OldmanBo> updateList=Lists.newArrayList();
+
+        List<List<OldmanBo>> parts = Lists.partition(oldmanBoList, PART_NUM);
+        parts.forEach(item->{
+            List<String> oidList=item.stream().map(OldmanBo::getOid).collect(Collectors.toList());
+            Map<String,OldmanBo> existOldmanMap=oldmanRepository.getByOids(oidList).stream().collect(Collectors.toMap(OldmanBo::getOid, Function.identity()));
+            item.forEach(oldman->{
+                if(existOldmanMap.containsKey(oldman.getOid())){
+                    oldman.setId(existOldmanMap.get(oldman.getOid()).getId());
+                    updateList.add(oldman);
+                } else{
+                    addList.add(oldman);
+                }
+            });
+        });
+        return Pair.of(addList,updateList);
     }
 
     /**
@@ -259,6 +288,7 @@ public class OldmanService {
         /**
          * 老人导入时， address字段  默认就是坐标的描述
          */
+        //todo 后续 优化 改成批量的
         oldmanBo.setLocationId(locationRepository.getByDescOrCreate(oldmanBo.getLocationAddress(),oldmanBo.getLng(),oldmanBo.getLat()));
     }
 

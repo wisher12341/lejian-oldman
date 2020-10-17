@@ -2,20 +2,13 @@ package com.lejian.oldman.service;
 
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.JpaSpecBo;
-import com.lejian.oldman.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.BusinessEnum;
-import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.OldmanRepository;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 

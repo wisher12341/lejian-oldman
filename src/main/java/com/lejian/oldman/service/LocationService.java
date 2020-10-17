@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.config.VarConfig;
+import com.lejian.oldman.bussiness.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.LocationRepository;

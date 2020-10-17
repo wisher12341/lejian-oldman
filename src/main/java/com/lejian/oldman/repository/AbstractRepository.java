@@ -108,8 +108,21 @@ public abstract class AbstractRepository<Bo,Entity> {
         return getDao().count();
     }
 
+    /**
+     * 批量插入
+     * @param boList
+     */
     public void batchAdd(List<Bo> boList) {
         List<Entity> entityList = boList.stream().map(this::convertBo).collect(Collectors.toList());
+        //saveAll  也可以用于更新， 但是更新是 null值的属性  相应字段会更新成null
         getDao().saveAll(entityList);
     }
+
+    /**
+     * 批量更新
+     */
+    public void batchUpdate(List<Bo> boList){
+        boList.forEach(this::dynamicUpdateByPkId);
+    }
+
 }
