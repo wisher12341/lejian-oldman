@@ -22,8 +22,8 @@ public class BusinessExceptionHandler {
             responseHead.setErrMsg(bizException.getIRespCode().getDisplayMessage());
         }else{
             responseHead.setErrorCode(UN_KNOWN.getCode());
-            responseHead.setErrMsg(UN_KNOWN.getDisplayMessage());
-            responseHead.setStackTraceElements(e.getStackTrace());
+            responseHead.setErrMsg(e.getMessage());
+            responseHead.setCause(e.getCause().getMessage());
         }
         return responseHead;
     }

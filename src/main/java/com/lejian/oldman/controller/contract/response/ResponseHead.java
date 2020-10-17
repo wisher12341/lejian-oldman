@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class ResponseHead {
     private String errorCode;
     private String errMsg;
+    private String cause;
     private StackTraceElement[] stackTraceElements;
 }
