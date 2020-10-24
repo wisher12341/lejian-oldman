@@ -116,16 +116,22 @@ function selectArea(name,obj) {
             success: function (result) {
                 var data=result.locationVoList;
                 var allOverlay = map.getOverlays();
+                var positions=[];
+                var j=0;
                 for(var i = 0;i<allOverlay.length;i++) {
                     if(allOverlay[i].id !=undefined && allOverlay[i].id!=null && allOverlay[i].type!="RED"){
                         allOverlay[i].setAnimation(null);
                         for(var j=0;j<data.length;j++){
                             if(data[j].id==allOverlay[i].id){
                                 allOverlay[i].setAnimation(BMAP_ANIMATION_BOUNCE);
+                                positions[j++]=allOverlay[i].getPosition();
                             }
                         }
                     }
                 }
+                console.info(JSON.stringify(positions));
+
+                map.panTo(map.getViewport(positions).center);
             }
         });
     }
