@@ -5,12 +5,13 @@ import com.lejian.oldman.bo.WorkerBo;
 import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.controller.contract.request.UserParam;
 import com.lejian.oldman.enums.BusinessEnum;
-import com.lejian.oldman.enums.UserEnum;
-import com.lejian.oldman.repository.UserRepository;
 import com.lejian.oldman.repository.WorkerRepository;
 import com.lejian.oldman.vo.UserVo;
+import com.lejian.oldman.enums.UserEnum;
+import com.lejian.oldman.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -60,6 +61,11 @@ public class UserService {
     public void add(UserParam userParam) {
         UserBo userBo=convert(userParam);
         verify(userBo);
+
+        //密码加密
+//        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+//        userBo.setPassword(encoder.encode(userBo.getPassword()));
+
         UserBo resultBo=userRepository.save(userBo);
         if(userBo.getRole().intValue()==UserEnum.Role.WORKER.getValue()) {
             updateWorker(resultBo, userParam.getWid());
