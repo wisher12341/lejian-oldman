@@ -18,7 +18,7 @@ public class WorkerSearchParam {
             jpaSpecBo.getEqualMap().put("type",param.getType());
         }
         if(StringUtils.isNotBlank(param.getBeyond())){
-            jpaSpecBo.getEqualMap().put("beyond",param.getBeyond());
+            jpaSpecBo.getLikeMap().put("beyond",param.getBeyond());
 
         }
         return jpaSpecBo;

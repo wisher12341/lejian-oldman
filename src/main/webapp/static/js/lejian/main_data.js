@@ -124,12 +124,16 @@ function selectArea(name,obj) {
                         for(var j=0;j<data.length;j++){
                             if(data[j].id==allOverlay[i].id){
                                 allOverlay[i].setAnimation(BMAP_ANIMATION_BOUNCE);
-                                positions[m++]=allOverlay[i].getPosition();
+                                if(m<50){
+                                    positions[m++]=allOverlay[i].getPosition();
+                                }
                             }
                         }
                     }
                 }
                 if(positions.length>0){
+                    // console.info(positions.length);
+                    // console.info(JSON.stringify(positions));
                     map.panTo(map.getViewport(positions).center);
                 }
             }
