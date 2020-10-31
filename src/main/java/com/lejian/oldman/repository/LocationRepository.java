@@ -59,6 +59,7 @@ public class LocationRepository extends AbstractRepository<LocationBo,LocationEn
      * @param lng
      *@param lat  @return
      */
+    //todo desc 不一样  坐标一样的 也要解决
     @Transactional
     public Integer getByDescOrCreate(String desc, String lng, String lat) {
         if(StringUtils.isNotBlank(desc)) {

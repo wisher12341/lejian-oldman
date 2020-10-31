@@ -2,6 +2,8 @@ var map;
 var timestamp=new Date().getTime();
 var interval;
 var time;
+
+var lng,lat;
 $(document).ready(function(){
     getConfigData();
 });
@@ -13,6 +15,8 @@ function getConfigData() {
         dataType: 'json',
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
+            lng=result.map.lng;
+            lat=result.map.lat;
             createMap(result.map.lng,result.map.lat);
 
             areaCountry=result.map.areaCountry;
@@ -37,6 +41,9 @@ function getConfigData() {
             }
             workerBeyond=workerBeyond.substr(0,workerBeyond.length-1);
 
+            if(currentArea==="areaCountry"){
+                $("#areaTitle2").html(areaCountry);
+            }
             if(currentArea==="areaTown"){
                 $("#areaTitle1").html(areaCountry);
                 $("#areaTitle2").html(areaTown);

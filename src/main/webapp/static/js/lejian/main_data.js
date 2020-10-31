@@ -100,6 +100,7 @@ function selectArea(name,obj) {
                 allOverlay[i].setAnimation(null);
             }
         }
+        map.panTo(new BMap.Point(lng,lat));
     }else{
         $.ajax({
             url: "/location/getLocationByArea",
