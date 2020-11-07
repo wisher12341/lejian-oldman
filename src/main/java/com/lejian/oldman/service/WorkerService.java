@@ -9,6 +9,7 @@ import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.controller.contract.request.WorkerParam;
 import com.lejian.oldman.controller.contract.request.WorkerSearchParam;
 import com.lejian.oldman.enums.*;
+import com.lejian.oldman.security.UserContext;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.utils.LjReflectionUtils;
 import com.lejian.oldman.vo.WorkerVo;
@@ -19,6 +20,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -70,12 +72,11 @@ public class WorkerService {
      * @param lng 经度
      * @param lat 纬度
      * @param oid
-     * @param token
      */
     //todo 对该方法 根据服务人员Id进行加锁
-    public void checkIn(String lng, String lat,String oid,String token) {
+    public void checkIn(String lng, String lat,String oid) {
         //服务人员
-        WorkerBo workerBo = getWorkerByToken(token);
+        WorkerBo workerBo = getWorkerByUser();
         //老人
         OldmanBo oldmanBo = oldmanRepository.findByOid(oid);
 
@@ -123,16 +124,18 @@ public class WorkerService {
     }
 
     /**
-     * 根据账号token查找服务人员
-     * @param token
+     * 根据当前账号查找服务人员
      * @return
      */
-    private WorkerBo getWorkerByToken(String token) {
-        String username = token.split("&")[0].split("=")[1];
-        String password = token.split("&")[1].split("=")[1];
-        UserBo userBo = userRepository.getByUsernameAndPassword(username,password);
-        ACCOUNT_ERROR.checkNotNull(userBo);
-        return workerRepository.getWorkerByUid(userBo.getId());
+    private WorkerBo getWorkerByUser() {
+        User user =UserContext.getLoginUser();
+        if (user!=null){
+            UserBo userBo = userRepository.getByUsername(user.getUsername());
+            ACCOUNT_ERROR.checkNotNull(userBo);
+            return workerRepository.getWorkerByUid(userBo.getId());
+        }
+        NO_DATA_FOUND.doThrowException("no worker found");
+        return null;
     }
 
     /**

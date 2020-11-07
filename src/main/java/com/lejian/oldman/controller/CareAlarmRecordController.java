@@ -6,6 +6,7 @@ import com.lejian.oldman.controller.contract.request.UpdateHandleByLocationIdReq
 import com.lejian.oldman.controller.contract.response.GetAlarmByPageResponse;
 import com.lejian.oldman.controller.contract.response.GetMainSecondAllCountResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;
+import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.CareAlarmRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
+@BackAdminAuth
 @Controller
 @ResponseBody
 @RequestMapping("/alarm")

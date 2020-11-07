@@ -11,13 +11,7 @@ $(document).ready(function(){
             var oldman =result.oldmanVo;
             $("#oid").text(oldman.oid);
             $("#oldmanname").text(oldman.name);
-            var token =$.cookie("token");
-            console.info(token);
-            if(token !==null){
-                checkIn();
-            }else{
-                window.location="/login?path=/worker/checkin&oid="+getQueryVariable("oid");
-            }
+            checkIn();
         }
     });
 

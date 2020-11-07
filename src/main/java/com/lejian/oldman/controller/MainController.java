@@ -9,6 +9,7 @@ import com.lejian.oldman.controller.contract.response.MapResponse;
 import com.lejian.oldman.controller.contract.response.PollResponse;
 import com.lejian.oldman.enums.OldmanEnum;
 
+import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.*;
 import com.lejian.oldman.vo.LocationVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import java.util.List;
 /**
  * 主页可视化查询
  */
+@BackAdminAuth
 @Controller
 @ResponseBody
 @RequestMapping("/main")

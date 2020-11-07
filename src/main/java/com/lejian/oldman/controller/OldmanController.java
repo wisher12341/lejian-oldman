@@ -3,6 +3,10 @@ package com.lejian.oldman.controller;
 import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.*;
 import com.lejian.oldman.handler.ExcelHandler;
+import com.lejian.oldman.security.annotation.BackAdminAuth;
+import com.lejian.oldman.security.annotation.BackUserAuth;
+import com.lejian.oldman.security.annotation.WorkerAndBackAuth;
+import com.lejian.oldman.security.annotation.WorkerAuth;
 import com.lejian.oldman.service.OldmanService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+//todo spring security 到post接口 如果没有权限的话 会报405
 @Controller
 @RequestMapping("/oldman")
 public class OldmanController {
@@ -30,6 +35,7 @@ public class OldmanController {
      * @param request
      * @return
      */
+    @BackUserAuth
     @ResponseBody
     @RequestMapping("/getOldmanByPage")
     public GetOldmanByPageResponse getOldmanByPage(@RequestBody GetOldmanByPageRequest request){
@@ -48,6 +54,7 @@ public class OldmanController {
      * @param request
      * @return
      */
+    @BackUserAuth
     @ResponseBody
     @RequestMapping("/getOldmanByLocationId")
     public GetOldmanListResponse getOldmanByLocationId(@RequestBody GetOldmanByLocationIdRequest request){
@@ -61,6 +68,7 @@ public class OldmanController {
      * @param request
      * @return
      */
+    @WorkerAndBackAuth
     @ResponseBody
     @RequestMapping("/getOldmanByOid")
     public GetOldmanResponse getOldmanByOid(@RequestBody GetOldmanByOidRequest request){
@@ -74,6 +82,7 @@ public class OldmanController {
      * @param request
      * @return
      */
+    @BackUserAuth
     @ResponseBody
     @RequestMapping("/getOldmanByFuzzyName")
     public GetOldmanListResponse getOldmanByFuzzyName(@RequestBody GetOldmanByFuzzNameRequest request){
@@ -87,6 +96,7 @@ public class OldmanController {
      * @param request
      * @return
      */
+    @BackUserAuth
     @ResponseBody
     @RequestMapping("/getOldmanByName")
     public GetOldmanResponse getOldmanByName(@RequestBody GetOldmanByNameRequest request){
@@ -96,7 +106,7 @@ public class OldmanController {
     }
 
     /**
-     * 关怀系统紧急报警 根据长者关怀系统 的老人oid（最好录入不能重名）
+     * 关怀系统紧急报警 根据长者关怀系统 的老人网关id
      * @param gatewayId 长者关怀系统 的老人 网关id
      * @param type
      * @param content
@@ -113,6 +123,7 @@ public class OldmanController {
      * @param request
      * @return
      */
+    @BackAdminAuth
     @ResponseBody
     @RequestMapping("/getCountOfOldmanField")
     public GetCountResponse getCountOfOldmanField(GetCountOfOldmanFieldRequest request){
@@ -125,6 +136,7 @@ public class OldmanController {
      * 获取 根据区域分组的 各数量
      * @return
      */
+    @BackAdminAuth
     @ResponseBody
     @RequestMapping("/getOldmanAreaGroupCount")
     public GetCountResponse getOldmanAreaGroupCount(@RequestBody GetOldmanAreaGroupCountRequest request){
@@ -139,13 +151,14 @@ public class OldmanController {
     /**
      * 根据location id更新老人状态
      */
+    @BackAdminAuth
     @ResponseBody
     @RequestMapping("/updateStatusByLocationId")
     public ResultResponse updateStatusByLocationId(@RequestBody UpdateStatusByLocationIdRequest request){
         oldmanService.updateStatusByLocationId(request.getLocationId(),request.getStatus());
         return new ResultResponse();
     }
-
+    @BackAdminAuth
     @ResponseBody
     @RequestMapping("/getBirthdayOldman")
     public GetOldmanListResponse getBirthdayOldman(@RequestBody GetBirthdayOldmanRequest request){
@@ -158,6 +171,7 @@ public class OldmanController {
      * 添加老人
      * @return
      */
+    @BackUserAuth
     @ResponseBody
     @RequestMapping("/add")
     public ResultResponse add(@RequestBody SaveOldmanRequest request){
@@ -170,6 +184,7 @@ public class OldmanController {
      * 编辑老人
      * @return
      */
+    @BackUserAuth
     @ResponseBody
     @RequestMapping("/edit")
     public ResultResponse edit(@RequestBody SaveOldmanRequest request){
@@ -185,6 +200,7 @@ public class OldmanController {
      * @param file
      * @return
      */
+    @BackUserAuth
     //todo 限制  数量限制 一次1000？ 参数限制
     @RequestMapping(value = "/importExcel",method = RequestMethod.POST)
     public ModelAndView importExcel(@RequestParam MultipartFile file) {

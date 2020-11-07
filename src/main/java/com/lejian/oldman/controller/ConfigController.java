@@ -4,6 +4,7 @@ import com.lejian.oldman.bussiness.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.MapRequest;
 import com.lejian.oldman.controller.contract.response.MapResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;
+import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.ConfigService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 配置数据管理
  */
+@BackAdminAuth
 @Controller
 @ResponseBody
 @RequestMapping("/config")

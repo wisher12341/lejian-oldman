@@ -12,6 +12,9 @@ import com.lejian.oldman.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.codec.Hex;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -31,6 +34,8 @@ public class UserService {
     private WorkerRepository workerRepository;
 
 
+    private BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+
     public List<UserVo> getUserByPage(PageParam pageParam) {
         return userRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),null).stream().map(this::convert).collect(Collectors.toList());
     }
@@ -38,6 +43,7 @@ public class UserService {
     private UserVo convert(UserBo userBo) {
         UserVo userVo=new UserVo();
         BeanUtils.copyProperties(userBo,userVo);
+        userVo.setPassword("********");
         userVo.setRole(BusinessEnum.find(userBo.getRole(), UserEnum.Role.class).getDesc());
         return userVo;
     }
@@ -61,10 +67,6 @@ public class UserService {
     public void add(UserParam userParam) {
         UserBo userBo=convert(userParam);
         verify(userBo);
-
-        //密码加密
-//        BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
-//        userBo.setPassword(encoder.encode(userBo.getPassword()));
 
         UserBo resultBo=userRepository.save(userBo);
         if(userBo.getRole().intValue()==UserEnum.Role.WORKER.getValue()) {
@@ -110,6 +112,11 @@ public class UserService {
     private UserBo convert(UserParam userParam) {
         UserBo userBo=new UserBo();
         BeanUtils.copyProperties(userParam,userBo);
+        userBo.setPassword(encoder.encode(userBo.getPassword()));
         return userBo;
+    }
+
+    public UserBo getUserByUsername(String username) {
+        return userRepository.getByUsername(username);
     }
 }
