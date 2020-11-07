@@ -2,6 +2,7 @@ package com.lejian.oldman.controller;
 
 import com.lejian.oldman.controller.contract.request.GetAreaRequest;
 import com.lejian.oldman.controller.contract.response.MapResponse;
+import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.AreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 行政区域
  */
-
+@BackAdminAuth
 @Controller
 @ResponseBody
 @RequestMapping("/area")

@@ -2,6 +2,7 @@ package com.lejian.oldman.controller;
 
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.response.GetLocationListResponse;
+import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.LocationService;
 import com.lejian.oldman.service.OldmanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@BackAdminAuth
 @Controller
 @ResponseBody
 @RequestMapping("/location")

@@ -9,6 +9,7 @@ import com.lejian.oldman.controller.contract.response.GetUserResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.enums.WorkerEnum;
+import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.EnumService;
 import com.lejian.oldman.service.UserService;
 import com.lejian.oldman.utils.CollectionUtils;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 获取系统定义的枚举值
  */
-
+@BackAdminAuth
 @Controller
 @ResponseBody
 @RequestMapping("/user")

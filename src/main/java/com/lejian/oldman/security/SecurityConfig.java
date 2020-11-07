@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
 /**
@@ -48,13 +49,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.formLogin()
-                .loginPage("/loginWeb") // 自定义用户登入页面
-                .failureUrl("/loginWeb?error") // 自定义登入失败页面，前端可以通过url中是否有error来提供友好的用户登入提示
-                .successForwardUrl("/")
+                .loginPage("/login") // 自定义用户登入页面
+                .failureUrl("/login?error") // 自定义登入失败页面，前端可以通过url中是否有error来提供友好的用户登入提示
+                .defaultSuccessUrl("/")
                 .and()
                 .logout()
                 .logoutUrl("/logout")// 自定义用户登出页面
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/login")
                 .and()
                 .rememberMe() // 开启记住密码功能
                 .rememberMeServices(getRememberMeServices()) // 必须提供
@@ -67,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().anyRequest().permitAll()
                 .and()
                 .exceptionHandling().accessDeniedPage("/403"); // 权限不足自动跳转403
+        http.csrf().disable();
         http.headers().frameOptions().disable();
     }
 
@@ -76,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private TokenBasedRememberMeServices getRememberMeServices() {
         TokenBasedRememberMeServices services = new TokenBasedRememberMeServices(SECRET_KEY, customUserDetailsService);
         services.setCookieName("remember-cookie");
-        services.setTokenValiditySeconds(100); // 默认14天
+//        services.setTokenValiditySeconds(100); // 默认14天
         return services;
     }
 }

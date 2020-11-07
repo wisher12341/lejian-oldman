@@ -4,6 +4,7 @@ import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(String.valueOf(userBo.getRole()));
         grantedAuthorities.add(grantedAuthority);
 
-        return new User(userBo.getUsername(), userBo.getPassword(),grantedAuthorities);
+
+        return new User(userBo.getUsername(), userBo.getPassword(),AuthorityUtils.commaSeparatedStringToAuthorityList(userBo.getRole().toString()));
     }
 }
