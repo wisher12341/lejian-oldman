@@ -1,5 +1,6 @@
 var table;
 $(document).ready(function(){
+    loadOldmanEnumInfo();
     table =$(".dataTables-example").dataTable(
         {
             "sPaginationType": "full_numbers",
@@ -61,7 +62,13 @@ $(document).ready(function(){
                     "areaCountry":$("input[name='areaCountry']").val(),
                     "areaTown":$("input[name='areaTown']").val(),
                     "areaVillage":$("input[name='areaVillage']").val(),
-                    "areaCustomOne":$("input[name='areaCustomOne']").val()
+                    "areaCustomOne":$("input[name='areaCustomOne']").val(),
+                    "name":$("input[name='name']").val(),
+                    "idCard":$("input[name='idCard']").val(),
+                    "serviceStatus":$("select[name='serviceStatus']").val(),
+                    "createTimeStart":$("input[name='createTimeStart']").val()!=""?$("input[name='createTimeStart']").val()+" 00:00:00":$("input[name='createTimeStart']").val(),
+                    "createTimeEnd":$("input[name='createTimeEnd']").val()!=""?$("input[name='createTimeEnd']").val()+" 00:00:00":$("input[name='createTimeEnd']").val()
+
                 }
             }),
             type: 'post',
@@ -106,6 +113,32 @@ function deleteOldman(oid) {
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             // alert("status:"+XMLHttpRequest.status+",readyState:"+XMLHttpRequest.readyState+",textStatus:"+textStatus);
+        }
+    });
+}
+
+
+function searchReset() {
+    $("#searchDiv input").val("");
+    $("#searchDiv select option:first").prop("selected", 'selected');
+}
+
+/**
+ * 加载枚举值
+ * @param oid
+ */
+function loadOldmanEnumInfo() {
+    $.ajax({
+        url: "/enum/oldmanAdd",
+        type: 'post',
+        dataType: 'json',
+        contentType: "application/json;charset=UTF-8",
+        sync:true,
+        success: function (result) {
+            for(var key in result.serviceStatus){
+                var option="<option value='"+key+"'>"+result.serviceStatus[key]+"</option>";
+                $("select[name='serviceStatus']").append(option)
+            }
         }
     });
 }

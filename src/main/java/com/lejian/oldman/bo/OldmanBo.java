@@ -46,6 +46,7 @@ public class OldmanBo {
     private Integer cameraId;
     private Integer xjbId;
     private Timestamp datachangeTime;
+    private Timestamp createTime;
     private BusinessEnum familyEnum;
     private Integer family;
     private String areaCountry;
@@ -67,6 +68,7 @@ public class OldmanBo {
         oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
         oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
         oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
+        oldmanVo.setCreateTime(oldmanBo.getCreateTime().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:MM:SS")));
         return oldmanVo;
     }
 }

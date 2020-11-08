@@ -9,6 +9,7 @@
 
     <title>H+ 后台主题UI框架 - 数据表格</title>
 
+    <link href="/static/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
 
     <!--<base target="_blank">-->
     <script type="text/javascript" src="/static/js/lejian/common.js"></script>
@@ -43,7 +44,34 @@
                 </div>
                 <div class="ibox-content">
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-12" id="searchDiv">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <input type="text" name="name"  class="form-control" placeholder="姓名">
+                                </div>
+                                <div class="col-sm-2">
+                                    <input type="text" name="idCard"  class="form-control" placeholder="身份证号码">
+                                </div>
+                                <div class="col-sm-2">
+                                    <select class="form-control m-b" name="serviceStatus" >
+                                        <option value='' disabled selected style='display:none;'>服务状态</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-4" id="data_5">
+                                    <div class="row">
+                                        <div class="col-sm-3" style="text-align: left">
+                                            <label class="font-noraml">添加时间</label>
+                                        </div>
+                                        <div class="col-sm-8" style="position: relative;left: -10%">
+                                            <div class="input-daterange input-group" id="datepicker">
+                                                <input type="text" class="input-sm form-control" name="createTimeStart" />
+                                                <span class="input-group-addon">至</span>
+                                                <input type="text" class="input-sm form-control" name="createTimeEnd"  />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-sm-2">
                                     <input type="text" name="areaCountry"  class="form-control" placeholder="县（区）">
@@ -59,6 +87,7 @@
                                 </div>
                                 <div class="col-sm-2">
                                     <button class='btn btn-primary' id="search" >查询</button>
+                                    <button class='btn btn-primary' onclick="searchReset()" >重置</button>
                                 </div>
                             </div>
                         </div>
@@ -95,6 +124,9 @@
     </div>
 </div>
 </body>
+<script src="/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="/static/js/lejian/oldman.js" charset="UTF-8"></script>
-
+<script>
+    $("#data_5 .input-daterange").datepicker({keyboardNavigation:!1,forceParse:!1,autoclose:!0});
+</script>
 </html>

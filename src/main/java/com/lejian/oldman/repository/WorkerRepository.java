@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Repository
 public class WorkerRepository extends AbstractSpecificationRepository<WorkerBo,WorkerEntity>{
@@ -47,5 +49,9 @@ public class WorkerRepository extends AbstractSpecificationRepository<WorkerBo,W
 
     public List<Map<String,Object>> getTypeCountByBeyond(String workerBeyond) {
         return workerDao.getTypeCountByBeyond(workerBeyond);
+    }
+
+    public List<WorkerBo> getByIdCards(List<String> idCardList) {
+        return workerDao.findByIdCardIn(idCardList).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 }

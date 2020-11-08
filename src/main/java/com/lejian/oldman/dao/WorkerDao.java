@@ -15,4 +15,6 @@ public interface WorkerDao extends JpaRepository<WorkerEntity,Long>,JpaSpecifica
 
     @Query(value = "select `type`,count(`type`) as count from worker where beyond LIKE CONCAT('%',?1,'%') group by `type`",nativeQuery = true)
     List<Map<String,Object>> getTypeCountByBeyond(String workerBeyond);
+
+    List<WorkerEntity> findByIdCardIn(List<String> idCardList);
 }

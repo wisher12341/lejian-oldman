@@ -6,11 +6,17 @@ import com.lejian.oldman.enums.OldmanEnum;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Data
 public class OldmanSearchParam {
+    private String name;
+    private String idCard;
+    private Integer serviceStatus;
+    private String createTimeStart;
+    private String createTimeEnd;
     private String oid;
     private String areaCustomOne;
     private String areaCountry;
@@ -60,6 +66,25 @@ public class OldmanSearchParam {
         }
         if (StringUtils.isNotBlank(oldmanSearchParam.getAreaCountry())){
             jpaSpecBo.getEqualMap().put("areaCountry", oldmanSearchParam.getAreaCountry());
+        }
+        if (StringUtils.isNotBlank(oldmanSearchParam.getName())){
+            jpaSpecBo.getEqualMap().put("name", oldmanSearchParam.getName());
+        }
+
+        if (StringUtils.isNotBlank(oldmanSearchParam.getIdCard())){
+            jpaSpecBo.getEqualMap().put("idCard", oldmanSearchParam.getIdCard());
+        }
+
+        if (oldmanSearchParam.getServiceStatus()!=null){
+            jpaSpecBo.getEqualMap().put("serviceStatus", oldmanSearchParam.getServiceStatus());
+        }
+
+        if (StringUtils.isNotBlank(oldmanSearchParam.getCreateTimeStart())){
+            jpaSpecBo.getGreatEMap().put("createTime", Timestamp.valueOf(oldmanSearchParam.getCreateTimeStart()));
+        }
+
+        if (StringUtils.isNotBlank(oldmanSearchParam.getCreateTimeEnd())){
+            jpaSpecBo.getLessEMap().put("createTime", Timestamp.valueOf(oldmanSearchParam.getCreateTimeEnd()));
         }
 
 

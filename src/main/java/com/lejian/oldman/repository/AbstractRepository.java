@@ -62,7 +62,7 @@ public abstract class AbstractRepository<Bo,Entity> {
     @Transactional
     public void dynamicUpdate(Bo bo,String fieldName){
         try {
-            String sqlFormat = "update %s set %s where %s='%s'";
+                String sqlFormat = "update %s set %s where %s='%s'";
 
             StringBuilder updateStr=new StringBuilder();
             Entity entity = convertBo(bo);

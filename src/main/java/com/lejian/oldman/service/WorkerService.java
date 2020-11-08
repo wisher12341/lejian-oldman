@@ -23,6 +23,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.time.Duration;
@@ -273,6 +274,7 @@ public class WorkerService {
         return map;
     }
 
+    @Transactional
     public void addWorkerByExcel(Pair<List<String>, List<List<String>>> excelData) {
         List<String> titleList=excelData.getFirst();
         List<List<String>> valueList=excelData.getSecond();
@@ -314,9 +316,40 @@ public class WorkerService {
             REFLECTION_ERROR.doThrowException("fail to addWorkerByExcel",e);
         }
         workerBoList.forEach(this::supplement);
-        //todo 验证bo数据
-        workerRepository.batchAdd(workerBoList);
 
+        //todo 验证bo数据
+        // left 添加 right更新
+        Pair<List<WorkerBo>,List<WorkerBo>> pair = classifyDbType(workerBoList);
+        workerRepository.batchAdd(pair.getFirst());
+        workerRepository.batchUpdate(pair.getSecond());
+
+    }
+
+    private static final int PART_NUM=100;
+
+    /**
+     * 区分 哪些服务人员 添加 哪些老人更新
+     * @param workerBoList
+     * @return
+     */
+    private Pair<List<WorkerBo>,List<WorkerBo>> classifyDbType(List<WorkerBo> workerBoList) {
+        List<WorkerBo> addList=Lists.newArrayList();
+        List<WorkerBo> updateList=Lists.newArrayList();
+
+        List<List<WorkerBo>> parts = Lists.partition(workerBoList, PART_NUM);
+        parts.forEach(item->{
+            List<String> idCardList=item.stream().map(WorkerBo::getIdCard).collect(Collectors.toList());
+            Map<String,WorkerBo> existWorkerMap=workerRepository.getByIdCards(idCardList).stream().collect(Collectors.toMap(WorkerBo::getIdCard, Function.identity()));
+            item.forEach(worker->{
+                if(existWorkerMap.containsKey(worker.getIdCard())){
+                    worker.setId(existWorkerMap.get(worker.getIdCard()).getId());
+                    updateList.add(worker);
+                } else{
+                    addList.add(worker);
+                }
+            });
+        });
+        return Pair.of(addList,updateList);
     }
 
     /**
