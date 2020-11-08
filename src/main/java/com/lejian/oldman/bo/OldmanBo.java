@@ -3,6 +3,7 @@ package com.lejian.oldman.bo;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.utils.DateUtils;
+import com.lejian.oldman.utils.ObjectUtils;
 import com.lejian.oldman.vo.OldmanVo;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
@@ -53,25 +54,19 @@ public class OldmanBo {
     private String areaCustomOne;
     private BusinessEnum serviceTypeEnum;
     private Integer serviceType;
-
+    private BusinessEnum serviceStatusEnum;
+    private Integer serviceStatus;
     private String locationAddress;
 
     private String lng;
     private String lat;
 
     public static OldmanVo createVo(OldmanBo oldmanBo){
-        OldmanVo oldmanVo = new OldmanVo();
-        BeanUtils.copyProperties(oldmanBo,oldmanVo);
+        OldmanVo oldmanVo = ObjectUtils.convert(oldmanBo,OldmanVo.class);
         oldmanVo.setBirthday(oldmanBo.getBirthday().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
         oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
         oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
-        oldmanVo.setStatus(oldmanBo.getStatusEnum().getDesc());
-        oldmanVo.setSex(oldmanBo.getSexEnum().getDesc());
-        oldmanVo.setPolitics(oldmanBo.getPoliticsEnum().getDesc());
-        oldmanVo.setEducation(oldmanBo.getEducationEnum().getDesc());
-        oldmanVo.setHouseholdType(oldmanBo.getHouseholdTypeEnum().getDesc());
-        oldmanVo.setFamily(oldmanBo.getFamilyEnum().getDesc());
         return oldmanVo;
     }
 }

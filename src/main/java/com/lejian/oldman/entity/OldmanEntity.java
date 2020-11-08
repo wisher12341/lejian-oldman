@@ -78,4 +78,6 @@ public class OldmanEntity {
     private Integer xjbId;
     @Column(name = "service_type")
     private Integer serviceType;
+    @Column(name = "service_status")
+    private Integer serviceStatus;
 }

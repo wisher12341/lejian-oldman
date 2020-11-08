@@ -117,6 +117,10 @@ function loadOldmanEnumInfo() {
                 var option="<option value='"+key+"'>"+result.family[key]+"</option>";
                 $("select[name='family']").append(option)
             }
+            for(var key in result.serviceStatus){
+                var option="<option value='"+key+"'>"+result.serviceStatus[key]+"</option>";
+                $("select[name='serviceStatus']").append(option)
+            }
         }
     });
 }

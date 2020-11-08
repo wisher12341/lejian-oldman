@@ -13,4 +13,5 @@ public class GetEnumResponse {
     Map<Integer,String> family;
     Map<Integer,String> workerType;
     Map<Integer,String> roleType;
+    Map<Integer,String> serviceStatus;
 }

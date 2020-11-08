@@ -38,5 +38,6 @@ public class OldmanVo {
     private Timestamp datachangeTime;
     private String family;
     private String serviceType;
+    private String serviceStatus;
 
 }

@@ -5,6 +5,7 @@ import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.enums.UserEnum;
 import com.lejian.oldman.enums.WorkerEnum;
 import com.lejian.oldman.security.annotation.BackAdminAuth;
+import com.lejian.oldman.security.annotation.BackUserAuth;
 import com.lejian.oldman.service.EnumService;
 import com.lejian.oldman.utils.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * 获取系统定义的枚举值
  */
-@BackAdminAuth
+@BackUserAuth
 @Controller
 @ResponseBody
 @RequestMapping("/enum")
@@ -32,6 +33,7 @@ public class EnumController {
         response.setEducation(CollectionUtils.enumToMap(OldmanEnum.Education.values()));
         response.setFamily(CollectionUtils.enumToMap(OldmanEnum.FamilyType.values()));
         response.setHouseholdType(CollectionUtils.enumToMap(OldmanEnum.HouseholdType.values()));
+        response.setServiceStatus(CollectionUtils.enumToMap(OldmanEnum.ServiceStatus.values()));
         return response;
     }
 

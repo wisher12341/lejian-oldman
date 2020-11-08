@@ -216,4 +216,20 @@ public interface OldmanEnum extends BusinessEnum{
         public abstract List<Integer> getSearchValue();
     }
 
+    /**
+     * 服务状态
+     */
+    @Getter
+    @AllArgsConstructor
+    enum ServiceStatus implements OldmanEnum{
+        ZC(0,"正常"),
+        DUJU(1,"转出"),
+        SHUDU(2,"死亡"),
+        GULAO(3,"临时暂停"),
+        YLYYL(4,"长期暂停"),
+        ;
+        private Integer value;
+        private String desc;
+    }
+
 }

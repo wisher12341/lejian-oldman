@@ -9,6 +9,7 @@ import com.lejian.oldman.entity.OldmanEntity;
 import com.lejian.oldman.entity.WorkerCheckinEntity;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
+import com.lejian.oldman.utils.ObjectUtils;
 import com.lejian.oldman.vo.LocationVo;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -44,15 +45,7 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
 
     @Override
     protected OldmanEntity convertBo(OldmanBo oldmanBo) {
-        OldmanEntity oldmanEntity= new OldmanEntity();
-        BeanUtils.copyProperties(oldmanBo,oldmanEntity);
-        if(oldmanBo.getEducationEnum()!=null) {
-            oldmanEntity.setEducation(oldmanBo.getEducationEnum().getValue());
-        }
-        if(oldmanBo.getStatusEnum()!=null) {
-            oldmanEntity.setStatus(oldmanBo.getStatusEnum().getValue());
-        }
-        return oldmanEntity;
+        return ObjectUtils.convert(oldmanBo,OldmanEntity.class);
     }
 
     @Override
@@ -68,6 +61,7 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         oldmanBo.setPoliticsEnum(BusinessEnum.find(oldmanEntity.getPolitics(),OldmanEnum.Politics.class));
         oldmanBo.setSexEnum(BusinessEnum.find(oldmanEntity.getSex(),OldmanEnum.Sex.class));
         oldmanBo.setFamilyEnum(BusinessEnum.find(oldmanEntity.getFamily(),OldmanEnum.FamilyType.class));
+        oldmanBo.setServiceStatusEnum(BusinessEnum.find(oldmanBo.getServiceStatus(),OldmanEnum.ServiceStatus.class));
         return oldmanBo;
     }
 
