@@ -341,4 +341,8 @@ public class WorkerService {
         workerBo.setBirthday(DateUtils.stringToLocalDate(workerParam.getIdCard().substring(6,14),YYMMDD));
         return workerBo;
     }
+
+    public void deleteWorker(Integer id) {
+        workerRepository.deleteById(id);
+    }
 }

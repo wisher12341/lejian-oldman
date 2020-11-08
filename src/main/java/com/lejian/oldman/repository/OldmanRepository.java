@@ -225,4 +225,9 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     public void updateStatusYtoG() {
         oldmanDao.updateStatusYtoG();
     }
+
+    @Transactional
+    public void deleteByOid(String oid) {
+        oldmanDao.deleteByOid(oid);
+    }
 }

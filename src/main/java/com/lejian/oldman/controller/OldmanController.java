@@ -193,6 +193,17 @@ public class OldmanController {
         return response;
     }
 
+    /**
+     * 删除老人
+     * @return
+     */
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping("/delete")
+    public ResultResponse delete(@RequestBody DeleteOldmanByOidRequest request){
+        oldmanService.deleteOldman(request.getOid());
+        return new ResultResponse();
+    }
 
     /**
      * excel导入

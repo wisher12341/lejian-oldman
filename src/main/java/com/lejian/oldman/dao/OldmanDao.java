@@ -55,4 +55,5 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
     @Query(value = "update oldman set status=1 where status=2",nativeQuery = true)
     void updateStatusYtoG();
 
+    void deleteByOid(String oid);
 }

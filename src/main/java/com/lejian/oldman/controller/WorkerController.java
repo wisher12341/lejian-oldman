@@ -130,4 +130,16 @@ public class WorkerController {
         return response;
     }
 
+    /**
+     * 删除
+     * @return
+     */
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping("/delete")
+    public ResultResponse delete(@RequestBody DeleteWorkerByIdRequest request){
+        ResultResponse response=new ResultResponse();
+        workerService.deleteWorker(request.getId());
+        return response;
+    }
 }

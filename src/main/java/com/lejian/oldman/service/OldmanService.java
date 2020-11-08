@@ -319,4 +319,7 @@ public class OldmanService {
         return this.getGroupCount(groupField,where);
     }
 
+    public void deleteOldman(String oid) {
+        oldmanRepository.deleteByOid(oid);
+    }
 }

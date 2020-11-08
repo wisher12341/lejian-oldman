@@ -125,4 +125,7 @@ public abstract class AbstractRepository<Bo,Entity> {
         boList.forEach(this::dynamicUpdateByPkId);
     }
 
+    public void deleteById(Integer id) {
+        getDao().deleteById(id);
+    }
 }

@@ -1,5 +1,7 @@
+var table;
+
 $(document).ready(function(){
-    var table =$(".dataTables-example").dataTable(
+    table =$(".dataTables-example").dataTable(
         {
             "sPaginationType": "full_numbers",
             "bPaginite": true,
@@ -40,7 +42,8 @@ $(document).ready(function(){
                     "data": "id", // 数据列名
                     "render": function(data, type, full) { // 返回自定义内容
                         return "<button class='btn btn-primary' onclick=newPage("+data+",'人员详情信息','/workerInfo?id="+data+"')>查看</button>" +
-                            "<button class='btn btn-primary' onclick=newPage("+data+",'编辑','/workerEdit?id="+data+"')>编辑</button>";
+                            "<button class='btn btn-primary' onclick=newPage("+data+",'编辑','/workerEdit?id="+data+"')>编辑</button>" +
+                            "<button class='btn btn-primary' onclick=deleteWorker("+data+")>删除</button>";
                     }
                 }
             ],
@@ -79,4 +82,22 @@ $(document).ready(function(){
         "callback":function(sValue,y){var aPos=oTable.fnGetPosition(this);oTable.fnUpdate(sValue,aPos[0],aPos[1])},
         "submitdata":function(value,settings){return{"row_id":this.parentNode.getAttribute("id"),
             "column":oTable.fnGetPosition(this)[2]}},"width":"90%","height":"100%"});
+
 });
+
+function deleteWorker(id) {
+    $.ajax({
+        url: "/worker/delete",//这个就是请求地址对应sAjaxSource
+        data :JSON.stringify({"id":id}),
+        type: 'post',
+        dataType: 'json',
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            table.fnFilter();
+        },
+        error:function(XMLHttpRequest, textStatus, errorThrown) {
+            // alert("status:"+XMLHttpRequest.status+",readyState:"+XMLHttpRequest.readyState+",textStatus:"+textStatus);
+        }
+    });
+}
+
