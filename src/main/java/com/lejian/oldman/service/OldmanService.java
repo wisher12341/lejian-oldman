@@ -12,6 +12,7 @@ import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.utils.LjReflectionUtils;
+import com.lejian.oldman.utils.ObjectUtils;
 import com.lejian.oldman.vo.OldmanVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -31,6 +34,7 @@ import java.util.stream.IntStream;
 
 import static com.lejian.oldman.common.ComponentRespCode.NO_DATA_FOUND;
 import static com.lejian.oldman.common.ComponentRespCode.REFLECTION_ERROR;
+import static com.lejian.oldman.common.ComponentRespCode.UN_KNOWN;
 import static com.lejian.oldman.utils.DateUtils.YYMMDD;
 
 @Slf4j
@@ -321,5 +325,32 @@ public class OldmanService {
 
     public void deleteOldman(String oid) {
         oldmanRepository.deleteByOid(oid);
+    }
+
+    /**
+     * 获取导出的数据
+     * @param oldmanSearchParam
+     * @return
+     */
+    public Pair<String[], String[][]> getExportOldmanInfo(OldmanSearchParam oldmanSearchParam) {
+        try {
+            OldmanExcelExportEnum[] oldmanExcelExportEnums = OldmanExcelExportEnum.values();
+            String[] title = new String[oldmanExcelExportEnums.length];
+            for(int i=0;i<oldmanExcelExportEnums.length;i++){
+                title[i]=oldmanExcelExportEnums[i].getColumnName();
+            }
+            List<OldmanVo> oldmanVoList = oldmanRepository.findWithSpec(OldmanSearchParam.convert(oldmanSearchParam)).stream().map(OldmanBo::createVo).collect(Collectors.toList());
+            String[][] content = new String[oldmanVoList.size()][title.length];
+            for (int i = 0; i < oldmanVoList.size(); i++) {
+                for (int j = 0; j < title.length; j++) {
+                    content[i][j] = String.valueOf(ObjectUtils.getFieldValue(oldmanVoList.get(i), oldmanExcelExportEnums[j].getFieldName()));
+                }
+            }
+            return Pair.of(title,content);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            UN_KNOWN.doThrowException("fail to getExportOldmanInfo",e);
+        }
+        return null;
+
     }
 }

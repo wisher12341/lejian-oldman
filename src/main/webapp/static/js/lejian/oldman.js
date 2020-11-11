@@ -133,12 +133,36 @@ function loadOldmanEnumInfo() {
         type: 'post',
         dataType: 'json',
         contentType: "application/json;charset=UTF-8",
+
         sync:true,
         success: function (result) {
             for(var key in result.serviceStatus){
                 var option="<option value='"+key+"'>"+result.serviceStatus[key]+"</option>";
                 $("select[name='serviceStatus']").append(option)
             }
+        }
+    });
+}
+
+function exportOldman() {
+    $.ajax({
+        url: "/oldman/exportExcel",
+        data :JSON.stringify({
+                "areaCountry":$("input[name='areaCountry']").val(),
+                "areaTown":$("input[name='areaTown']").val(),
+                "areaVillage":$("input[name='areaVillage']").val(),
+                "areaCustomOne":$("input[name='areaCustomOne']").val(),
+                "name":$("input[name='name']").val(),
+                "idCard":$("input[name='idCard']").val(),
+                "serviceStatus":$("select[name='serviceStatus']").val(),
+                "createTimeStart":$("input[name='createTimeStart']").val()!=""?$("input[name='createTimeStart']").val()+" 00:00:00":$("input[name='createTimeStart']").val(),
+                "createTimeEnd":$("input[name='createTimeEnd']").val()!=""?$("input[name='createTimeEnd']").val()+" 00:00:00":$("input[name='createTimeEnd']").val()
+        }),
+        type: 'post',
+        dataType: 'json',
+        contentType: "application/json;charset=UTF-8",
+        sync:true,
+        success: function (result) {
         }
     });
 }

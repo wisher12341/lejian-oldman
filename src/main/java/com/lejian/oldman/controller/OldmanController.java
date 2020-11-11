@@ -1,5 +1,6 @@
 package com.lejian.oldman.controller;
 
+import com.lejian.oldman.bo.ExportOldmanBo;
 import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.*;
 import com.lejian.oldman.handler.ExcelHandler;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
@@ -221,5 +223,16 @@ public class OldmanController {
         }
         ModelAndView mv=new ModelAndView("/oldman");
         return mv;
+    }
+
+    /**
+     * 导出
+     * @param oldmanSearchParam
+     */
+    @BackUserAuth
+    @RequestMapping(value = "/exportExcel",method = RequestMethod.POST)
+    public void export(OldmanSearchParam oldmanSearchParam){
+        Pair<String[],String[][]> data=oldmanService.getExportOldmanInfo(oldmanSearchParam);
+        excelHandler.export("oldman",data.getFirst(),data.getSecond());
     }
 }

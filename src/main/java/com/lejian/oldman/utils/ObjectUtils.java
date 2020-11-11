@@ -1,11 +1,13 @@
 package com.lejian.oldman.utils;
 
+import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.exception.BizException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ClassUtils;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -62,5 +64,16 @@ public class ObjectUtils {
             throw new BizException("fail to convert object");
         }
         return target;
+    }
+
+    /**
+     * 获取属性值
+     * @param obj
+     * @param fieldName
+     * @return
+     */
+    public static Object getFieldValue(Object obj, String fieldName) throws InvocationTargetException, IllegalAccessException {
+        PropertyDescriptor pd=BeanUtils.getPropertyDescriptor(obj.getClass(), fieldName);
+        return pd.getReadMethod().invoke(obj);
     }
 }
