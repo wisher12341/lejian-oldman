@@ -1,5 +1,6 @@
 package com.lejian.oldman.controller;
 
+import com.lejian.oldman.controller.contract.request.DeleteUserByIdRequest;
 import com.lejian.oldman.controller.contract.request.GetUserByPageRequest;
 import com.lejian.oldman.controller.contract.request.GetUserByUidRequest;
 import com.lejian.oldman.controller.contract.request.SaveUserRequest;
@@ -55,6 +56,12 @@ public class UserController {
     @RequestMapping("/edit")
     public ResultResponse edit(@RequestBody SaveUserRequest request){
         userService.edit(request.getUserParam());
+        return new ResultResponse();
+    }
+
+    @RequestMapping("/delete")
+    public ResultResponse delete(@RequestBody DeleteUserByIdRequest request){
+        userService.delete(request.getId());
         return new ResultResponse();
     }
 

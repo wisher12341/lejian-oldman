@@ -2,20 +2,29 @@ package com.lejian.oldman.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Floats;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
 import com.lejian.oldman.bo.OldmanBo;
+import com.lejian.oldman.check.CheckProcessor;
+import com.lejian.oldman.check.bo.CheckFieldBo;
+import com.lejian.oldman.check.bo.CheckResultBo;
+import com.lejian.oldman.check.bo.OldmanImportCheckBo;
 import com.lejian.oldman.controller.contract.request.OldmanParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.*;
+import com.lejian.oldman.handler.BaiduMapHandler;
 import com.lejian.oldman.repository.CareAlarmRecordRepository;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.utils.LjReflectionUtils;
 import com.lejian.oldman.utils.ObjectUtils;
+import com.lejian.oldman.utils.tuple.Tuple3;
 import com.lejian.oldman.vo.OldmanVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -32,9 +41,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.lejian.oldman.common.ComponentRespCode.NO_DATA_FOUND;
-import static com.lejian.oldman.common.ComponentRespCode.REFLECTION_ERROR;
-import static com.lejian.oldman.common.ComponentRespCode.UN_KNOWN;
+import static com.lejian.oldman.common.ComponentRespCode.*;
 import static com.lejian.oldman.utils.DateUtils.YYMMDD;
 
 @Slf4j
@@ -48,7 +55,11 @@ public class OldmanService {
     @Autowired
     private LocationRepository locationRepository;
 
-    private static final String EXCEL_EMPTY="无";
+    @Autowired
+    private CheckProcessor checkProcessor;
+
+    @Autowired
+    private BaiduMapHandler baiduMapHandler;
 
     private static final int PART_NUM=100;
 
@@ -210,9 +221,15 @@ public class OldmanService {
      * @param excelData
      */
     @Transactional
-    public void addOldmanByExcel(Pair<List<String>, List<List<String>>> excelData) {
+    public List<CheckResultBo> addOldmanByExcel(Pair<List<String>, List<List<String>>> excelData) {
         List<String> titleList=excelData.getFirst();
         List<List<String>> valueList=excelData.getSecond();
+
+        List<CheckResultBo> checkResultBoList=checkOldmanImport(excelData);
+        if(CollectionUtils.isNotEmpty(checkResultBoList)){
+            return checkResultBoList;
+        }
+
 
         List<OldmanBo> oldmanBoList = Lists.newArrayList();
 
@@ -231,7 +248,7 @@ public class OldmanService {
                 //纵向 遍历每个对象，一个属性一个属性 纵向赋值
                 for (int j = 0; j < valueList.size(); j++) {
                     Object value=valueList.get(j).get(i);
-                    if(!value.toString().equals(EXCEL_EMPTY)) {
+                    if(StringUtils.isNotBlank(String.valueOf(value))) {
                         //转换成枚举值
                         Class<? extends BusinessEnum> enumClass = oldmanExcelEnum.getEnumType();
                         if (enumClass != null) {
@@ -250,12 +267,66 @@ public class OldmanService {
         }catch (IllegalArgumentException | IllegalAccessException e){
             REFLECTION_ERROR.doThrowException("fail to addOldmanByExcel",e);
         }
-        oldmanBoList.forEach(this::supplement);
+
+        supplement(oldmanBoList);
+
         //todo 验证bo数据
         // left 添加 right更新
         Pair<List<OldmanBo>,List<OldmanBo>> pair = classifyDbType(oldmanBoList);
+        //todo 并非真正的 batch
         oldmanRepository.batchAdd(pair.getFirst());
         oldmanRepository.batchUpdate(pair.getSecond());
+        return Lists.newArrayList();
+    }
+
+    /**
+     * Excel表格校验
+     * @param excelData
+     * @return
+     */
+    private List<CheckResultBo> checkOldmanImport(Pair<List<String>, List<List<String>>> excelData) {
+        List<OldmanImportCheckBo> checkBoList=OldmanImportCheckBo.convert(excelData);
+        List<CheckResultBo> checkResultBoList=checkProcessor.check(checkBoList);
+
+        Map<Integer,CheckResultBo> checkResultBoMap=checkResultBoList.stream().collect(Collectors.toMap(CheckResultBo::getNumber,Function.identity()));
+
+        /**
+         * 校验坐标
+         */
+        checkBoList.forEach(bo->{
+            if (StringUtils.isBlank(bo.getLocationAddress())){
+                checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标", LOCATION_CHECK.getDisplayMessage()));
+                return;
+            }
+            if(StringUtils.isNotBlank(bo.getLng()) && StringUtils.isNotBlank(bo.getLat())){
+                //todo 是否需要调用接口 验证 坐标正确？
+                if(bo.getLng().startsWith("121.") && bo.getLat().startsWith("31.") && NumberUtils.isNumber(bo.getLng()) && NumberUtils.isNumber(bo.getLat())){
+
+                }else {
+                    checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标", LOCATION_CHECK.getDisplayMessage()));
+                }
+                return;
+            }
+            if(StringUtils.isNotBlank(bo.getLocationAddress())){
+                Pair<String,String> result=baiduMapHandler.geocoding(bo.getLocationAddress(),"上海市");
+                if(result==null){
+                    checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标",LOCATION_CHECK.getDisplayMessage()));
+                }
+                return;
+            }
+            checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标",LOCATION_CHECK.getDisplayMessage()));
+        });
+
+        // 属性名 改为 枚举中的表格文字
+        checkResultBoList.forEach(a->{
+            a.getCheckFieldBoList().forEach(b->{
+                if (b.getName().equals("坐标")){
+                    return;
+                }
+                b.setName(ExcelEnum.findColumnName(b.getName(),OldmanExcelEnum.class).getColumnName());
+            });
+        });
+        return checkResultBoList;
     }
 
     /**
@@ -286,14 +357,19 @@ public class OldmanService {
     /**
      * 补全数据
      */
-    private void supplement(OldmanBo oldmanBo){
-        oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanBo.getIdCard().substring(6,14),YYMMDD));
-        oldmanBo.setOid(oldmanBo.getIdCard().substring(oldmanBo.getIdCard().length()-10,oldmanBo.getIdCard().length()));
-        /**
-         * 老人导入时， address字段  默认就是坐标的描述
-         */
-        //todo 后续 优化 改成批量的
-        oldmanBo.setLocationId(locationRepository.getByDescOrCreate(oldmanBo.getLocationAddress(),oldmanBo.getLng(),oldmanBo.getLat()));
+    private void supplement(List<OldmanBo> oldmanBoList){
+        oldmanBoList.forEach(oldmanBo -> {
+            oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanBo.getIdCard().substring(6,14),YYMMDD));
+            oldmanBo.setOid(oldmanBo.getIdCard().substring(oldmanBo.getIdCard().length()-10,oldmanBo.getIdCard().length()));
+        });
+        List<List<OldmanBo>> list= Lists.partition(oldmanBoList,200);
+        list.forEach(item->{
+            List<Tuple3<String,String,String>> tuple3List=Lists.newArrayList();
+            item.forEach(bo-> tuple3List.add(Tuple3.of(bo.getLocationAddress(),bo.getLng(),bo.getLat())));
+            // key 地址描述, value location id
+            Map<String,Integer> map=locationRepository.getBatchByDescOrCreate(tuple3List);
+            item.forEach(bo-> bo.setLocationId(map.get(bo.getLocationAddress())));
+        });
     }
 
     public void editOldman(OldmanParam oldmanParam) {

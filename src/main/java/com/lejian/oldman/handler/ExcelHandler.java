@@ -50,23 +50,32 @@ public class ExcelHandler {
             int i=1;
             for (Row row : workbook.getSheetAt(0)) {
                 List<String> list=Lists.newArrayList();
-                if (start<=i) {
+                if (start>i){
+                    i++;
+                    continue;
+                }
+                if(start==i){
+                    //表头
                     Iterator<Cell> iterable = row.cellIterator();
                     while (iterable.hasNext()) {
                         Cell cell = iterable.next();
                         cell.setCellType(Cell.CELL_TYPE_STRING);
-                        if(StringUtils.isBlank(cell.getStringCellValue().trim())){
+                        //结束
+                        if(StringUtils.isBlank(cell.getStringCellValue())){
+                            break;
+                        }
+                        titleList.add(cell.getStringCellValue().trim());
+                    }
+                }else {
+                    //用cellIterator，如果前面几个是空值 是无法遍历的
+                    for(int j=0;j<titleList.size();j++){
+                        Cell cell = row.getCell(j);
+                        if(cell == null){
+                            list.add(StringUtils.EMPTY);
                             continue;
                         }
-                        if (start == i) {
-                            //表名 结束
-                            if(StringUtils.isBlank(cell.getStringCellValue())){
-                                break;
-                            }
-                            titleList.add(cell.getStringCellValue().trim());
-                        } else {
-                            list.add(cell.getStringCellValue().trim());
-                        }
+                        cell.setCellType(Cell.CELL_TYPE_STRING);
+                        list.add(cell.getStringCellValue().trim());
                     }
                     if (CollectionUtils.isNotEmpty(list.stream().filter(StringUtils::isNotBlank).collect(Collectors.toList()))) {
                         valueList.add(list);
@@ -106,7 +115,7 @@ public class ExcelHandler {
         //响应到客户端
         try {
             response.setContentType("application/vnd.ms-excel;charset=utf-8");
-            response.setHeader("Content-disposition", "attachment;filename="+fileName);
+            response.setHeader("Content-disposition", "attachment;filename="+fileName+".xls");
             OutputStream os = response.getOutputStream();
             wb.write(os);
             os.flush();

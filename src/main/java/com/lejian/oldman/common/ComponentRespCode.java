@@ -35,8 +35,15 @@ public enum ComponentRespCode implements IRespCode {
      */
     UN_KNOW_COLUMN("601","不能识别 excel表的列名"),
     ACCOUNT_REPEAT("602","账号重复"),
-    ACCOUNT_UPDATE_ERROR("603","账号更新失败")
+    ACCOUNT_UPDATE_ERROR("603","账号更新失败"),
 
+
+    /**
+     * 7xx check校验错误码
+     */
+    NULL_CHECK("701","不能为空"),
+    ENUM_CHECK("702","枚举数据不匹配"),
+    LOCATION_CHECK("703","不能识别坐标"),
     ;
 
     private String code;

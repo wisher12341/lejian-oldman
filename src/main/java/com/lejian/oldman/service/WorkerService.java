@@ -17,6 +17,7 @@ import com.lejian.oldman.repository.*;
 import com.lejian.oldman.utils.MapUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -54,7 +55,6 @@ public class WorkerService {
     @Autowired
     private LocationRepository locationRepository;
 
-    private static final String EXCEL_EMPTY="无";
     /**
      * 服务人员签到签出 最小的时间间隔 分钟
      */
@@ -296,7 +296,7 @@ public class WorkerService {
                 //纵向 遍历每个对象，一个属性一个属性 纵向赋值
                 for (int j = 0; j < valueList.size(); j++) {
                     Object value=valueList.get(j).get(i);
-                    if(!value.toString().equals(EXCEL_EMPTY)) {
+                    if(StringUtils.isNotBlank(String.valueOf(value))) {
                         //转换成枚举值
                         Class<? extends BusinessEnum> enumClass = excelEnum.getEnumType();
                         if (enumClass != null) {

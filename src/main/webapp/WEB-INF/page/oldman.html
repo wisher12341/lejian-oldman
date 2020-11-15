@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 
@@ -10,7 +10,6 @@
     <title>H+ 后台主题UI框架 - 数据表格</title>
 
     <link href="/static/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-
     <!--<base target="_blank">-->
     <script type="text/javascript" src="/static/js/lejian/common.js"></script>
     <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
@@ -130,10 +129,53 @@
         </div>
     </div>
 </div>
+
+<div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content animated bounceInRight">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                </button>
+                <i class="fa fa-warn modal-icon"></i>
+                <h4 class="modal-title" style="color: red">导入失败</h4>
+            </div>
+            <div class="modal-body" style="height: 50%;overflow:scroll">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <label class="control-label label_title">序号</label>
+                    </div>
+                    <div class="col-sm-8">
+                        <label class="control-label label_title">错误内容</label>
+                    </div>
+                </div>
+                <div class="row" th:each="subCheck : ${check}" style="border-bottom: 1px solid #c3bfbf">
+                    <div class="col-sm-2">
+                        <label class="control-label label_title" th:text="${subCheck.number}"/>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="form-group" th:each="data : ${subCheck.checkFieldBoList}" >
+                            <label class="control-label label_title" th:text="${data.name}" style="color: red"/>
+                            <label class="control-label label_title"  style="color: red">：</label>
+                            <label class="control-label" th:text="${data.msg}"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </body>
 <script src="/static/js/plugins/datapicker/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="/static/js/lejian/oldman.js" charset="UTF-8"></script>
 <script>
     $("#data_5 .input-daterange").datepicker({keyboardNavigation:!1,forceParse:!1,autoclose:!0});
+</script>
+<script th:inline="javascript">
+    var check = [[${check}]];
+    if (check!=null && check.length>0) {
+        $("#myModal").modal("show");
+    }
 </script>
 </html>

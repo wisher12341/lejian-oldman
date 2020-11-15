@@ -18,6 +18,16 @@ public interface ExcelEnum {
         return null;
     }
 
+    static ExcelEnum findColumnName(String filedName, Class<? extends ExcelEnum> enumClass){
+        for(ExcelEnum excelEnum: enumClass.getEnumConstants()){
+            if(excelEnum.getFieldName().equals(filedName)){
+                return excelEnum;
+            }
+        }
+        UN_KNOW_COLUMN.doThrowException();
+        return null;
+    }
+
     /**
      * 获取 枚举值类型
      * @return

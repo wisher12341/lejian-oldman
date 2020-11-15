@@ -24341,10 +24341,10 @@ proto.restoreData = function (ecModel, payload) {
     // and some components like coordinate system, axes, dataZoom, visualMap only
     // need their target series refresh.
     // (1) If we are implementing this feature some day, we should consider these cases:
-    // if a data processor depends on a component (e.g., dataZoomProcessor depends
+    // if a data checker depends on a component (e.g., dataZoomProcessor depends
     // on the settings of `dataZoom`), it should be re-performed if the component
     // is modified by `setOption`.
-    // (2) If a processor depends on sevral series, speicified by its `getTargetSeries`,
+    // (2) If a checker depends on sevral series, speicified by its `getTargetSeries`,
     // it should be re-performed when the result array of `getTargetSeries` changed.
     // We use `dependencies` to cover these issues.
     // (3) How to update target series when coordinate system related components modified.
@@ -26722,7 +26722,7 @@ var actions = {};
 var eventActionMap = {};
 
 /**
- * Data processor functions of each stage
+ * Data checker functions of each stage
  * @type {Array.<Object.<string, Function>>}
  * @inner
  */

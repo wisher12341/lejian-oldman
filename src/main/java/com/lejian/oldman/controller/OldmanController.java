@@ -1,6 +1,8 @@
 package com.lejian.oldman.controller;
 
+import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.ExportOldmanBo;
+import com.lejian.oldman.check.bo.CheckResultBo;
 import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.*;
 import com.lejian.oldman.handler.ExcelHandler;
@@ -218,10 +220,12 @@ public class OldmanController {
     @RequestMapping(value = "/importExcel",method = RequestMethod.POST)
     public ModelAndView importExcel(@RequestParam MultipartFile file) {
         Pair<List<String>,List<List<String>>> excelData=excelHandler.parse(file,2);
+        List<CheckResultBo> checkResultBoList= Lists.newArrayList();
         if(CollectionUtils.isNotEmpty(excelData.getSecond())) {
-            oldmanService.addOldmanByExcel(excelData);
+            checkResultBoList=oldmanService.addOldmanByExcel(excelData);
         }
         ModelAndView mv=new ModelAndView("/oldman");
+        mv.addObject("check",checkResultBoList);
         return mv;
     }
 

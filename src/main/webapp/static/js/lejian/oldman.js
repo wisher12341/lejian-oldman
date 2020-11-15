@@ -41,9 +41,9 @@ $(document).ready(function(){
                     "targets": [8], // 目标列位置，下标从0开始
                     "data": "oid", // 数据列名
                     "render": function(data, type, full) { // 返回自定义内容
-                        return "<button class='btn btn-primary' onclick=newPage("+data+",'人员详情信息','/oldmanInfo?oid="+data+"')>查看</button>" +
-                            "<button class='btn btn-primary' onclick=newPage("+data+",'编辑','/oldmanEdit?oid="+data+"')>编辑</button>" +
-                            "<button class='btn btn-primary' onclick=deleteOldman("+data+")>删除</button>";
+                        return "<button class='btn btn-primary' onclick=newPage('"+data+"','人员详情信息','/oldmanInfo?oid="+data+"')>查看</button>" +
+                            "<button class='btn btn-primary' onclick=newPage('"+data+"','编辑','/oldmanEdit?oid="+data+"')>编辑</button>" +
+                            "<button class='btn btn-primary' onclick=deleteOldman('"+data+"')>删除</button>";
                     }
                 }
             ],

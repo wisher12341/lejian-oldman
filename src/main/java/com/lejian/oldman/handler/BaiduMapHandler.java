@@ -39,6 +39,7 @@ public class BaiduMapHandler {
     /**
      *地理编码
      */
+    //todo 加缓存
     public Pair<String,String> geocoding(String address,String city){
         String url = String.format(ADDRESS_ANALYZER_URL_TEMPLATE,address,AK,city);
         GeoCodingBo geoCodingBo= SerializationUtils.gsonSerialize(HttpUtils.get(url),GeoCodingBo.class);

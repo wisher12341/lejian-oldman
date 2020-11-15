@@ -17,4 +17,6 @@ public interface LocationDao extends JpaRepository<LocationEntity, Long>{
     @Query(value = "select * from location where id in (select location_id from oldman where " +
             "if(LENGTH(?1)>0,area_country=?1,1=1) and if(LENGTH(?2)>0,area_town=?2,1=1) and if(LENGTH(?3)>0,area_village=?3,1=1)) ",nativeQuery = true)
     List<LocationEntity> getAllLocationByConfig(String areaCountry, String areaTown, String areaVillage);
+
+    List<LocationEntity> findByDescIn(List<String> descList);
 }

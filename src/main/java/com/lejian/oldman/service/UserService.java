@@ -119,4 +119,8 @@ public class UserService {
     public UserBo getUserByUsername(String username) {
         return userRepository.getByUsername(username);
     }
+
+    public void delete(Integer id) {
+        userRepository.deleteById(id);
+    }
 }
