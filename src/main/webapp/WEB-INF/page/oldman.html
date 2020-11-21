@@ -10,6 +10,7 @@
     <title>H+ 后台主题UI框架 - 数据表格</title>
 
     <link href="/static/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="/static/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
     <!--<base target="_blank">-->
     <script type="text/javascript" src="/static/js/lejian/common.js"></script>
     <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
@@ -172,10 +173,19 @@
 <script>
     $("#data_5 .input-daterange").datepicker({keyboardNavigation:!1,forceParse:!1,autoclose:!0});
 </script>
+<script src="/static/js/plugins/sweetalert/sweetalert.min.js"></script>
 <script th:inline="javascript">
     var check = [[${check}]];
-    if (check!=null && check.length>0) {
-        $("#myModal").modal("show");
+    if (check!=null) {
+        if(check.length==0){
+            swal({
+                title:"导入成功",
+                type:"success"
+            });
+        }else{
+            $("#myModal").modal("show");
+        }
     }
+
 </script>
 </html>
