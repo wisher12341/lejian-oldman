@@ -66,24 +66,24 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     }
 
     public List<OldmanBo> findByStatus(List<Integer> statusList) {
-        return oldmanDao.findByStatusIn(statusList).stream().map(this::convertEntity).collect(Collectors.toList());
+        return oldmanDao.findByStatusInAndIsDelete(statusList,0).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 
     public List<OldmanBo> findByLocationId(Integer locationId) {
-        return oldmanDao.findByLocationId(locationId).stream().map(this::convertEntity).collect(Collectors.toList());
+        return oldmanDao.findByLocationIdAndIsDelete(locationId,0).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 
     public OldmanBo findByOid(String oid) {
-        return convertEntity(oldmanDao.findByOid(oid));
+        return convertEntity(oldmanDao.findByOidAndIsDelete(oid,0));
     }
 
     public List<OldmanBo> findByFuzzyName(String value) {
-        return oldmanDao.findByNameLike(value).stream().map(this::convertEntity).collect(Collectors.toList());
+        return oldmanDao.findByNameLikeAndIsDelete(value,0).stream().map(this::convertEntity).collect(Collectors.toList());
 
     }
 
     public OldmanBo findByName(String name) {
-        return convertEntity(oldmanDao.findByName(name));
+        return convertEntity(oldmanDao.findByNameAndIsDelete(name,0));
     }
 
     @Transactional
@@ -92,22 +92,22 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     }
 
     public OldmanBo findByCareGatewayId(Integer gatewayId) {
-        return convertEntity(oldmanDao.findByCareGatewayId(gatewayId));
+        return convertEntity(oldmanDao.findByCareGatewayIdAndIsDelete(gatewayId,0));
     }
 
     public Long countByStatus(Integer status) {
-        return oldmanDao.countByStatus(status);
+        return oldmanDao.countByStatusAndIsDelete(status,0);
     }
 
 
     public Map<String,Long> getGroupCount(String groupFieldName, Map<String, String> where) {
         try {
             Map<String,Long> map= Maps.newHashMap();
-            StringBuilder whereCase=new StringBuilder("");
+            StringBuilder whereCase=new StringBuilder("where is_delete=0 ");
             if(MapUtils.isNotEmpty(where)){
                 Iterator iterator= where.keySet().iterator();
                 String key= (String) iterator.next();
-                whereCase.append("where ").append(key).append("='").append(where.get(key)).append("'");
+                whereCase.append("and ").append(key).append("='").append(where.get(key)).append("'");
                 while (iterator.hasNext()){
                     whereCase.append(" and ");
                     key= (String) iterator.next();
@@ -146,7 +146,7 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     }
 
     public List<OldmanBo> getByOids(List<String> oidList) {
-        return oldmanDao.findByOidIn(oidList).stream().map(this::convertEntity).collect(Collectors.toList());
+        return oldmanDao.findByOidInAndIsDelete(oidList,1).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 
     @Transactional
@@ -178,7 +178,7 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     public List<OldmanBo> getBirthdayOldman(String date,String whereCase) {
         try {
             List<OldmanEntity> oldmanEntityList= Lists.newArrayList();
-            String sql = "select * from oldman where birthday like '%"+date+"%'";
+            String sql = "select * from oldman where birthday like '%"+date+"%' and is_delete=0";
             if (StringUtils.isNotBlank(whereCase)){
                 sql+=" and "+whereCase;
             }
@@ -205,7 +205,7 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
 
     public Long getBirthdayOldmanCount(String birthdayLike,String whereCase) {
         try {
-            String sql = "select count(1) from oldman where birthday like '%"+birthdayLike+"%'";
+            String sql = "select count(1) from oldman where birthday like '%"+birthdayLike+"%' and is_delete=0 ";
             if (StringUtils.isNotBlank(whereCase)){
                 sql+=" and "+whereCase;
             }

@@ -69,7 +69,7 @@ public class CareAlarmRecordRepository extends AbstractSpecificationRepository<C
                 areaWhere+=" area_country='"+areaCountry+"' and ";
             }
             if(StringUtils.isNotBlank(areaWhere)) {
-                areaWhere += " 1=1 ";
+                areaWhere += " is_delete=0 ";
             }
 
             String sql ="";

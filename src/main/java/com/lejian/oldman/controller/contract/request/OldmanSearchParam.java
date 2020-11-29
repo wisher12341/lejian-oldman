@@ -48,10 +48,12 @@ public class OldmanSearchParam {
     private String equipType;
 
     public static JpaSpecBo convert(OldmanSearchParam oldmanSearchParam){
-        if(oldmanSearchParam == null){
-            return new JpaSpecBo();
-        }
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        jpaSpecBo.getEqualMap().put("isDelete",0);
+        if(oldmanSearchParam == null){
+            return jpaSpecBo;
+        }
+
         if(StringUtils.isNotBlank(oldmanSearchParam.getOid())) {
             jpaSpecBo.getEqualMap().put("oid", oldmanSearchParam.getOid());
         }
@@ -146,7 +148,7 @@ public class OldmanSearchParam {
             where+=" area_country='"+getAreaCountry()+"' and ";
         }
 
-        where+=" 1=1 ";
+        where+=" is_delete=0 ";
 
         return where;
     }
