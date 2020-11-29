@@ -176,7 +176,15 @@ function birthdayOldman() {
         url: "/oldman/getBirthdayOldman",
         type: 'post',
         dataType: 'json',
-        data :JSON.stringify({"date":new Date().Format("MM-dd")}),
+        data :JSON.stringify({
+            "date":new Date().Format("MM-dd"),
+            "oldmanSearchParam": {
+                "areaCustomOne":areaCustomOne,
+                "areaCountry":areaCountry,
+                "areaTown":areaTown,
+                "areaVillage":areaVillage
+            },
+        }),
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
             var oldmanList = result.oldmanVoList;

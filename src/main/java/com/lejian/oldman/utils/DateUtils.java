@@ -1,9 +1,12 @@
 package com.lejian.oldman.utils;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public final class DateUtils {
 
@@ -14,6 +17,7 @@ public final class DateUtils {
 
     public final static DateTimeFormatter YYMMDDHHMMSS = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     public final static DateTimeFormatter YYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
+    public final static DateTimeFormatter YY_MM_DD = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
     /**
@@ -80,5 +84,22 @@ public final class DateUtils {
 
     public static LocalDate stringToLocalDate(String date, DateTimeFormatter dateTimeFormatter) {
         return LocalDate.parse(date, dateTimeFormatter);
+    }
+
+    /**
+     * 日期校验
+     * @param format
+     * @param data
+     * @return
+     */
+    public static boolean isCorrect(String format, String data) {
+        DateFormat formatter = new SimpleDateFormat(format);
+        formatter.setLenient(false);
+        try {
+            formatter.parse(data);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

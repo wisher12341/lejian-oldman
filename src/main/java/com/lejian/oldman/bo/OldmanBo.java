@@ -68,7 +68,9 @@ public class OldmanBo {
         oldmanVo.setAge(DateUtils.birthdayToAge(oldmanBo.getBirthday()));
         oldmanVo.setZodiac(DateUtils.getZodiac(oldmanBo.getBirthday()));
         oldmanVo.setConstellation(DateUtils.getConstellation(oldmanBo.getBirthday()));
-        oldmanVo.setCreateTime(oldmanBo.getCreateTime().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:MM:SS")));
+        if(oldmanBo.getCreateTime()!=null) {
+            oldmanVo.setCreateTime(oldmanBo.getCreateTime().toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:MM:SS")));
+        }
         return oldmanVo;
     }
 }

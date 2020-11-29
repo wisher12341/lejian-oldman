@@ -175,10 +175,13 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         return Maps.newHashMap();
     }
 
-    public List<OldmanBo> getBirthdayOldman(String date) {
+    public List<OldmanBo> getBirthdayOldman(String date,String whereCase) {
         try {
             List<OldmanEntity> oldmanEntityList= Lists.newArrayList();
             String sql = "select * from oldman where birthday like '%"+date+"%'";
+            if (StringUtils.isNotBlank(whereCase)){
+                sql+=" and "+whereCase;
+            }
             Query query =entityManager.createNativeQuery(sql);
             query.getResultList().forEach(object->{
                 Object[] cells = (Object[]) object;

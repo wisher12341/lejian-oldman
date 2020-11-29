@@ -119,8 +119,9 @@ function deleteOldman(oid) {
 
 
 function searchReset() {
-    $("#searchDiv input").val("");
+    $("#searchDiv input[type!='button']").val("");
     $("#searchDiv select option:first").prop("selected", 'selected');
+    table.fnFilter();
 }
 
 /**

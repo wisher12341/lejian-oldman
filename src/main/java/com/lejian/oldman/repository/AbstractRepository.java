@@ -1,5 +1,6 @@
 package com.lejian.oldman.repository;
 
+import com.lejian.oldman.bo.ChxBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.utils.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -127,5 +128,10 @@ public abstract class AbstractRepository<Bo,Entity> {
 
     public void deleteById(Integer id) {
         getDao().deleteById(id);
+    }
+
+    public void delete(Bo bo) {
+        Entity entity=convertBo(bo);
+        getDao().delete(entity);
     }
 }

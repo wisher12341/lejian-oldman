@@ -76,6 +76,23 @@ public class PageController {
     }
 
     @BackUserAuth
+    @GetMapping("/chx")
+    public ModelAndView chx(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/chx");
+        return mv;
+    }
+
+
+    @BackUserAuth
+    @GetMapping("/chxEdit")
+    public ModelAndView chxEdit(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/chx_add_edit");
+        return mv;
+    }
+
+    @BackUserAuth
     @GetMapping("/main")
     public ModelAndView main(){
         ModelAndView mv = new ModelAndView();

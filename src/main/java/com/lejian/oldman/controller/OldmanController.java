@@ -167,7 +167,7 @@ public class OldmanController {
     @RequestMapping("/getBirthdayOldman")
     public GetOldmanListResponse getBirthdayOldman(@RequestBody GetBirthdayOldmanRequest request){
         GetOldmanListResponse response=new GetOldmanListResponse();
-        response.setOldmanVoList(oldmanService.getBirthdayOldman(request.getDate()));
+        response.setOldmanVoList(oldmanService.getBirthdayOldman(request.getDate(),request.getOldmanSearchParam()));
         return response;
     }
 

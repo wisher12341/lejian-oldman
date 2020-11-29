@@ -174,8 +174,8 @@ public class OldmanService {
         return oldmanRepository.countWithSpec(OldmanSearchParam.convert(oldmanSearchParam));
     }
 
-    public List<OldmanVo> getBirthdayOldman(String date) {
-        return oldmanRepository.getBirthdayOldman(date).stream().map(OldmanBo::createVo).collect(Collectors.toList());
+    public List<OldmanVo> getBirthdayOldman(String date, OldmanSearchParam oldmanSearchParam) {
+        return oldmanRepository.getBirthdayOldman(date,oldmanSearchParam.getSql()).stream().map(OldmanBo::createVo).collect(Collectors.toList());
     }
 
     public Long getBirthdayOldmanCount(String birthdayLike, OldmanSearchParam oldmanSearchParam) {
@@ -270,7 +270,6 @@ public class OldmanService {
 
         supplement(oldmanBoList);
 
-        //todo 验证bo数据
         // left 添加 right更新
         Pair<List<OldmanBo>,List<OldmanBo>> pair = classifyDbType(oldmanBoList);
         //todo 并非真正的 batch
@@ -373,7 +372,10 @@ public class OldmanService {
     }
 
     public void editOldman(OldmanParam oldmanParam) {
-        oldmanRepository.dynamicUpdate(convert(oldmanParam),"oid");
+        OldmanBo oldmanBo=new OldmanBo();
+        BeanUtils.copyProperties(oldmanParam,oldmanBo);
+        oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanParam.getIdCard().substring(6,14),YYMMDD));
+        oldmanRepository.dynamicUpdate(oldmanBo,"oid");
     }
 
     public Map<String,Long> getOldmanAreaGroupCount(String areaCountry, String areaTown, String areaVillage) {
@@ -415,6 +417,13 @@ public class OldmanService {
             for(int i=0;i<oldmanExcelExportEnums.length;i++){
                 title[i]=oldmanExcelExportEnums[i].getColumnName();
             }
+            if (StringUtils.isNotBlank(oldmanSearchParam.getCreateTimeStart())){
+                oldmanSearchParam.setCreateTimeStart(oldmanSearchParam.getCreateTimeStart()+" 00:00:00");
+            }
+            if (StringUtils.isNotBlank(oldmanSearchParam.getCreateTimeEnd())){
+                oldmanSearchParam.setCreateTimeEnd(oldmanSearchParam.getCreateTimeEnd()+" 00:00:00");
+            }
+
             List<OldmanVo> oldmanVoList = oldmanRepository.findWithSpec(OldmanSearchParam.convert(oldmanSearchParam)).stream().map(OldmanBo::createVo).collect(Collectors.toList());
             String[][] content = new String[oldmanVoList.size()][title.length];
             for (int i = 0; i < oldmanVoList.size(); i++) {

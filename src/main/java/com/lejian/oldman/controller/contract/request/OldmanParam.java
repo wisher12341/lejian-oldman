@@ -30,6 +30,6 @@ public class OldmanParam {
     private Integer cameraId;
     private Integer xjbId;
     private Integer family;
-//    private String serviceType;
+    private Integer serviceStatus;
 
 }

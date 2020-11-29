@@ -44,6 +44,7 @@ public enum ComponentRespCode implements IRespCode {
     NULL_CHECK("701","不能为空"),
     ENUM_CHECK("702","枚举数据不匹配"),
     LOCATION_CHECK("703","不能识别坐标"),
+    DATE_CHECK("704","日期格式不对"),
     ;
 
     private String code;
