@@ -45,4 +45,12 @@ public class ChxRepository extends AbstractSpecificationRepository<ChxBo,ChxEnti
     public List<ChxBo> getByOids(List<String> oidList) {
         return chxDao.findByOidIn(oidList).stream().map(this::convertEntity).collect(Collectors.toList());
     }
+
+    public ChxBo getByPkIdAndIsDelete(Integer id) {
+        return convertEntity(chxDao.findByIdAndIsDelete(id,0));
+    }
+
+    public void logicDeleteByOid(String oid) {
+        chxDao.logicDeleteByOid(oid);
+    }
 }

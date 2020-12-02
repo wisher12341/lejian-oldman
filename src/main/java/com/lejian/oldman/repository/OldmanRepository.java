@@ -145,8 +145,13 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         return oldmanDao.getEquipCountByArea(areaCustomOne,areaVillage,areaTown,areaCountry);
     }
 
+    /**
+     * 获取全部的老人（包括被删除的）
+     * @param oidList
+     * @return
+     */
     public List<OldmanBo> getByOids(List<String> oidList) {
-        return oldmanDao.findByOidInAndIsDelete(oidList,1).stream().map(this::convertEntity).collect(Collectors.toList());
+        return oldmanDao.findByOidIn(oidList).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 
     @Transactional

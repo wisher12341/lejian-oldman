@@ -1,5 +1,11 @@
 var table;
+var isDeadline;
 $(document).ready(function(){
+    isDeadline=getQueryVariable("isDeadline");
+    if(isDeadline=="true"){
+        isDeadline=true;
+    }
+
     table =$(".dataTables-example").dataTable(
         {
             "sPaginationType": "full_numbers",
@@ -49,7 +55,11 @@ $(document).ready(function(){
                 "pageParam": {
                     "pageNo": aoData.iDisplayStart / aoData.iDisplayLength,
                     "pageSize": aoData.iDisplayLength
+                },
+                "chxParam":{
+                    "isDeadline":isDeadline
                 }
+
             }),
             type: 'post',
             dataType: 'json',

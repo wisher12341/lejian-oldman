@@ -46,7 +46,6 @@
                 <div class="ibox-content">
                     <div class="row">
                         <div class="col-sm-12">
-                            <!--<button class='btn btn-primary' onclick=newPage(1,'添加老人','/oldmanAdd')>添加</button>-->
                             <form action="/chx/importExcel" method="post" enctype="multipart/form-data" id="importForm" style="display: inline">
                                 <input type="button" style="display:inline" class="btn btn-primary" onclick="$('#formFile').trigger('click');" value="导入">
                                 <input type="file" name="file" onchange="$('#importForm').submit()" id="formFile" style="display:none">

@@ -134,4 +134,24 @@ public abstract class AbstractRepository<Bo,Entity> {
         Entity entity=convertBo(bo);
         getDao().delete(entity);
     }
+
+    /**
+     * 逻辑删除
+     * @param id
+     */
+    @Transactional
+    public void logicDeleteById(Integer id,String tableName){
+        try {
+            String sqlFormat = "update %s set is_delete=1 where id='%s'";
+
+            String sql = String.format(sqlFormat,
+                    tableName,id);
+
+            Query query =entityManager.createNativeQuery(sql);
+            query.executeUpdate();
+
+        }catch (Exception e){
+            REPOSITORY_ERROR.doThrowException("logicDeleteById,"+this.getClass().getSimpleName(),e);
+        }
+    }
 }

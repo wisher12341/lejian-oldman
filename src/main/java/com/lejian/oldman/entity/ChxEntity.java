@@ -24,6 +24,8 @@ public class ChxEntity {
     private LocalDate pushDate;
     @Column
     private LocalDate deadline;
+    @Column(name = "is_delete")
+    private Integer isDelete;
     @Column(name = "create_time")
     private Timestamp createTime;
     @Column(name = "datachange_time")

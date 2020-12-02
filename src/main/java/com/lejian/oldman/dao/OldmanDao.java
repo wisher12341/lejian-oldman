@@ -41,7 +41,7 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
             "(select count(xjb_id)  from oldman  where if(LENGTH(?1)>0,area_custom_one=?1,if(LENGTH(?2)>0,area_village=?2,if(LENGTH(?3)>0,area_town=?3,if(LENGTH(?4)>0,area_country=?4,1=1)))) and xjb_id!=0 and is_delete=0)",nativeQuery = true)
     List<Long> getEquipCountByArea(String areaCustomOne,String areaVillage,String areaTown,String areaCountry);
 
-    List<OldmanEntity> findByOidInAndIsDelete(List<String> oidList,Integer delete);
+    List<OldmanEntity> findByOidIn(List<String> oidList);
 
     @Modifying
     @Query(value = "update oldman set status=?2 where location_id=?1 and is_delete=0",nativeQuery = true)

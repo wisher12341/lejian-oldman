@@ -2,6 +2,7 @@ package com.lejian.oldman.service;
 
 import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.ChxBo;
+import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.check.CheckProcessor;
 import com.lejian.oldman.check.bo.CheckResultBo;
@@ -51,12 +52,22 @@ public class ChxService {
     private CheckProcessor checkProcessor;
 
 
-    public Long getCount() {
-        return repository.countWithSpec(null);
+    public Long getCount(ChxParam chxParam) {
+        JpaSpecBo jpaSpecBo=new JpaSpecBo();
+        jpaSpecBo.getEqualMap().put("isDelete",0);
+        if (chxParam.getIsDeadline()!=null){
+            jpaSpecBo.getEqualMap().put("deadline",LocalDate.now());
+        }
+        return repository.countWithSpec(jpaSpecBo);
     }
 
-    public List<ChxVo> getChxByPage(PageParam pageParam) {
-        List<ChxBo> chxBoList= repository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),null);
+    public List<ChxVo> getChxByPage(ChxParam chxParam, PageParam pageParam) {
+        JpaSpecBo jpaSpecBo=new JpaSpecBo();
+        jpaSpecBo.getEqualMap().put("isDelete",0);
+        if (chxParam.getIsDeadline()!=null){
+            jpaSpecBo.getEqualMap().put("deadline",LocalDate.now());
+        }
+        List<ChxBo> chxBoList= repository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),jpaSpecBo);
         List<String> oidList=chxBoList.stream().map(ChxBo::getOid).collect(Collectors.toList());
         Map<String,OldmanBo> oldmanBoMap= oldmanRepository.getByOids(oidList).stream().collect(Collectors.toMap(OldmanBo::getOid, Function.identity()));
         return chxBoList.stream().map(item->convert(item,oldmanBoMap.get(item.getOid()))).filter(Objects::nonNull).collect(Collectors.toList());
@@ -84,7 +95,7 @@ public class ChxService {
     }
 
     public void delete(Integer id) {
-        repository.deleteById(id);
+        repository.logicDeleteById(id,"chx");
     }
 
     @Transactional
@@ -167,6 +178,7 @@ public class ChxService {
         chxBoList.forEach(bo->{
             if(existChxList.containsKey(bo.getOid())){
                 bo.setId(existChxList.get(bo.getOid()).getId());
+                bo.setIsDelete(0);
                 update.add(bo);
             }else{
                 add.add(bo);
@@ -177,7 +189,7 @@ public class ChxService {
     }
 
     public ChxVo getChxById(Integer id) {
-        return convert(repository.getByPkId(id));
+        return convert(repository.getByPkIdAndIsDelete(id));
     }
 
     private ChxVo convert(ChxBo chxBo) {
@@ -187,5 +199,13 @@ public class ChxService {
         chxVo.setDeadline(chxBo.getDeadline().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         chxVo.setOid(chxBo.getOid());
         return chxVo;
+    }
+
+
+    public Long getDeadLineCount() {
+        JpaSpecBo jpaSpecBo=new JpaSpecBo();
+        jpaSpecBo.getEqualMap().put("isDelete",0);
+        jpaSpecBo.getEqualMap().put("deadline",LocalDate.now());
+        return repository.countWithSpec(jpaSpecBo);
     }
 }

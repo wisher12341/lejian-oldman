@@ -37,8 +37,8 @@ public class ChxController {
     @RequestMapping("/getChxByPage")
     public GetChxByPageResponse getChxByPage(@RequestBody GetChxByPageRequest request){
         GetChxByPageResponse response = new GetChxByPageResponse();
-        response.setChxVoList(service.getChxByPage(request.getPageParam()));
-        response.setCount(service.getCount());
+        response.setChxVoList(service.getChxByPage(request.getChxParam(),request.getPageParam()));
+        response.setCount(service.getCount(request.getChxParam()));
         return response;
     }
 
@@ -73,5 +73,16 @@ public class ChxController {
         ModelAndView mv=new ModelAndView("/chx");
         mv.addObject("check",checkResultBoList);
         return mv;
+    }
+
+    /**
+     * 获取 当前到 截止的老人
+     * @return
+     */
+    @RequestMapping(value = "/deadlineCount")
+    public GetChxByPageResponse deadlineCount(){
+        GetChxByPageResponse response=new GetChxByPageResponse();
+        response.setCount(service.getDeadLineCount());
+        return response;
     }
 }

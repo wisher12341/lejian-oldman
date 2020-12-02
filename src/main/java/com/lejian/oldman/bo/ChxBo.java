@@ -16,6 +16,6 @@ public class ChxBo {
     private String oid;
     private LocalDate pushDate;
     private LocalDate deadline;
-
+    private Integer IsDelete;
 
 }

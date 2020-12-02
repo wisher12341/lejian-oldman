@@ -14,6 +14,7 @@ import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.*;
 import com.lejian.oldman.handler.BaiduMapHandler;
 import com.lejian.oldman.repository.CareAlarmRecordRepository;
+import com.lejian.oldman.repository.ChxRepository;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
@@ -60,6 +61,9 @@ public class OldmanService {
 
     @Autowired
     private BaiduMapHandler baiduMapHandler;
+
+    @Autowired
+    private ChxRepository chxRepository;
 
     private static final int PART_NUM=100;
 
@@ -344,6 +348,7 @@ public class OldmanService {
             item.forEach(oldman->{
                 if(existOldmanMap.containsKey(oldman.getOid())){
                     oldman.setId(existOldmanMap.get(oldman.getOid()).getId());
+                    oldman.setIsDelete(0);
                     updateList.add(oldman);
                 } else{
                     addList.add(oldman);
@@ -401,8 +406,10 @@ public class OldmanService {
         return this.getGroupCount(groupField,where);
     }
 
+    @Transactional
     public void deleteOldman(String oid) {
         oldmanRepository.deleteByOid(oid);
+        chxRepository.logicDeleteByOid(oid);
     }
 
     /**

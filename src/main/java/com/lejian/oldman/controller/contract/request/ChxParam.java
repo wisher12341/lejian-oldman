@@ -9,4 +9,5 @@ public class ChxParam {
     private Integer id;
     private String pushDate;
     private String deadline;
+    private Boolean isDeadline;
 }

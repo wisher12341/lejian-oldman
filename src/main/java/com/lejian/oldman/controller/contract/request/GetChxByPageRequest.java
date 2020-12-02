@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class GetChxByPageRequest {
     private PageParam pageParam;
+    private ChxParam chxParam;
 
 }
