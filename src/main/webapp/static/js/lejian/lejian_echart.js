@@ -319,3 +319,80 @@ function createPieChartWithLegend(title,data,obj,callback,lengend) {
     pie.setOption(option,true);
 
 }
+
+/**
+ * 空心的 饼图 数值显示在中间
+ */
+function createEmptyPie(num,obj) {
+    var option = {
+        series: [
+            {
+                type : 'pie',
+                hoverAnimation: false,
+                center : ['45%', '5 0%'],
+                radius: ['50%', '70%'],
+                label: { //  饼图图形上的文本标签
+                    normal: { // normal 是图形在默认状态下的样式
+                        show: true,
+                        position: 'center',
+                        color: '#000',
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                        formatter: '{c}' // {b}:数据名； {c}：数据值； {d}：百分比，可以自定义显示内容，
+                    }
+                },
+                data : [
+                    {
+                        name:'GoogleMaps',
+                        value: num,
+                        itemStyle : {
+                            normal: {
+                                color: '#2866FF',
+                                label: {
+                                    normal: {show: true}
+                                }
+                            }
+                        }
+                    },
+                    {
+                        name:'other',
+                        value:100 - num,
+                        itemStyle:{
+                            normal: {
+                                color: "#aaa",
+                                label: {
+                                    normal: {show: false}
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    };
+    var pie= echarts.init(obj);
+    pie.setOption(option);
+
+}
+
+
+/**
+ * sourceId 为null 获取父类的元素
+ * @param sourceId
+ * @param targetId
+ * @param heightP
+ * @param withP
+ */
+function createHeightAndWidthFromSourceDoc(sourceId,targetId,heightP,withP) {
+    var doc;
+    if(sourceId==null){
+        doc=document.getElementById(targetId).parentNode;
+    }else{
+        doc=document.getElementById(sourceId);
+    }
+
+    var width = doc.offsetWidth*withP;
+    var height = doc.offsetHeight*heightP;
+    $("#"+targetId).css("width",width).css("height",height);
+
+}

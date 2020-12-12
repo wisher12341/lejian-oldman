@@ -206,26 +206,6 @@ function birthdayOldman() {
 
 }
 
-/**
- * sourceId 为null 获取父类的元素
- * @param sourceId
- * @param targetId
- * @param heightP
- * @param withP
- */
-function createHeightAndWidthFromSourceDoc(sourceId,targetId,heightP,withP) {
-    var doc;
-    if(sourceId==null){
-        doc=document.getElementById(targetId).parentNode;
-    }else{
-        doc=document.getElementById(sourceId);
-    }
-
-    var width = doc.offsetWidth*withP;
-    var height = doc.offsetHeight*heightP;
-    $("#"+targetId).css("width",width).css("height",height);
-
-}
 
 function secondceng(obj,type) {
 
