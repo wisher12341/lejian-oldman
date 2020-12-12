@@ -1,4 +1,6 @@
 HELP.md
+mvnw
+mvnw.cmd
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**
@@ -13,6 +15,7 @@ target/
 .springBeans
 .sts4-cache
 .properties
+.txt
 
 ### IntelliJ IDEA ###
 .idea
@@ -20,6 +23,7 @@ target/
 *.iml
 *.ipr
 *.properties
+*.txt
 
 ### NetBeans ###
 /nbproject/private/
