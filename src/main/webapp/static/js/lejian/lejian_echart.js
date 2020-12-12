@@ -329,40 +329,44 @@ function createEmptyPie(num,obj) {
             {
                 type : 'pie',
                 hoverAnimation: false,
-                center : ['45%', '5 0%'],
+                center : "center",
                 radius: ['50%', '70%'],
-                label: { //  饼图图形上的文本标签
-                    normal: { // normal 是图形在默认状态下的样式
-                        show: true,
-                        position: 'center',
-                        color: '#000',
-                        fontSize: 16,
-                        fontWeight: 'bold',
-                        formatter: '{c}' // {b}:数据名； {c}：数据值； {d}：百分比，可以自定义显示内容，
-                    }
-                },
                 data : [
                     {
-                        name:'GoogleMaps',
+                        name:'num',
                         value: num,
                         itemStyle : {
                             normal: {
-                                color: '#2866FF',
+                                color: 'rgb(228, 203, 4)',
                                 label: {
-                                    normal: {show: true}
+                                    normal: {
+                                        show: true
+                                    }
                                 }
                             }
+                        },
+                        label:{
+                            normal: { // normal 是图形在默认状态下的样式
+                                show: true,
+                                position: 'center',
+                                color: '#000',
+                                fontSize:32,
+                                fontWeight: 'bold',
+                                formatter: '{c}' // {b}:数据名； {c}：数据值； {d}：百分比，可以自定义显示内容，
+                            }
                         }
-                    },
+                    }
+                    ,
                     {
-                        name:'other',
-                        value:100 - num,
+                        value:num*2,
                         itemStyle:{
                             normal: {
-                                color: "#aaa",
-                                label: {
-                                    normal: {show: false}
-                                }
+                                color: "#edebeb"
+                            }
+                        },
+                        label: {
+                            normal: {
+                                show: false
                             }
                         }
                     }

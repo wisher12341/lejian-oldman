@@ -303,31 +303,6 @@
             }
         });
     }
-
-    $.ajax({
-        url: "/chx/deadlineCount",//这个就是请求地址对应sAjaxSource
-        type: 'post',
-        dataType: 'json',
-        contentType: "application/json;charset=UTF-8",
-        success: function (result) {
-            if(result.count!=null && result.count>0){
-                swal({
-                    title: "长护险：今天有"+result.count+"人到达截止日！",
-                    type: "warning",
-                    confirmButtonColor: "#DD6B55",
-                    confirmButtonText: "查看",
-                    closeOnConfirm: true,
-                    showCancelButton: true,
-                }, function () {
-                    swal.close();
-                    newPage('1','长护险截止','/chx?isDeadline=true');
-                })
-            }
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            // alert("status:"+XMLHttpRequest.status+",readyState:"+XMLHttpRequest.readyState+",textStatus:"+textStatus);
-        }
-    });
 </script>
 
 </body>
