@@ -1,0 +1,234 @@
+[onclick]{
+    cursor: pointer;
+}
+
+.mengceng{
+    box-shadow: inset 0px 0px 2px 0px rgb(4, 17, 25);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    height: -webkit-fill-available;
+    text-align: center;
+}
+.word{
+    color: white;
+    font-weight: bolder;
+}
+
+.bbbb{
+    display: inline-block;
+    text-align: left;
+}
+.cccc,.dddd{
+    display: inline-block;
+}
+
+/*.BMap_cpyCtrl {*/
+/*display: none;*/
+/*}*/
+/*.anchorBL {*/
+/*display: none;*/
+/*}*/
+@media only screen and ( max-width: 2000px){
+    #oldmanInfo{
+        display: none;
+        position:absolute;
+        height: 80%;
+        width: 70%;
+        z-index: 9999;
+    }
+    #workerIcon{
+        position: absolute;
+        height: 6%;
+        width: 15%;
+        z-index: 9998;
+        background-color: #0e3954;
+        opacity: 0.8;
+        color: white;
+        font-weight: bold;
+        font-size: x-large;
+        margin: 1%;
+        text-align: center;
+        padding-top: 1%;
+        border-radius: 10%;
+        right: 1.5%;
+    }
+    #timeIcon{
+        position: absolute;
+        height: 6%;
+        width: 30%;
+        z-index: 9998;
+        background-color: #0e3954;
+        opacity: 0.8;
+        color: white;
+        font-weight: bold;
+        font-size: x-large;
+        margin: 1%;
+        text-align: center;
+        padding-top: 1%;
+        border-radius: 10%;
+    }
+    #map{
+        width: 97%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        position: absolute;
+    }
+    .container{
+        width: 100%!important;
+        height: 100%;
+    }
+    .btn-primary{
+        padding:3px 6px!important;
+        margin-right: 3px;
+    }
+    #workerDiv{
+        width: 40%;
+        position: absolute;
+        z-index: 9998;
+        margin: 1%;
+        right: 1.5%;
+    }
+    #workerList{
+        border-radius: 10%;
+        margin: 1%;
+        background-color: #0e3954;
+        opacity: 0.8;
+        color: white;
+        font-weight: bold;
+        display: none;
+        width: 100%!important;
+        font-size: large;
+        text-align: center;
+    }
+    #workerList .btn-primary{
+        padding:0px 3px!important;
+        font-size: large;
+    }
+    #workerList .row{
+        margin-top: 2px;
+    }
+    .firstceng{
+        height: 11%;
+        margin-top: 1%;
+    }
+    .secondceng{
+        height: 30%;
+        margin-top: 1%;
+    }
+    .thirdceng{
+        height: 35%;
+        margin-top: 1%;
+    }
+    .fourceng{
+        height:10%;
+        margin-top: 1%;
+    }
+    .fiveceng{
+        height:45%;
+        margin-top: 1%;
+    }
+    .sixceng{
+        height:75%;
+        margin-top: 1%;
+    }
+    .w3{
+        padding-top: 1.5%;
+    }
+    .num{
+        font-size: x-large;
+        font-weight: bolder;
+        color: red;
+    }
+    ul{
+        padding:0;
+        padding-left: 3%;
+        margin:0;
+        text-align: left;
+        overflow-y: scroll;
+    }
+    li{
+        padding-top: 3%;
+        list-style: none;
+        border-bottom: 1px solid #fff;
+    }
+    #adminNumber .num{
+        margin-left: 16%;
+    }
+    .aaaa{
+        display: inline-block;
+        width: 24%;
+        text-align: center;
+    }
+    .cccc{
+        width: 70%;
+        text-align: left;
+        padding-left: 3%;
+    }
+    .dddd{
+        width: 20%;
+        text-align: right;
+    }
+    #p1{
+        margin-top: 1%;
+        height: 16%;
+
+    }
+    #secondFirst div{
+        margin-top: 2%;
+    }
+    #p2{
+        padding: 3%
+    }
+    #p3{
+        font-size: larger;display: block;
+    }
+    #totalNumber{
+        font-size: -webkit-xxx-large;display: block;
+    }
+    #p5{
+        margin-top: 2%;height: 82.5%
+    }
+    #p6{
+        text-align: center;padding: 5%;height: 100%
+    }
+    #p7{
+
+    }
+    #areaTitle1{
+        font-size: 21px;
+    }
+    #areaTitle2{
+        font-size: 28px;display: block
+    }
+    #adminNumber{
+        margin-top: 4%;height: 83%;overflow-x: hidden
+    }
+    .p7{
+        font-size: larger;display: block;
+    }
+    .p8{
+        font-size: xx-large;display: block;
+    }
+    .p9{
+        font-size: larger
+    }
+    .p11{
+        font-size: xx-large;
+    }
+    #birthdayNum{
+        font-size:  xx-large;
+    }
+    #manName{
+        font-size:medium;
+    }
+    #manList{
+        height: 80%
+    }
+    #p10{
+        text-align: left;margin-left: 3%
+    }
+    #birthdayOldmanList{
+        height: 80%
+    }
+}
