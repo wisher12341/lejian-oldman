@@ -28,7 +28,7 @@
 /*.anchorBL {*/
 /*display: none;*/
 /*}*/
-@media only screen and ( max-width: 2000px){
+@media only screen and ( max-width: 7000px){
     #oldmanInfo{
         display: none;
         position:absolute;
@@ -187,7 +187,7 @@
         font-size: -webkit-xxx-large;display: block;
     }
     #p5{
-        margin-top: 2%;height: 82.5%
+        margin-top: 2%;height: 96%
     }
     #p6{
         text-align: center;padding: 5%;height: 100%
@@ -230,5 +230,21 @@
     }
     #birthdayOldmanList{
         height: 80%
+    }
+    #visualSetting{
+        height: 3%;
+        margin-top: 0.8%;
+    }
+    .p11{
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        margin: 1px;
+        padding: 1px;
+    }
+    #p4{
+        height: 82.3%;
+        margin-top: 2%;
+    }
+    .p12{
+        color: orange !important;
     }
 }

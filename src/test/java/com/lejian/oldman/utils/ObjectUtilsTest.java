@@ -6,6 +6,7 @@ import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.vo.OldmanVo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,5 +34,11 @@ class ObjectUtilsTest {
 
         OldmanEntity oldmanEntity =ObjectUtils.convert(oldmanBo,OldmanEntity.class);
         assert oldmanEntity.getSex()==1;
+    }
+
+    @Test
+    void test(){
+        BCryptPasswordEncoder encoder =new BCryptPasswordEncoder();
+        System.out.println(encoder.encode("1234"));
     }
 }

@@ -52,10 +52,12 @@ function getConfigData() {
                 $("#areaTitle1").html(areaCountry+areaTown);
                 $("#areaTitle2").html(areaVillage);
             }
+            getVisualSetting();
             pollOldmanStatus(true);
             createAdminNumber();
             createStaticCount(true);
             createOldmanChart(true);
+
         }
     });
 }

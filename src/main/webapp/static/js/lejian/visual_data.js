@@ -8,6 +8,70 @@ var workerBeyond="";
  */
 var currentArea;
 
+function getVisualSetting() {
+    $.ajax({
+        url: "/visual/setting/getByPage",
+        type: 'post',
+        dataType: 'json',
+        data :JSON.stringify({
+            "pageParam": {
+                "pageNo": 0,
+                "pageSize": 10
+            }
+        }),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            var id = getQueryVariable("visualSettingId");
+            var data = result.visualSettingVoList;
+            for(var i=0;i<data.length;i++){
+                var text = data[i].areaVillage;
+                if (text == null || text == ''){
+                    text = data[i].areaTown;
+                }
+                if (text == null || text == ''){
+                    text = data[i].areaCountry;
+                }
+                var highlight ="";
+                if (id ==data[i].id){
+                    highlight="p12";
+                }
+                console.info(id);
+                console.info(data[i].id);
+
+                var label = $("<span class='label p11 "+highlight+"' onclick=changeVisualArea('"+data[i].id+"','"+data[i].areaCountry+"','"+data[i].areaTown+"','"+data[i].areaVillage+"','"+data[i].lng+"','"+data[i].lat+"')>"+text+"</span>");
+                $("#visualSetting").append(label);
+            }
+        }
+    });
+}
+
+function changeVisualArea(id,areaCountry,areaTown,areaVillage,lng,lat) {
+    var param={};
+    param.areaCountry=areaCountry;
+    param.areaTown=areaTown;
+    param.areaVillage=areaVillage;
+    param.lng=lng;
+    param.lat=lat;
+
+    $.ajax({
+        url: "/config/saveVarConfigData",
+        data :JSON.stringify({
+            "map":param
+        }),
+        type: 'post',
+        dataType: 'json',
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            if(result.success!==null){
+                var href = location.href.split("?")[0]+"?visualSettingId="+id;
+                window.location=href;
+            }else{
+                alert("切换失败");
+            }
+        }
+    });
+}
+
 
 function createStaticCount(sync) {
     $.ajax({
