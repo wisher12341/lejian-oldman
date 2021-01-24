@@ -35,8 +35,6 @@ function getVisualSetting() {
                 if (id ==data[i].id){
                     highlight="p12";
                 }
-                console.info(id);
-                console.info(data[i].id);
 
                 var label = $("<span class='label p11 "+highlight+"' onclick=changeVisualArea('"+data[i].id+"','"+data[i].areaCountry+"','"+data[i].areaTown+"','"+data[i].areaVillage+"','"+data[i].lng+"','"+data[i].lat+"')>"+text+"</span>");
                 $("#visualSetting").append(label);

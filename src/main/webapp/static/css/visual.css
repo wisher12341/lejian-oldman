@@ -28,7 +28,7 @@
 /*.anchorBL {*/
 /*display: none;*/
 /*}*/
-@media only screen and ( max-width: 7000px){
+@media only screen and ( max-width: 200000px){
     #oldmanInfo{
         display: none;
         position:absolute;
