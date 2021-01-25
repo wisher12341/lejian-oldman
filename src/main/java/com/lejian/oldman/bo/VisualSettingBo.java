@@ -14,5 +14,6 @@ public class VisualSettingBo {
     private String areaCountry;
     private String areaTown;
     private String areaVillage;
+    private Boolean isUsed;
 
 }

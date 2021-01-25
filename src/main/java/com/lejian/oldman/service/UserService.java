@@ -68,7 +68,7 @@ public class UserService {
         UserBo userBo=convert(userParam);
         verify(userBo);
 
-        UserBo resultBo=userRepository.save(userBo);
+        UserBo resultBo=userRepository.saveAndReturn(userBo);
         if(userBo.getRole().intValue()==UserEnum.Role.WORKER.getValue()) {
             updateWorker(resultBo, userParam.getWid());
         }

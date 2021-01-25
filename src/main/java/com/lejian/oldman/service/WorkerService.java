@@ -3,7 +3,6 @@ package com.lejian.oldman.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.*;
-import com.lejian.oldman.bussiness.config.VarConfig;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.controller.contract.request.WorkerParam;
@@ -54,6 +53,8 @@ public class WorkerService {
     private WorkerCheckinRepository workerCheckinRepository;
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private VisualSettingRepository visualSettingRepository;
 
     /**
      * 服务人员签到签出 最小的时间间隔 分钟
@@ -175,7 +176,7 @@ public class WorkerService {
      * @return
      */
     public List<WorkerCheckinBo> getWorkerLatestPositionByPage(String startTime, String endTime,PageParam pageParam) {
-        String beyond= VarConfig.getWorkerBeyond();
+        String beyond= visualSettingRepository.getWorkerBeyond();
         List<WorkerCheckinBo> latestWorkerList = workerCheckinRepository.getLatestTimeByTimeAndAreaAndPage(startTime,endTime,pageParam,beyond);
         if(CollectionUtils.isNotEmpty(latestWorkerList)) {
             return workerCheckinRepository.getAllPositionByTime(latestWorkerList);
@@ -263,7 +264,7 @@ public class WorkerService {
         for(WorkerEnum workerEnum: WorkerEnum.Type.values()){
             map.put(workerEnum.getDesc(),0L);
         }
-        List<Map<String,Object>> typeMapList=workerRepository.getTypeCountByBeyond(VarConfig.getWorkerBeyond());
+        List<Map<String,Object>> typeMapList=workerRepository.getTypeCountByBeyond(visualSettingRepository.getWorkerBeyond());
 
         typeMapList.forEach(item->{
             Integer type= (Integer) item.get("type");

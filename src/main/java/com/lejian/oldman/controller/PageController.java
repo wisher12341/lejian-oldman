@@ -139,10 +139,18 @@ public class PageController {
     }
 
     @BackAdminAuth
-    @GetMapping("/config/visual")
-    public ModelAndView configVisual(){
+    @GetMapping("/visualSetting")
+    public ModelAndView visualSetting(){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/config/visual");
+        mv.setViewName("/visual_setting");
+        return mv;
+    }
+
+    @BackAdminAuth
+    @GetMapping("/visualSettingEdit")
+    public ModelAndView visualSettingEdit(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/visual_setting_add_edit");
         return mv;
     }
 

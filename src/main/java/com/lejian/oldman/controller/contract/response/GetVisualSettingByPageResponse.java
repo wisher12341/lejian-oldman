@@ -7,7 +7,10 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class GetVisualSettingListResponse {
+public class GetVisualSettingByPageResponse {
     private List<VisualSettingVo> visualSettingVoList;
-
+    /**
+     * 总数量
+     */
+    private Long count;
 }

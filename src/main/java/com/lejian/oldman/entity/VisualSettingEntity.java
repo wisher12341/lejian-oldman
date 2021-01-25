@@ -27,5 +27,7 @@ public class VisualSettingEntity {
     private String areaTown;
     @Column(name = "area_village")
     private String areaVillage;
+    @Column(name = "is_used")
+    private Integer isUsed;
 
 }

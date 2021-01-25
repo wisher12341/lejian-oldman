@@ -6,4 +6,5 @@ import lombok.Data;
 public class PageParam {
     private Integer pageNo;
     private Integer pageSize;
+    private Boolean sort;
 }

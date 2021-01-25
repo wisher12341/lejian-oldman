@@ -10,31 +10,58 @@ $(document).ready(function(){
 
 function getConfigData() {
     $.ajax({
-        url: "/config/getMainConfigData",
+        url: "/visual/setting/getByPage",
         type: 'post',
         dataType: 'json',
+        data :JSON.stringify({
+            "pageParam": {
+                "pageNo": 0,
+                "pageSize": 10
+            }
+        }),
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
-            lng=result.map.lng;
-            lat=result.map.lat;
-            createMap(result.map.lng,result.map.lat);
+            var usedData;
+            var data = result.visualSettingVoList;
+            for(var i=0;i<data.length;i++){
+                var highlight ="";
 
-            areaCountry=result.map.areaCountry;
-            areaTown=result.map.areaTown;
-            areaVillage=result.map.areaVillage;
-            areaCustomOne=result.map.areaCustomOne;
+                if(data[i].isUsed==="是"){
+                    usedData = data[i];
+                    highlight="p12";
+                }
+                var text = data[i].areaVillage;
+                if (text == null || text == ''){
+                    text = data[i].areaTown;
+                }
+                if (text == null || text == ''){
+                    text = data[i].areaCountry;
+                }
+
+                var label = $("<span class='label p11 "+highlight+"' onclick=changeVisualArea('"+data[i].id+"')>"+text+"</span>");
+                $("#visualSetting").append(label);
+            }
+
+            lng=usedData.lng;
+            lat=usedData.lat;
+            createMap(usedData.lng,usedData.lat);
+
+            areaCountry=usedData.areaCountry;
+            areaTown=usedData.areaTown;
+            areaVillage=usedData.areaVillage;
+            areaCustomOne=usedData.areaCustomOne;
 
             if(areaCountry!==undefined &&areaCountry!==null && areaCountry!==""){
                 currentArea="areaCountry";
-                workerBeyond+=result.map.areaCountry+"-";
+                workerBeyond+=usedData.areaCountry+"-";
             }
             if(areaTown!==undefined &&areaTown!==null && areaTown!==""){
                 currentArea="areaTown";
-                workerBeyond+=result.map.areaTown+"-";
+                workerBeyond+=usedData.areaTown+"-";
             }
             if(areaVillage!==undefined &&areaVillage!==null && areaVillage!==""){
                 currentArea="areaVillage";
-                workerBeyond+=result.map.areaVillage+"-";
+                workerBeyond+=usedData.areaVillage+"-";
             }
             if(areaCustomOne!==undefined && areaCustomOne!==null && areaCustomOne!==""){
                 currentArea="areaCustomOne";
@@ -52,14 +79,13 @@ function getConfigData() {
                 $("#areaTitle1").html(areaCountry+areaTown);
                 $("#areaTitle2").html(areaVillage);
             }
-            getVisualSetting();
             pollOldmanStatus(true);
             createAdminNumber();
             createStaticCount(true);
             createOldmanChart(true);
-
         }
     });
+
 }
 
 function createMap(lng,lat) {

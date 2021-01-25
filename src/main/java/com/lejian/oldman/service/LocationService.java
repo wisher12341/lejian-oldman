@@ -5,11 +5,12 @@ import com.google.common.collect.Lists;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.bussiness.config.VarConfig;
+import com.lejian.oldman.bo.VisualSettingBo;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
+import com.lejian.oldman.repository.VisualSettingRepository;
 import com.lejian.oldman.vo.LocationVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -29,6 +30,8 @@ public class LocationService {
     private LocationRepository locationRepository;
     @Autowired
     private OldmanRepository oldmanRepository;
+    @Autowired
+    private VisualSettingRepository visualSettingRepository;
 
     /**
      * 获取 配置区域 全部位置
@@ -36,7 +39,7 @@ public class LocationService {
      * @return
      */
     public List<LocationVo> getAllLocationByConfig() {
-        List<LocationBo> locationBoList = locationRepository.getAllLocationByConfig(VarConfig.areaCountry,VarConfig.areaTown,VarConfig.areaVillage);
+        List<LocationBo> locationBoList = locationRepository.getAllLocationByConfig(visualSettingRepository.getUsed());
         Map<Integer,List<OldmanBo>> locationOldmanMap = getRedAndYellowLocation();
         return classifyLocation(locationBoList,locationOldmanMap);
     }
@@ -77,11 +80,11 @@ public class LocationService {
 
     public Pair<Long, List<LocationVo>> pollStatus(long timestamp) {
         List<LocationVo> locationVoList = Lists.newArrayList();
-
+        VisualSettingBo visualSettingBo = visualSettingRepository.getUsed();
         OldmanSearchParam oldmanSearchParam=new OldmanSearchParam();
-        oldmanSearchParam.setAreaCountry(VarConfig.areaCountry);
-        oldmanSearchParam.setAreaTown(VarConfig.areaTown);
-        oldmanSearchParam.setAreaVillage(VarConfig.areaVillage);
+        oldmanSearchParam.setAreaCountry(visualSettingBo.getAreaCountry());
+        oldmanSearchParam.setAreaTown(visualSettingBo.getAreaTown());
+        oldmanSearchParam.setAreaVillage(visualSettingBo.getAreaVillage());
 
         JpaSpecBo jpaSpecBo = OldmanSearchParam.convert(oldmanSearchParam);
         jpaSpecBo.getGreatMap().put("datachangeTime", new Timestamp(timestamp));

@@ -3,6 +3,7 @@ package com.lejian.oldman.repository;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.lejian.oldman.bo.VisualSettingBo;
 import com.lejian.oldman.dao.LocationDao;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.entity.LocationEntity;
@@ -106,8 +107,8 @@ public class LocationRepository extends AbstractRepository<LocationBo,LocationEn
         return null;
     }
 
-    public List<LocationBo> getAllLocationByConfig(String areaCountry, String areaTown, String areaVillage) {
-        return dao.getAllLocationByConfig(areaCountry,areaTown,areaVillage).stream().map(this::convertEntity).collect(Collectors.toList());
+    public List<LocationBo> getAllLocationByConfig(VisualSettingBo visualSettingBo) {
+        return dao.getAllLocationByConfig(visualSettingBo.getAreaCountry(),visualSettingBo.getAreaTown(),visualSettingBo.getAreaVillage()).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 
     /**
