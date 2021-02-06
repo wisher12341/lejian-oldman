@@ -7,4 +7,5 @@ public class PollRequest {
     private OldmanSearchParam oldmanSearchParam;
     private long timestamp;
     private String birthdayLike;
+    private long careTimeStamp;
 }

@@ -11,6 +11,7 @@ import com.lejian.oldman.enums.OldmanEnum;
 
 import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.*;
+import com.lejian.oldman.vo.CareAlarmRecordVo;
 import com.lejian.oldman.vo.LocationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -102,6 +103,12 @@ public class MainController {
         if(pair!=null) {
             response.setLocationVoList(pair.getSecond());
             response.setTimestamp(pair.getFirst());
+        }
+
+        Pair<Long,List<CareAlarmRecordVo>> carePair = careAlarmRecordService.getByTime(request.getCareTimeStamp());
+        if(carePair!=null) {
+            response.setCareAlarmRecordVoList(carePair.getSecond());
+            response.setCareTimestamp(carePair.getFirst());
         }
         return response;
     }

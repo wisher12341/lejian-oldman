@@ -78,7 +78,7 @@ public class LocationService {
         return oldmanBoList.stream().collect(Collectors.groupingBy(OldmanBo::getLocationId));
     }
 
-    public Pair<Long, List<LocationVo>> pollStatus(long timestamp) {
+    public Pair<Long, List<LocationVo>>     pollStatus(long timestamp) {
         List<LocationVo> locationVoList = Lists.newArrayList();
         VisualSettingBo visualSettingBo = visualSettingRepository.getUsed();
         OldmanSearchParam oldmanSearchParam=new OldmanSearchParam();

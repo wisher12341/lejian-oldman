@@ -3,6 +3,7 @@ package com.lejian.oldman.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
+import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.controller.contract.request.GetAlarmByPageRequest;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
@@ -13,14 +14,18 @@ import com.lejian.oldman.repository.CareAlarmRecordRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.vo.CareAlarmRecordVo;
+import com.lejian.oldman.vo.LocationVo;
 import com.lejian.oldman.vo.OldmanVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -90,6 +95,7 @@ public class CareAlarmRecordService {
             OldmanBo oldmanBo=oldmanBoMap.get(careAlarmRecordBo.getOid());
             careAlarmRecordVo.setOldmanVo(OldmanBo.createVo(oldmanBo));
         }
+        careAlarmRecordVo.setType(BusinessEnum.find(careAlarmRecordBo.getType(),CareSystemEnum.AlarmType.class).getDesc());
         return careAlarmRecordVo;
     }
 
@@ -105,5 +111,18 @@ public class CareAlarmRecordService {
 
     public Long getCount(OldmanSearchParam oldmanSearchParam) {
         return careAlarmRecordRepository.getCount(oldmanSearchParam);
+    }
+
+    public Pair<Long, List<CareAlarmRecordVo>> getByTime(long careTimeStamp) {
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        jpaSpecBo.getGreatMap().put("createTime", new Timestamp(careTimeStamp));
+        List<CareAlarmRecordBo> careAlarmRecordBoList = careAlarmRecordRepository.findWithSpec(jpaSpecBo);
+        if(CollectionUtils.isNotEmpty(careAlarmRecordBoList)){
+            Map<String,OldmanBo> oldmanBoMap=oldmanRepository.getByOids(careAlarmRecordBoList.stream().map(CareAlarmRecordBo::getOid).distinct().collect(Collectors.toList())).stream().collect(Collectors.toMap(OldmanBo::getOid, Function.identity()));
+            CareAlarmRecordBo careAlarmRecordBo=careAlarmRecordBoList.stream().max(Comparator.comparing(CareAlarmRecordBo::getCreateTime)).get();
+            return Pair.of(careAlarmRecordBo.getCreateTime().getTime(),careAlarmRecordBoList.stream().map(item->convert(item,oldmanBoMap)).collect(Collectors.toList()));
+
+        }
+        return null;
     }
 }

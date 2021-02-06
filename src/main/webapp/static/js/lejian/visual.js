@@ -1,5 +1,7 @@
 var map;
 var timestamp=new Date().getTime();
+var careTimestamp=new Date().getTime();
+
 var interval;
 var time;
 
@@ -93,7 +95,9 @@ function createMap(lng,lat) {
     map.centerAndZoom(new BMap.Point(lng,lat), 15);
     map.setMapStyle({style:'midnight'});
     map.enableScrollWheelZoom(true);
-
+    map.enablePinchToZoom(true);
+    var opts = {anchor: BMAP_ANCHOR_BOTTOM_RIGHT};
+    map.addControl(new BMap.NavigationControl(opts));
     $.ajax({
         url: "/location/getAllLocationByConfig",
         type: 'post',
@@ -122,6 +126,7 @@ function pollOldmanStatus(sync) {
         dataType: 'json',
         data :JSON.stringify({
             "timestamp": timestamp,
+            "careTimeStamp":careTimestamp,
             "oldmanSearchParam":{
                 "areaCustomOne":areaCustomOne,
                 "areaCountry":areaCountry,
@@ -137,6 +142,7 @@ function pollOldmanStatus(sync) {
             $("#warnNum").html(result.alarmCount);
             var positions = result.locationVoList;
             var allOverlay = map.getOverlays();
+            var records= result.careAlarmRecordVoList;
             if(positions!=null && positions.length>0){
                 timestamp=result.timestamp;
                 for(var i=0;i<positions.length;i++){
@@ -155,6 +161,14 @@ function pollOldmanStatus(sync) {
                             }
                         }
                     }
+                }
+            }
+            if(records!=null && records.length>0){
+                careTimestamp=result.careTimestamp;
+                for(var i=0;i<records.length;i++){
+                    var record=records[i];
+                    var message = record.oldmanVo.name+"："+record.type;
+                    showToast(message);
                 }
             }
         }
