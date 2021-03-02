@@ -1,9 +1,11 @@
 package com.lejian.oldman.controller;
 
+import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.GetWorkerListResponse;
 import com.lejian.oldman.controller.contract.response.GetWorkerResponse;
+import com.lejian.oldman.controller.contract.response.MapResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;
 import com.lejian.oldman.handler.ExcelHandler;
 import com.lejian.oldman.repository.UserRepository;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
+import java.util.Map;
 
 import static com.lejian.oldman.common.ComponentRespCode.ACCOUNT_ERROR;
 
@@ -140,6 +143,19 @@ public class WorkerController {
     public ResultResponse delete(@RequestBody DeleteWorkerByIdRequest request){
         ResultResponse response=new ResultResponse();
         workerService.deleteWorker(request.getId());
+        return response;
+    }
+
+
+    /**
+     * 获取某机构的老人数量
+     */
+    @RequestMapping("/getCount")
+    public MapResponse getCount(@RequestBody GetWorkerRequest request){
+        MapResponse response = new MapResponse();
+        Map<String,String> map = Maps.newHashMap();
+        map.put("count",String.valueOf(workerService.getCount(request.getWorkerSearchParam())));
+        response.setMap(map);
         return response;
     }
 }

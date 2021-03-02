@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 public class WorkerSearchParam {
     private Integer type;
     private String beyond;
+    private Integer organId;
 
     public static JpaSpecBo convert(WorkerSearchParam param) {
         if(param==null){
@@ -19,6 +20,10 @@ public class WorkerSearchParam {
         }
         if(StringUtils.isNotBlank(param.getBeyond())){
             jpaSpecBo.getLikeMap().put("beyond","%"+param.getBeyond()+"%");
+
+        }
+        if(param.getOrganId()!=null){
+            jpaSpecBo.getLikeMap().put("organId",param.getOrganId());
 
         }
         return jpaSpecBo;

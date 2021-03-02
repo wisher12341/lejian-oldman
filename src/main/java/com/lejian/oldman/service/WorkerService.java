@@ -379,4 +379,9 @@ public class WorkerService {
     public void deleteWorker(Integer id) {
         workerRepository.deleteById(id);
     }
+
+    public Long getCount(WorkerSearchParam workerSearchParam) {
+        JpaSpecBo jpaSpecBo = WorkerSearchParam.convert(workerSearchParam);
+        return workerRepository.countWithSpec(jpaSpecBo);
+    }
 }
