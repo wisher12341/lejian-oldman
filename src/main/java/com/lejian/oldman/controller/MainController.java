@@ -42,6 +42,8 @@ public class MainController {
     private LocationService locationService;
     @Autowired
     private WorkerService workerService;
+    @Autowired
+    private OrganService organService;
 
 
 //    /**
@@ -89,13 +91,24 @@ public class MainController {
         OldmanSearchParam oldmanSearchParam=new OldmanSearchParam();
         oldmanSearchParam.setStatus(OldmanEnum.Status.YELLOW.getValue());
         /**
-         * 以下三个需要跟着 行政区域变更 而变化，所以area取自request
+         * 以下需要跟着 行政区域变更 而变化，所以area取自request
          */
         response.setYellowOldmanCount(oldmanService.getOldmanCount(oldmanSearchParam));
 
 
         response.setAlarmCount(careAlarmRecordService.getCount(request.getOldmanSearchParam()));
         response.setWorkerCheckInCount(workerService.getCheckinCount(null)/2);
+        //归属 取系统设置的， 不取request的
+        response.setWorkerCount(workerService.getBeyondCount());
+        //归属取request
+        response.setEquipCount(oldmanService.getEquipCount(request.getOldmanSearchParam()));
+        response.setHomeServiceCount(oldmanService.getHomeServiceCount(request.getOldmanSearchParam()));
+        response.setRzzCount(0L);
+        response.setDbCount(0L);
+
+        response.setOrganServiceCount(organService.getServiceCount());
+
+
         /**
          * 该信息不需要跟着 变更， area取 VarConfig中的
          */
@@ -119,12 +132,12 @@ public class MainController {
     @RequestMapping("/getMainStaticData")
     public GetMainStaticDataResponse getMainStaticData(@RequestBody PollRequest request){
         GetMainStaticDataResponse response=new GetMainStaticDataResponse();
-        response.setWorkerMap(workerService.getTypeCount());
-        response.setHomeServiceMap(oldmanService.getHomeServiceCount(request.getOldmanSearchParam()));
-        response.setEquipCount(oldmanService.getEquipCount(request.getOldmanSearchParam()));
-        response.setEquipMap(mainService.getOldmanEquipCount(request.getOldmanSearchParam()));
+//        response.setWorkerMap(workerService.getTypeCount());
+//        response.setHomeServiceMap(oldmanService.getHomeServiceMapCount(request.getOldmanSearchParam()));
+//        response.setEquipCount(oldmanService.getEquipCount(request.getOldmanSearchParam()));
+//        response.setEquipMap(mainService.getOldmanEquipCount(request.getOldmanSearchParam()));
         response.setBirthdayCount(oldmanService.getBirthdayOldmanCount(request.getBirthdayLike(),request.getOldmanSearchParam()));
-        response.sum();
+//        response.sum();
         return response;
     }
 

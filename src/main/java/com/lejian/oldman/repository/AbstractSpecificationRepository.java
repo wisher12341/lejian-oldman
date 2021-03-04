@@ -165,6 +165,12 @@ public abstract class AbstractSpecificationRepository<Bo,Entity> extends Abstrac
                 predicateList.add(criteriaBuilder.like(root.get(k), (String) v));
             }
         });
+        jpaSpecBo.getNotEqualMap().forEach((k,v)->{
+            if(!ObjectUtils.isEmpty(v)) {
+                predicateList.add(criteriaBuilder.notEqual(root.get(k), v));
+            }
+        });
+
         List<Predicate> orPredicateList = Lists.newArrayList();
         jpaSpecBo.getOrNotEquipMap().forEach((k,v)->{
             if(!ObjectUtils.isEmpty(v)) {

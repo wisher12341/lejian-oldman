@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Map;
 
 //todo spring security 到post接口 如果没有权限的话 会报405
 @Controller
@@ -235,8 +236,17 @@ public class OldmanController {
      */
     @BackUserAuth
     @RequestMapping(value = "/exportExcel",method = RequestMethod.POST)
-    public void export(OldmanSearchParam oldmanSearchParam){
+    public void export(@RequestBody OldmanSearchParam oldmanSearchParam){
         Pair<String[],String[][]> data=oldmanService.getExportOldmanInfo(oldmanSearchParam);
         excelHandler.export("oldman",data.getFirst(),data.getSecond());
+    }
+
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping(value = "/getHomeServiceMapCount",method = RequestMethod.POST)
+    public MapResponse getHomeServiceMapCount(@RequestBody OldmanSearchParam oldmanSearchParam){
+        MapResponse mapResponse = new MapResponse();
+        mapResponse.setMap(oldmanService.getHomeServiceMapCount(oldmanSearchParam));
+        return mapResponse;
     }
 }

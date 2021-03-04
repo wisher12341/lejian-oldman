@@ -45,12 +45,12 @@ function createStaticCount(sync) {
         sync: sync,
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
-            homeServiceData = result.homeServiceMap;
-            equipData = result.equipMap;
-            workerData = result.workerMap;
-            $("#homeServiceNum").html(result.homeServiceCount);
-            $("#equipNum").html(result.equipCount);
-            $("#workerNum").html(result.workerCount);
+            // homeServiceData = result.homeServiceMap;
+            // equipData = result.equipMap;
+            // workerData = result.workerMap;
+            // $("#homeServiceNum").html(result.homeServiceCount);
+            // $("#equipNum").html(result.equipCount);
+            // $("#workerNum").html(result.workerCount);
             $("#birthdayNum").html(result.birthdayCount);
 
         }
@@ -245,7 +245,22 @@ function secondceng(obj, type) {
     var data = {};
     if (type == 1) {
         oldmanSearchParam.oldmanSearchParam.homeService = true;
-        data = homeServiceData;
+        $.ajax({
+            url: "/oldman/getHomeServiceMapCount",
+            type: 'post',
+            dataType: 'json',
+            data: JSON.stringify({
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage
+            }),
+            async: false,
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
     }
     if (type == 2) {
         oldmanSearchParam.oldmanSearchParam.equip = true;
@@ -260,7 +275,6 @@ function secondceng(obj, type) {
     for (var key in data) {
         chartData[i++] = {"key": key, "value": data[key]};
     }
-
     createHeightAndWidthFromSourceDoc("sencondAll", "chart", 0.7, 0.8);
     if (type == 4) {
         createBarChart(null, chartData, document.getElementById('chart'), selectWorkerType);
@@ -432,21 +446,21 @@ function createOldmanChart(sync) {
         sync: sync,
         contentType: "application/json;charset=UTF-8",
         success: function (result) {
-            var w,h;
-            var width =  document.body.clientWidth;
+            var w, h;
+            var width = document.body.clientWidth;
             var height = document.body.clientHeight;
-            if((width/height)>1.5){
-                h=0.45;
-                w=0.45;
-            }else {
-                w=0.45;
-                h=0.45;
+            if ((width / height) > 1.5) {
+                h = 0.45;
+                w = 0.45;
+            } else {
+                w = 0.45;
+                h = 0.45;
             }
 
-            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanAge", h,w );
-            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanSex",  h,w );
-            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanHuji",  h,w );
-            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanJia",  h,w );
+            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanAge", h, w);
+            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanSex", h, w);
+            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanHuji", h, w);
+            createHeightAndWidthFromSourceDoc("oldmanChart", "oldmanJia", h, w);
 
             var sex = [];
             var age = [];
@@ -609,7 +623,7 @@ function showToast(message) {
         "showMethod": "fadeIn",
         "hideMethod": "fadeOut"
     };
-    toastr.options.onclick=function(){
+    toastr.options.onclick = function () {
         window.open("http://47.103.137.244:84/");
     };
 

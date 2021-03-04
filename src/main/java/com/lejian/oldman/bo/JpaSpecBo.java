@@ -17,6 +17,10 @@ public class JpaSpecBo {
      */
     Map<String,Object> equalMap = new HashMap<>();
     /**
+     * 不等于
+     */
+    Map<String,Object> notEqualMap = new HashMap<>();
+    /**
      * like  使用时 value 要带 %%
      */
     Map<String,Object> likeMap = new HashMap<>();

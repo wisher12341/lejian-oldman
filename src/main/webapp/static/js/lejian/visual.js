@@ -108,7 +108,7 @@ function createMap(lng,lat) {
             for(var i=0;i<positions.length;i++){
                 createLocationMarker(positions[i],map);
             }
-            interval =self.setInterval("pollOldmanStatus()",30*1000);
+            interval =self.setInterval("pollOldmanStatus()",60*1000);
             $('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'));
             time=self.setInterval("$('#timeIcon').html(new Date().Format('yyyy-MM-dd HH:mm:ss'))",1000);
         }
@@ -140,6 +140,14 @@ function pollOldmanStatus(sync) {
             $("#serviceNum").html(result.yellowOldmanCount);
             $("#historyServiceNum").html(result.workerCheckInCount);
             $("#warnNum").html(result.alarmCount);
+
+            $("#homeServiceNum").html(result.homeServiceCount);
+            $("#organServiceNum").html(result.organServiceCount);
+            $("#rzzNum").html(result.rzzCount);
+            $("#dbNum").html(result.dbCount);
+            $("#workerNum").html(result.workerCount);
+            $("#equipNum").html(result.equipCount);
+
             var positions = result.locationVoList;
             var allOverlay = map.getOverlays();
             var records= result.careAlarmRecordVoList;

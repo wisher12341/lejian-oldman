@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Floats;
 import com.lejian.oldman.bo.CareAlarmRecordBo;
+import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.check.CheckProcessor;
 import com.lejian.oldman.check.bo.CheckFieldBo;
@@ -186,11 +187,11 @@ public class OldmanService {
         return oldmanRepository.getBirthdayOldmanCount(birthdayLike,oldmanSearchParam.getSql());
     }
 
-    public Map<String, Long> getHomeServiceCount(OldmanSearchParam oldmanSearchParam) {
-        Map<String, Long> map = Maps.newHashMap();
+    public Map<String, String> getHomeServiceMapCount(OldmanSearchParam oldmanSearchParam) {
+        Map<String, String> map = Maps.newHashMap();
         for(OldmanEnum oldmanEnum:OldmanEnum.ServiceType.values()){
             if(oldmanEnum.getValue()<100) {
-                map.put(oldmanEnum.getDesc(), 0L);
+                map.put(oldmanEnum.getDesc(), "0");
             }
         }
         Map<Integer, Long> mapInt =oldmanRepository.getOldmanGroup(oldmanSearchParam,"service_type");
@@ -199,12 +200,19 @@ public class OldmanService {
             if(businessEnum!=BusinessEnum.DefaultValue.NULL) {
                 List<OldmanEnum.ServiceType> serviceTypeList = ((OldmanEnum.ServiceType) businessEnum).map();
                 serviceTypeList.forEach(item -> {
-                    map.put(item.getDesc(), map.get(item.getDesc()) + v);
+                    map.put(item.getDesc(), String.valueOf(Integer.valueOf(map.get(item.getDesc())) + v));
                 });
             }
 
         });
         return map;
+    }
+
+    public Long getHomeServiceCount(OldmanSearchParam oldmanSearchParam) {
+        JpaSpecBo jpaSpecBo = OldmanSearchParam.convert(oldmanSearchParam);
+        jpaSpecBo.getNotEqualMap().put("serviceType",0);
+        log.info("1111111111");
+        return oldmanRepository.countWithSpec(jpaSpecBo);
     }
 
 

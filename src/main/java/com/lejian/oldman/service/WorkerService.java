@@ -384,4 +384,15 @@ public class WorkerService {
         JpaSpecBo jpaSpecBo = WorkerSearchParam.convert(workerSearchParam);
         return workerRepository.countWithSpec(jpaSpecBo);
     }
+
+    /**
+     * 归属地服务人员数量
+     * @return
+     */
+    public Long getBeyondCount() {
+        String beyond = visualSettingRepository.getWorkerBeyond();
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        jpaSpecBo.getEqualMap().put("beyond",beyond);
+        return workerRepository.countWithSpec(jpaSpecBo);
+    }
 }

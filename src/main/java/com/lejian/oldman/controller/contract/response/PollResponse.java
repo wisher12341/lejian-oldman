@@ -21,7 +21,12 @@ public class PollResponse {
     private Long alarmCount;
     private Long yellowOldmanCount;
     private Long workerCheckInCount;
-
+    private Long organServiceCount;
+    private Long workerCount;
+    private Long equipCount;
+    private Long homeServiceCount;
+    private Long rzzCount;
+    private Long dbCount;
 
 
     /**

@@ -140,6 +140,11 @@
         font-weight: bolder;
         color: red;
     }
+    .nums{
+        font-size: 18px;
+        font-weight: bolder;
+        color: red;
+    }
     ul{
         padding:0;
         padding-left: 3%;
@@ -175,7 +180,7 @@
 
     }
     #secondFirst div{
-        margin-top: 2%;
+        margin-top: 0.5%;
     }
     #p2{
         padding: 3%
@@ -211,7 +216,7 @@
         font-size: xx-large;display: block;
     }
     .p9{
-        font-size: larger
+        font-size: 14px;
     }
     .p11{
         font-size: xx-large;
