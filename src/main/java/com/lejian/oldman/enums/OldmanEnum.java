@@ -187,7 +187,7 @@ public interface OldmanEnum extends BusinessEnum{
             }
         },
         //todo 组合 开会确认 哪些会交叉
-        RZZ(4,"认知症服務老人") {
+        RZZ(4,"认知症服务") {
             @Override
             public List<ServiceType> map() {
                 return Lists.newArrayList(RZZ);
@@ -198,7 +198,7 @@ public interface OldmanEnum extends BusinessEnum{
                 return Lists.newArrayList(4);
             }
         },
-        DB(5,"大病服務老人") {
+        DB(5,"大病服务") {
             @Override
             public List<ServiceType> map() {
                 return Lists.newArrayList(DB);

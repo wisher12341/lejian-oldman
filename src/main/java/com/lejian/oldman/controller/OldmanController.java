@@ -249,4 +249,13 @@ public class OldmanController {
         mapResponse.setMap(oldmanService.getHomeServiceMapCount(oldmanSearchParam));
         return mapResponse;
     }
+
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping(value = "/getEquipMapCount",method = RequestMethod.POST)
+    public MapResponse getEquipMapCount(@RequestBody OldmanSearchParam oldmanSearchParam){
+        MapResponse mapResponse = new MapResponse();
+        mapResponse.setMap(oldmanService.getEquipMapCount(oldmanSearchParam));
+        return mapResponse;
+    }
 }

@@ -13,6 +13,7 @@ import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.service.*;
 import com.lejian.oldman.vo.CareAlarmRecordVo;
 import com.lejian.oldman.vo.LocationVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
@@ -101,10 +102,15 @@ public class MainController {
         //归属 取系统设置的， 不取request的
         response.setWorkerCount(workerService.getBeyondCount());
         //归属取request
-        response.setEquipCount(oldmanService.getEquipCount(request.getOldmanSearchParam()));
+        OldmanSearchParam param=new OldmanSearchParam();
+        BeanUtils.copyProperties(request,param);
+        param.setEquip(true);
+        response.setEquipCount(oldmanService.getEquipCount(param));
+
         response.setHomeServiceCount(oldmanService.getHomeServiceCount(request.getOldmanSearchParam()));
-        response.setRzzCount(0L);
-        response.setDbCount(0L);
+
+        response.setRzzCount(oldmanService.getRzzCount(request.getOldmanSearchParam()));
+        response.setDbCount(oldmanService.getDbCount(request.getOldmanSearchParam()));
 
         response.setOrganServiceCount(organService.getServiceCount());
 

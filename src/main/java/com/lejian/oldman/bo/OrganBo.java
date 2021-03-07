@@ -13,5 +13,6 @@ public class OrganBo {
 
     private String name;
     private Integer type;
+    private Integer id;
 
 }

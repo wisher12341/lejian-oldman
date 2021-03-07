@@ -175,7 +175,6 @@ public class OldmanService {
     }
 
     public Long getEquipCount(OldmanSearchParam oldmanSearchParam) {
-        oldmanSearchParam.setEquip(true);
         return oldmanRepository.countWithSpec(OldmanSearchParam.convert(oldmanSearchParam));
     }
 
@@ -211,7 +210,6 @@ public class OldmanService {
     public Long getHomeServiceCount(OldmanSearchParam oldmanSearchParam) {
         JpaSpecBo jpaSpecBo = OldmanSearchParam.convert(oldmanSearchParam);
         jpaSpecBo.getNotEqualMap().put("serviceType",0);
-        log.info("1111111111");
         return oldmanRepository.countWithSpec(jpaSpecBo);
     }
 
@@ -452,5 +450,35 @@ public class OldmanService {
         }
         return null;
 
+    }
+
+    /**
+     * 获取认知症数量
+     * @param oldmanSearchParam
+     * @return
+     */
+    public Long getRzzCount(OldmanSearchParam oldmanSearchParam) {
+        String where = oldmanSearchParam.getSql("o.");
+        return oldmanRepository.getRzzCount(where);
+    }
+
+    public Long getDbCount(OldmanSearchParam oldmanSearchParam) {
+        String where = oldmanSearchParam.getSql("o.");
+        return oldmanRepository.getDbCount(where);
+    }
+
+    public Map<String, String> getEquipMapCount(OldmanSearchParam oldmanSearchParam) {
+        Map<String, String> map= Maps.newHashMap();
+        /**
+         * 1. 长者关怀系统
+         * 2. 摄像头系统
+         * 3. 想家宝系统
+         */
+        List<Long> countList=oldmanRepository.getEquipCountByArea(
+                oldmanSearchParam.getAreaCustomOne(),oldmanSearchParam.getAreaVillage(),oldmanSearchParam.getAreaTown(),oldmanSearchParam.getAreaCountry());
+        map.put("关怀系统",String.valueOf(countList.get(0)));
+        map.put("摄像头",String.valueOf(countList.get(1)));
+        map.put("想家宝",String.valueOf(countList.get(2)));
+        return map;
     }
 }

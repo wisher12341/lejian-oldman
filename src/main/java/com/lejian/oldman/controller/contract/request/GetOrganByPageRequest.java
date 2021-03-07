@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class GetOrganByPageRequest {
     private PageParam pageParam;
+    private OrganParam organParam;
 }

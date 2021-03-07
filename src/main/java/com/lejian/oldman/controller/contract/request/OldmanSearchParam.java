@@ -134,21 +134,25 @@ public class OldmanSearchParam {
     }
 
     public String getSql() {
+        return getSql("");
+    }
+
+    public String getSql(String type) {
         String where="";
         if(StringUtils.isNotBlank(getAreaCustomOne())){
-            where+=" area_custom_one='"+getAreaCustomOne()+"' and ";
+            where+=" "+type+"area_custom_one='"+getAreaCustomOne()+"' and ";
         }
         if (StringUtils.isNotBlank(getAreaVillage())){
-            where+=" area_village='"+getAreaVillage()+"' and ";
+            where+=" "+type+"area_village='"+getAreaVillage()+"' and ";
         }
         if (StringUtils.isNotBlank(getAreaTown())){
-            where+=" area_town='"+getAreaTown()+"' and ";
+            where+=" "+type+"area_town='"+getAreaTown()+"' and ";
         }
         if (StringUtils.isNotBlank(getAreaCountry())){
-            where+=" area_country='"+getAreaCountry()+"' and ";
+            where+=" "+type+"area_country='"+getAreaCountry()+"' and ";
         }
 
-        where+=" is_delete=0 ";
+        where+=" "+type+"is_delete=0 ";
 
         return where;
     }

@@ -9,6 +9,8 @@ public class WorkerSearchParam {
     private Integer type;
     private String beyond;
     private Integer organId;
+    private String organName;
+    private Boolean settingBeyond;
 
     public static JpaSpecBo convert(WorkerSearchParam param) {
         if(param==null){
@@ -19,11 +21,11 @@ public class WorkerSearchParam {
             jpaSpecBo.getEqualMap().put("type",param.getType());
         }
         if(StringUtils.isNotBlank(param.getBeyond())){
-            jpaSpecBo.getLikeMap().put("beyond","%"+param.getBeyond()+"%");
+            jpaSpecBo.getEqualMap().put("beyond",param.getBeyond());
 
         }
         if(param.getOrganId()!=null){
-            jpaSpecBo.getLikeMap().put("organId",param.getOrganId());
+            jpaSpecBo.getEqualMap().put("organId",param.getOrganId());
 
         }
         return jpaSpecBo;

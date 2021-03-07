@@ -55,6 +55,8 @@ public class WorkerService {
     private LocationRepository locationRepository;
     @Autowired
     private VisualSettingRepository visualSettingRepository;
+    @Autowired
+    private OrganRepository organRepository;
 
     /**
      * 服务人员签到签出 最小的时间间隔 分钟
@@ -254,7 +256,18 @@ public class WorkerService {
     public List<WorkerVo> getWorkerByPage(PageParam pageParam, WorkerSearchParam param) {
         JpaSpecBo jpaSpecBo=new JpaSpecBo();
         if(param!=null) {
+            if (StringUtils.isNotBlank(param.getOrganName())){
+                JpaSpecBo bo = new JpaSpecBo();
+                bo.getEqualMap().put("name",param.getOrganName());
+                OrganBo organBo = organRepository.findWithSpec(bo).get(0);
+                param.setOrganId(organBo.getId());
+            }
+            if (param.getSettingBeyond()!=null && param.getSettingBeyond()==true){
+                String beyond = visualSettingRepository.getWorkerBeyond();
+                param.setBeyond(beyond);
+            }
             jpaSpecBo = WorkerSearchParam.convert(param);
+
         }
         return workerRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),jpaSpecBo).stream().map(this::convert).collect(Collectors.toList());
     }
@@ -381,6 +394,11 @@ public class WorkerService {
     }
 
     public Long getCount(WorkerSearchParam workerSearchParam) {
+        if (StringUtils.isNotBlank(workerSearchParam.getOrganName())){
+            JpaSpecBo jpaSpecBo = new JpaSpecBo();
+            jpaSpecBo.getEqualMap().put("name",workerSearchParam.getOrganName());
+            workerSearchParam.setOrganId(organRepository.findWithSpec(jpaSpecBo).get(0).getId());
+        }
         JpaSpecBo jpaSpecBo = WorkerSearchParam.convert(workerSearchParam);
         return workerRepository.countWithSpec(jpaSpecBo);
     }
@@ -394,5 +412,21 @@ public class WorkerService {
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
         jpaSpecBo.getEqualMap().put("beyond",beyond);
         return workerRepository.countWithSpec(jpaSpecBo);
+    }
+
+    public Map<String, String> getTypeMapCount() {
+        Map<String, String> map = Maps.newHashMap();
+        for(WorkerEnum workerEnum: WorkerEnum.Type.values()){
+            map.put(workerEnum.getDesc(),"0");
+        }
+        List<Map<String,Object>> typeMapList=workerRepository.getTypeCountByBeyond(visualSettingRepository.getWorkerBeyond());
+
+        typeMapList.forEach(item->{
+            Integer type= (Integer) item.get("type");
+            Long b=((BigInteger)item.get("count")).longValue();
+
+            map.put(BusinessEnum.find(type, WorkerEnum.Type.class).getDesc(),String.valueOf(b));
+        });
+        return map;
     }
 }

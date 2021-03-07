@@ -238,4 +238,34 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     public void deleteByOid(String oid) {
         oldmanDao.deleteByOid(oid);
     }
+
+    public Long getRzzCount(String where) {
+        try {
+            String sql = "select count(1) from rrz r left join oldman o on r.oid=o.oid" +
+                    " where 1=1 ";
+            if (StringUtils.isNotBlank(where)){
+                sql+=" and "+where;
+            }
+            Query query =entityManager.createNativeQuery(sql);
+            return ((BigInteger) query.getResultList().get(0)).longValue();
+        }catch (Exception e){
+            REPOSITORY_ERROR.doThrowException("getRzzCount",e);
+        }
+        return 0L;
+    }
+
+    public Long getDbCount(String where) {
+        try {
+            String sql = "select count(1) from db d left join oldman o on d.oid=o.oid" +
+                    " where 1=1 ";
+            if (StringUtils.isNotBlank(where)){
+                sql+=" and "+where;
+            }
+            Query query =entityManager.createNativeQuery(sql);
+            return ((BigInteger) query.getResultList().get(0)).longValue();
+        }catch (Exception e){
+            REPOSITORY_ERROR.doThrowException("getDbCount",e);
+        }
+        return 0L;
+    }
 }

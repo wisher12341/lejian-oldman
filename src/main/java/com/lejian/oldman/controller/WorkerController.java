@@ -3,10 +3,7 @@ package com.lejian.oldman.controller;
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.controller.contract.request.*;
-import com.lejian.oldman.controller.contract.response.GetWorkerListResponse;
-import com.lejian.oldman.controller.contract.response.GetWorkerResponse;
-import com.lejian.oldman.controller.contract.response.MapResponse;
-import com.lejian.oldman.controller.contract.response.ResultResponse;
+import com.lejian.oldman.controller.contract.response.*;
 import com.lejian.oldman.handler.ExcelHandler;
 import com.lejian.oldman.repository.UserRepository;
 import com.lejian.oldman.security.annotation.BackAdminAuth;
@@ -151,11 +148,21 @@ public class WorkerController {
      * 获取某机构的老人数量
      */
     @RequestMapping("/getCount")
-    public MapResponse getCount(@RequestBody GetWorkerRequest request){
+    public LongResponse getCount(@RequestBody GetWorkerRequest request){
+        LongResponse response = new LongResponse();
+        response.setResult(workerService.getCount(request.getWorkerSearchParam()));
+        return response;
+    }
+
+    /**
+     * 服务人员类型统计数据
+     * 归属地去配置
+     * @return
+     */
+    @RequestMapping("/getTypeMapCount")
+    public MapResponse getTypeMapCount(){
         MapResponse response = new MapResponse();
-        Map<String,String> map = Maps.newHashMap();
-        map.put("count",String.valueOf(workerService.getCount(request.getWorkerSearchParam())));
-        response.setMap(map);
+        response.setMap(workerService.getTypeMapCount());
         return response;
     }
 }

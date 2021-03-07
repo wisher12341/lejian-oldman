@@ -22,6 +22,8 @@ public class OrganEntity {
     private String name;
     @Column
     private Integer type;
+    @Column
+    private String beyond;
     @Column(name = "create_time")
     private Timestamp createTime;
     @Column(name = "datachange_time")

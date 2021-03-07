@@ -14,7 +14,8 @@ public interface OrganEnum extends BusinessEnum{
     @Getter
     @AllArgsConstructor
     enum Type implements BusinessEnum {
-        ZZZGZJ(1,"长者照顾之家")
+        ZZZGZJ(1,"长者照顾之家"),
+        WLFWZX(2,"为老服务中心")
         ;
         private Integer value;
         private String desc;

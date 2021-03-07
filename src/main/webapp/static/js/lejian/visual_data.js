@@ -241,7 +241,6 @@ function secondceng(obj, type) {
         },
         "needCount": false
     };
-    oldmanSearchParam.oldmanSearchParam.areaCustomOne = areaCustomOne;
     var data = {};
     if (type == 1) {
         oldmanSearchParam.oldmanSearchParam.homeService = true;
@@ -262,12 +261,61 @@ function secondceng(obj, type) {
             }
         });
     }
+    if (type == 5){
+        $.ajax({
+            url: "/organ/getServiceCountGroupByType",
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
+    }
+    if (type == 6){
+        // $.ajax({
+        //     url: "/oldman/getRzz",
+        //     type: 'post',
+        //     dataType: 'json',
+        //     async: false,
+        //     contentType: "application/json;charset=UTF-8",
+        //     success: function (result) {
+        //         data = result.map;
+        //     }
+        // });
+        data={"筛查":"0","活动":"0"};
+    }
     if (type == 2) {
         oldmanSearchParam.oldmanSearchParam.equip = true;
-        data = equipData;
+        $.ajax({
+            url: "/oldman/getEquipMapCount",
+            type: 'post',
+            dataType: 'json',
+            data: JSON.stringify({
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage
+            }),
+            async: false,
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
     }
     if (type == 4) {
-        data = workerData;
+        $.ajax({
+            url: "/worker/getTypeMapCount",
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
     }
 
     var chartData = [];
@@ -278,20 +326,39 @@ function secondceng(obj, type) {
     createHeightAndWidthFromSourceDoc("sencondAll", "chart", 0.7, 0.8);
     if (type == 4) {
         createBarChart(null, chartData, document.getElementById('chart'), selectWorkerType);
-        createWorker({"beyond": workerBeyond}, "manList", true);
+        createWorker({"settingBeyond": true}, "manList", true);
         $("#manName").html("工作人员");
-    } else {
+    }
+    else if (type==5){
+        createBarChart(null, chartData, document.getElementById('chart'), selectOrganType);
+        var param = {
+            "pageParam": {
+                "pageNo": 0,
+                "pageSize": 50
+            }
+        };
+        createServiceOldman(param,"manList", true);
+        $("#manName").html("老人名单");
+    }
+    else if (type==6){
+        oldmanSearchParam.pageParam.pageSize=0;
+        createBarChart(null, chartData, document.getElementById('chart'), selectRzz);
+        createOldman(oldmanSearchParam, "manList", true);
+    }
+    else if (type!=7){
         createBarChart(null, chartData, document.getElementById('chart'), selectManType);
         createOldman(oldmanSearchParam, "manList", true);
         $("#manName").html("老人名单");
     }
-    $("#secondcengName").html($(obj).children().eq(0).html());
-    $("#secondcengNum").html($(obj).children().eq(1).html());
-    $("#secondFirst").hide();
-    $(".thirdceng").hide();
-    $(".fourceng").hide();
-    $("#secondSecond").show();
-    $(".fiveceng").show();
+    if (type!=7){
+        $("#secondcengName").html($(obj).children().eq(0).html());
+        $("#secondcengNum").html($(obj).children().eq(1).html());
+        $("#secondFirst").hide();
+        $(".thirdceng").hide();
+        $(".fourceng").hide();
+        $("#secondSecond").show();
+        $(".fiveceng").show();
+    }
 }
 
 function selectWorkerType(name) {
@@ -305,6 +372,164 @@ function selectWorkerType(name) {
     } else if (name == "居家养老") {
         createWorker({"type": 4, "beyond": workerBeyond}, "manList", true);
     }
+}
+
+function selectRzz(name) {
+    var chartData={};
+    if (name == "筛查"){
+        chartData=[{
+            "key":"初筛",
+            "value":0
+        },
+            {
+                "key":"复筛",
+                "value":0
+            }];
+    }else if (name=="活动"){
+        chartData=[{
+            "key":"心里",
+            "value":0
+        }];
+    }
+
+    createBarChart(null, chartData, document.getElementById('chart'), selectRzzSc);
+
+}
+
+function selectRzzSc(name) {
+    var chartData={};
+    if (name == "初筛"){
+        chartData=[{
+            "key":"分诊",
+            "value":0
+        }];
+        createBarChart(null, chartData, document.getElementById('chart'), selectRzzScFz);
+    }
+}
+
+function selectRzzScFz(name) {
+    var chartData={};
+    if (name == "分诊"){
+        chartData=[{
+            "key":"卫区医院复查",
+            "value":0
+        }];
+        createBarChart(null, chartData, document.getElementById('chart'), selectRzzScFz);
+    }
+}
+
+function selectOrganType(type) {
+    $("#secondcengName").html(type);
+    var data={};
+    $.ajax({
+        url: "/organ/getOrganServiceCountByType",
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify({
+            "organParam": {
+                "typeDesc":type
+            }
+        }),
+        async: false,
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            data = result.map;
+        }
+    });
+
+    var chartData = [];
+    var i = 0;
+    var num =0;
+    for (var key in data) {
+        chartData[i++] = {"key": key, "value": data[key]};
+        num += parseInt(data[key]);
+    }
+    $("#secondcengNum").html(num);
+    createBarChart(null, chartData, document.getElementById('chart'), selectOrgan);
+    var param = {
+        "pageParam": {
+            "pageNo": 0,
+            "pageSize": 50
+        },
+        "organParam":{
+            "typeDesc":type
+        }
+    };
+    createServiceOldman(param,"manList", true);
+}
+function selectServiceType(serviceType) {
+    var organName = $("#secondcengName").html();
+    if (serviceType!="服务人员"){
+        var param = {
+            "pageParam": {
+                "pageNo": 0,
+                "pageSize": 50
+            },
+            "organParam":{
+                "name":organName,
+                "serviceTypeDesc":serviceType
+            }
+        };
+        createServiceOldman(param,"manList", true);
+    }else{
+        createWorker({"organName": organName}, "manList", true);
+        $("#manName").html("工作人员");
+    }
+}
+function selectOrgan(organ) {
+    $("#secondcengName").html(organ);
+
+    var data={};
+    $.ajax({
+        url: "/organ/getServiceCountByOrgan",
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify({
+            "organParam":{
+                "name":organ
+            }
+        }),
+        async: false,
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            data = result.map;
+        }
+    });
+    var chartData = [];
+    var i = 0;
+    var num =0;
+    for (var key in data) {
+        chartData[i++] = {"key": key, "value": data[key]};
+        num += parseInt(data[key]);
+    }
+
+    $.ajax({
+        url: "/worker/getCount",
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify({
+            "workerSearchParam":{
+                "organName":organ
+            }
+        }),
+        async: false,
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            chartData[i++] = {"key": "服务人员", "value": result.result};
+        }
+    });
+    $("#secondcengNum").html(num);
+    createBarChart(null, chartData, document.getElementById('chart'), selectServiceType);
+    var param = {
+        "pageParam": {
+            "pageNo": 0,
+            "pageSize": 50
+        },
+        "organParam":{
+            "name":organ
+        }
+    };
+    createServiceOldman(param,"manList", true);
 }
 
 function selectManType(name) {
@@ -334,6 +559,10 @@ function selectManType(name) {
         param.oldmanSearchParam.equipType = "xjbId";
     } else if (name == "摄像头") {
         param.oldmanSearchParam.equipType = "cameraId";
+    }else if (name == "认知症服务") {
+        param.oldmanSearchParam.serviceType = 4;
+    }else if (name == "大病服务") {
+        param.oldmanSearchParam.serviceType = 5;
     }
     createOldman(param, "manList", true);
 
@@ -543,6 +772,33 @@ function oldmanInfoChartSelect(title, value) {
     $(".thirdceng").hide();
     $(".fourceng").hide();
     $(".fiveceng").show();
+}
+
+/**
+ * 获取服务老人
+ */
+function createServiceOldman(param,id, clear) {
+    if (clear) {
+        $("#" + id).html("");
+    }
+    $.ajax({
+        url: "/organ/getServiceOldmanByPage",
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(param),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            var oldmanList = result.oldmanVoList;
+            for (var i = 0; i < oldmanList.length; i++) {
+                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + ")'>" +
+                    "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].oid + "</span></div>" +
+                    "<div class='bbbb'style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].name + "</span></div>" +
+                    "<div class='bbbb'style='width: 25%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].age + "</span></div>" +
+                    "<div class='bbbb'style='width: 10%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].sex + "</span></div></li>";
+                $("#" + id).append(li);
+            }
+        }
+    });
 }
 
 /**

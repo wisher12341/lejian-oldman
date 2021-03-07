@@ -19,13 +19,13 @@
     </appender>
 
     <logger name="com.lejian.oldman.repository" level="info" additivity="false">
-        <!--<appender-ref ref="FILE" />-->
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <!--<appender-ref ref="CONSOLE" />-->
     </logger>
 
     <logger name="com.lejian.oldman.service" level="info" additivity="false">
-        <!--<appender-ref ref="FILE" />-->
-        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <!--<appender-ref ref="CONSOLE" />-->
     </logger>
 
 
