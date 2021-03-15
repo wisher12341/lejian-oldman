@@ -1,13 +1,9 @@
 package com.lejian.oldman.repository;
 
 
-import com.lejian.oldman.bo.OrganBo;
-import com.lejian.oldman.bo.ServiceBo;
-import com.lejian.oldman.dao.OrganDao;
-import com.lejian.oldman.dao.ServiceDao;
-import com.lejian.oldman.entity.OrganEntity;
-import com.lejian.oldman.entity.ServiceEntity;
-import com.lejian.oldman.vo.OldmanVo;
+import com.lejian.oldman.bo.OrganServiceBo;
+import com.lejian.oldman.dao.OrganServiceDao;
+import com.lejian.oldman.entity.OrganServiceEntity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,10 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class ServiceRepository extends AbstractSpecificationRepository<ServiceBo,ServiceEntity> {
+public class ServiceRepository extends AbstractSpecificationRepository<OrganServiceBo,OrganServiceEntity> {
 
     @Autowired
-    private ServiceDao dao;
+    private OrganServiceDao dao;
 
     @Override
     protected JpaRepository getDao() {
@@ -28,11 +24,11 @@ public class ServiceRepository extends AbstractSpecificationRepository<ServiceBo
     }
 
     @Override
-    protected ServiceBo convertEntity(ServiceEntity entity) {
+    protected OrganServiceBo convertEntity(OrganServiceEntity entity) {
         if(entity==null){
             return null;
         }
-        ServiceBo serviceBo = new ServiceBo();
+        OrganServiceBo serviceBo = new OrganServiceBo();
         BeanUtils.copyProperties(entity,serviceBo);
         return serviceBo;
     }
@@ -40,8 +36,8 @@ public class ServiceRepository extends AbstractSpecificationRepository<ServiceBo
 
 
     @Override
-    protected ServiceEntity convertBo(ServiceBo serviceBo) {
-        ServiceEntity serviceEntity = new ServiceEntity();
+    protected OrganServiceEntity convertBo(OrganServiceBo serviceBo) {
+        OrganServiceEntity serviceEntity = new OrganServiceEntity();
         BeanUtils.copyProperties(serviceBo,serviceEntity);
         return serviceEntity;
     }

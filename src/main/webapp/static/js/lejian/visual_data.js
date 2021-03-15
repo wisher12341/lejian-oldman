@@ -284,7 +284,7 @@ function secondceng(obj, type) {
         //         data = result.map;
         //     }
         // });
-        data={"筛查":"0","活动":"0"};
+        data={"活动":"0","筛查":"0"};
     }
     if (type == 2) {
         oldmanSearchParam.oldmanSearchParam.equip = true;
@@ -344,6 +344,9 @@ function secondceng(obj, type) {
         oldmanSearchParam.pageParam.pageSize=0;
         createBarChart(null, chartData, document.getElementById('chart'), selectRzz);
         createOldman(oldmanSearchParam, "manList", true);
+        // createBarChart(null, chartData, document.getElementById('chart'), selectRzz);
+        // createRzzOldman(oldmanSearchParam, "manList", true);
+        // $("#manName").html("老人名单");
     }
     else if (type!=7){
         createBarChart(null, chartData, document.getElementById('chart'), selectManType);
@@ -378,13 +381,12 @@ function selectRzz(name) {
     var chartData={};
     if (name == "筛查"){
         chartData=[{
-            "key":"初筛",
+            "key":"复筛",
             "value":0
-        },
-            {
-                "key":"复筛",
+        }, {
+                "key":"初筛",
                 "value":0
-            }];
+        }];
     }else if (name=="活动"){
         chartData=[{
             "key":"心里",

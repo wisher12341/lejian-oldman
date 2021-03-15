@@ -14,10 +14,7 @@ import com.lejian.oldman.controller.contract.request.OldmanParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.*;
 import com.lejian.oldman.handler.BaiduMapHandler;
-import com.lejian.oldman.repository.CareAlarmRecordRepository;
-import com.lejian.oldman.repository.ChxRepository;
-import com.lejian.oldman.repository.LocationRepository;
-import com.lejian.oldman.repository.OldmanRepository;
+import com.lejian.oldman.repository.*;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.utils.LjReflectionUtils;
 import com.lejian.oldman.utils.ObjectUtils;
@@ -65,6 +62,9 @@ public class OldmanService {
 
     @Autowired
     private ChxRepository chxRepository;
+
+    @Autowired
+    private RzzRepository rzzRepository;
 
     private static final int PART_NUM=100;
 
@@ -480,5 +480,15 @@ public class OldmanService {
         map.put("摄像头",String.valueOf(countList.get(1)));
         map.put("想家宝",String.valueOf(countList.get(2)));
         return map;
+    }
+
+    public Map<String, String> getRzzMapCount(OldmanSearchParam oldmanSearchParam) {
+        Map<String, String> result = Maps.newHashMap();
+        OldmanEnum.RzzType rzzType = (OldmanEnum.RzzType) BusinessEnum.find(oldmanSearchParam.getRrzTypeDesc(),OldmanEnum.RzzType.class);
+        Map<Integer,Long> map = rzzRepository.getMapCount(rzzType.getSelectValue());
+        map.forEach((k,v)->{
+            result.put(BusinessEnum.find(oldmanSearchParam.getRrzTypeDesc(),OldmanEnum.RzzType.class).getDesc(),String.valueOf(v));
+        });
+        return result;
     }
 }

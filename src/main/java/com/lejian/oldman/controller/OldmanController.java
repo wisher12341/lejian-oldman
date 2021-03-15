@@ -258,4 +258,14 @@ public class OldmanController {
         mapResponse.setMap(oldmanService.getEquipMapCount(oldmanSearchParam));
         return mapResponse;
     }
+
+
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping(value = "/getRzzCount",method = RequestMethod.POST)
+    public MapResponse getRzzCount(@RequestBody OldmanSearchParam oldmanSearchParam){
+        MapResponse mapResponse = new MapResponse();
+        mapResponse.setMap(oldmanService.getRzzMapCount(oldmanSearchParam));
+        return mapResponse;
+    }
 }

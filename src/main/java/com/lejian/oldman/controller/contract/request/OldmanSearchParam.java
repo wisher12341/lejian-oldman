@@ -29,6 +29,10 @@ public class OldmanSearchParam {
     private String householdType;
     private String familyType;
     /**
+     * 认知症描述
+     */
+    private String rrzTypeDesc;
+    /**
      * 是否过滤 有智能设备
      */
     private Boolean equip;

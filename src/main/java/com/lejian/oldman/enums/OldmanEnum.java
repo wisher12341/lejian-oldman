@@ -243,4 +243,70 @@ public interface OldmanEnum extends BusinessEnum{
         private String desc;
     }
 
+
+    /**
+     * 认知症
+     * >0的为 最底层的类型
+     */
+    @Getter
+    @AllArgsConstructor
+    enum RzzType implements OldmanEnum {
+        A(1,"卫区医院复查") {
+            @Override
+            public List<Integer> getSelectValue() {
+                return Lists.newArrayList(1);
+            }
+        },
+        B(2,"复筛") {
+            @Override
+            public List<Integer> getSelectValue() {
+                return Lists.newArrayList(2);
+            }
+        },
+        C(3,"心里") {
+            @Override
+            public List<Integer> getSelectValue() {
+                return Lists.newArrayList(3);
+            }
+        },
+
+        SC(0,"筛查") {
+            @Override
+            public List<Integer> getSelectValue() {
+                return Lists.newArrayList(1,2);
+            }
+        },
+        HD(0,"活动") {
+            @Override
+            public List<Integer> getSelectValue() {
+                return Lists.newArrayList(3);
+            }
+        },
+        CS(0,"初筛") {
+            @Override
+            public List<Integer> getSelectValue() {
+                return Lists.newArrayList(1);
+            }
+        },
+        FZ(0,"分诊") {
+            @Override
+            public List<Integer> getSelectValue() {
+                return Lists.newArrayList(1);
+            }
+        },
+        ;
+
+        private Integer value;
+        private String desc;
+
+
+        /**
+         * 获取子类型
+         *
+         * @return
+         */
+        public abstract List<Integer> getSelectValue();
+
+    }
+
 }

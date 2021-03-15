@@ -12,8 +12,8 @@ import java.sql.Timestamp;
 @DynamicUpdate
 @Data
 @Entity
-@Table(name = "service")
-public class ServiceEntity {
+@Table(name = "organ_service")
+public class OrganServiceEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

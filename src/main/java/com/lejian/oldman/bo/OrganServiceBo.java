@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Data
-public class ServiceBo {
+public class OrganServiceBo {
 
 
     private Integer organId;
