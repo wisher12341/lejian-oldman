@@ -51,6 +51,7 @@ public class UserController {
         return new ResultResponse();
     }
 
+    //todo 服务人员变更，删除老的账号绑定的老人
     @RequestMapping("/edit")
     public ResultResponse edit(@RequestBody SaveUserRequest request){
         userService.edit(request.getUserParam());

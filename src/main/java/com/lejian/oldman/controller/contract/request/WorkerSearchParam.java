@@ -11,6 +11,7 @@ public class WorkerSearchParam {
     private Integer organId;
     private String organName;
     private Boolean settingBeyond;
+    private String name;
 
     public static JpaSpecBo convert(WorkerSearchParam param) {
         if(param==null){
@@ -27,6 +28,9 @@ public class WorkerSearchParam {
         if(param.getOrganId()!=null){
             jpaSpecBo.getEqualMap().put("organId",param.getOrganId());
 
+        }
+        if (StringUtils.isNotBlank(param.getName())){
+            jpaSpecBo.getLikeMap().put("name","%"+param.getName()+"%");
         }
         return jpaSpecBo;
     }

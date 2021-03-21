@@ -1,8 +1,6 @@
 var saveUrl;
 var uid;
 $(document).ready(function(){
-    $(".chosen-select").chosen();
-
     loadUserEnumInfo();
     uid=getQueryVariable("uid");
     if(uid!=null){
@@ -13,6 +11,55 @@ $(document).ready(function(){
         $(".ibox-title h5").html("添加账号");
         saveUrl="/user/add";
     }
+
+
+    $('.wid').select2({
+        ajax: {
+            url: '/worker/getWorkerByPage',
+
+            type: 'POST',
+
+            dataType: 'json',
+            contentType: "application/json;charset=UTF-8",
+
+            placeholder: '直接选择或搜索选择',
+
+            data: function (val) {
+                return JSON.stringify({
+                    "pageParam": {
+                        "pageNo": 0,
+                        "pageSize": 50
+                    },
+                    "workerSearchParam": {
+                        "name": val.term
+                    }
+                });
+
+            },
+
+            processResults: function (data) {
+                var options = new Array();
+
+                $(data.workerVoList).each(function (i, v) {
+                    options.push({
+                        id: v.id,
+
+                        text: v.name+"-"+v.sex
+
+                    });
+
+                });
+
+                return {
+                    results: options
+
+                };
+
+            }
+
+        }
+
+    });
 });
 
 
@@ -29,20 +76,22 @@ function loadUserInfo(uid) {
             var data = result.userVo;
             $("[name]").each(function () {
                 var field = $(this).attr("name");
-                var value =eval("data."+field);
-                var tagType=$(this).prop("tagName");
-                if(tagType==="INPUT"){
-                    $(this).val(value);
-                }
-                if(tagType==="SELECT"){
-                    $.each($(this).find("option"), function() {
-                        if ($(this).html() == value) {
-                            $(this).attr("selected", "selected");
-                            if(($(this).attr("class")+"").indexOf("chosen-select")!==-1){
-                                $(this).trigger("chosen:updated");
+                if(field == "wid"){
+                    var obj = $("<option value='"+data.wid+"' selected>"+data.workerName+"</option>");
+                    $(this).append(obj)
+                }else{
+                    var value =eval("data."+field);
+                    var tagType=$(this).prop("tagName");
+                    if(tagType==="INPUT"){
+                        $(this).val(value);
+                    }
+                    if(tagType==="SELECT"){
+                        $.each($(this).find("option"), function() {
+                            if ($(this).html() == value) {
+                                $(this).attr("selected", "selected");
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             });
             roleChange($("[name='role']"));
@@ -60,7 +109,7 @@ function loadUserEnumInfo() {
         success: function (result) {
             for(var key in result.roleType){
                 var option="<option value='"+key+"'>"+result.roleType[key]+"</option>";
-                $("select[name='role']").append(option)
+                $("select[name='role']").append(option);
             }
         }
     });
@@ -103,6 +152,7 @@ function submitUser() {
 function roleChange(obj) {
     //服务人员
     if($(obj).val()==="2"){
+
         $("#bindWorker").show();
     }else{
         $("#bindWorker").hide();

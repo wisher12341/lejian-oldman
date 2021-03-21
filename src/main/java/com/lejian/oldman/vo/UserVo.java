@@ -12,4 +12,5 @@ public class UserVo {
      * 绑定的服务人员id
      */
     private Integer wid;
+    private String workerName;
 }

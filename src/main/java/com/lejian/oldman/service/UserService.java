@@ -58,6 +58,7 @@ public class UserService {
             WorkerBo workerBo=workerRepository.getWorkerByUid(userVo.getId());
             if(workerBo!=null) {
                 userVo.setWid(workerBo.getId());
+                userVo.setWorkerName(workerBo.getName());
             }
         }
         return userVo;
