@@ -292,12 +292,32 @@ function createInfoWindow(position) {
     return infoWindow;
 }
 
-function oldmanInfo(oid) {
+function oldmanInfo(oid,locationId) {
     $("#oldmanInfo").hide();
     $("#oldmanInfo").attr("src","/oldmanInfo?oid="+oid+"&contact=no");
     $("#oldmanInfo").load(function(){                             //  等iframe加载完毕
         $("#oldmanInfo").show();
     });
+    var allOverlay = map.getOverlays();
+    var positions = [];
+    var m = 0;
+    for (var i = 0; i < allOverlay.length; i++) {
+        if (allOverlay[i].id != undefined && allOverlay[i].id != null && allOverlay[i].type != "RED") {
+            allOverlay[i].setAnimation(null);
+            if (locationId == allOverlay[i].id) {
+                allOverlay[i].setAnimation(BMAP_ANIMATION_BOUNCE);
+                if (m < 50) {
+                    positions[m++] = allOverlay[i].getPosition();
+                }
+            }
+
+        }
+    }
+    if (positions.length > 0) {
+        // console.info(positions.length);
+        // console.info(JSON.stringify(positions));
+        map.panTo(map.getViewport(positions).center);
+    }
 }
 
 function workerInfo(wid) {

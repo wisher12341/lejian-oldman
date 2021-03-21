@@ -5,27 +5,35 @@ import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.bo.OrganBo;
+import com.lejian.oldman.bo.RzzBo;
+import com.lejian.oldman.check.bo.CheckResultBo;
 import com.lejian.oldman.controller.contract.request.OrganParam;
 import com.lejian.oldman.controller.contract.request.PageParam;
-import com.lejian.oldman.enums.BusinessEnum;
-import com.lejian.oldman.enums.OldmanEnum;
-import com.lejian.oldman.enums.OrganEnum;
-import com.lejian.oldman.enums.WorkerEnum;
+import com.lejian.oldman.enums.*;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.repository.OrganRepository;
 import com.lejian.oldman.repository.ServiceRepository;
 import com.lejian.oldman.repository.VisualSettingRepository;
+import com.lejian.oldman.utils.LjReflectionUtils;
 import com.lejian.oldman.vo.OldmanVo;
 import com.lejian.oldman.vo.OrganVo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static com.lejian.oldman.common.ComponentRespCode.REFLECTION_ERROR;
 
 @Service
 public class OrganService {
@@ -39,6 +47,7 @@ public class OrganService {
     @Autowired
     private OldmanRepository oldmanRepository;
 
+    private static final int PART_NUM=100;
 
     public List<OrganVo> getByPage(PageParam pageParam) {
         return repository.findByPageWithSpec(pageParam.getPageNo(), pageParam.getPageSize(), null).stream().map(this::convert).collect(Collectors.toList());
@@ -128,8 +137,92 @@ public class OrganService {
             }
             serviceType = BusinessEnum.find(organParam.getServiceTypeDesc(), OrganEnum.ServiceType.class).getValue();
         }
+
         List<String> oidList = serviceRepository.getServiceOldmanByPage(pageNo, pageSize, organIdList, serviceType);
         return oldmanRepository.getByOids(oidList).stream().map(OldmanBo::createVo).collect(Collectors.toList());
     }
 
+    @Transactional
+    public List<CheckResultBo> addByExcel(Pair<List<String>, List<List<String>>> excelData) {
+        List<String> titleList=excelData.getFirst();
+        List<List<String>> valueList=excelData.getSecond();
+
+        //todo
+//        List<CheckResultBo> checkResultBoList=checkRzzImport(excelData);
+        List<CheckResultBo> checkResultBoList = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(checkResultBoList)){
+            return checkResultBoList;
+        }
+
+
+        List<OrganBo> boList = Lists.newArrayList();
+
+        IntStream.range(0,valueList.size()).forEach(item->{
+            OrganBo organBo=new OrganBo();
+            boList.add(organBo);
+        });
+
+        Map<String,Field> fieldMap= LjReflectionUtils.getFieldToMap(OrganBo.class);
+
+        try {
+            for (int i = 0; i < titleList.size(); i++) {
+                ExcelEnum excelEnum = ExcelEnum.findFieldName(titleList.get(i),OrganExcelEnum.class);
+                Field field = fieldMap.get(excelEnum.getFieldName());
+                field.setAccessible(true);
+                //纵向 遍历每个对象，一个属性一个属性 纵向赋值
+                for (int j = 0; j < valueList.size(); j++) {
+                    Object value=valueList.get(j).get(i);
+                    if(StringUtils.isNotBlank(String.valueOf(value))) {
+                        //转换成枚举值
+                        Class<? extends BusinessEnum> enumClass = excelEnum.getEnumType();
+                        if (enumClass != null) {
+                            //需要 枚举转换
+                            for (BusinessEnum businessEnum : enumClass.getEnumConstants()) {
+                                if (businessEnum.getDesc().equals(value)) {
+                                    value = businessEnum.getValue();
+                                    break;
+                                }
+                            }
+                        }
+                        if (field.getType() == Integer.class){
+                            field.set(boList.get(j), Integer.valueOf(String.valueOf(value)));
+                        }else {
+                            field.set(boList.get(j), value);
+                        }
+                    }
+                }
+            }
+        }catch (IllegalArgumentException | IllegalAccessException e){
+            REFLECTION_ERROR.doThrowException("fail to addByExcel",e);
+        }
+
+        // left 添加 right更新
+        Pair<List<OrganBo>,List<OrganBo>> pair = classifyDbType(boList);
+        //todo 并非真正的 batch
+        repository.batchAdd(pair.getFirst());
+        repository.batchUpdate(pair.getSecond());
+
+        return Lists.newArrayList();
+    }
+
+
+    private Pair<List<OrganBo>,List<OrganBo>> classifyDbType(List<OrganBo> boList) {
+        List<OrganBo> addList=Lists.newArrayList();
+        List<OrganBo> updateList=Lists.newArrayList();
+
+        List<List<OrganBo>> parts = Lists.partition(boList, PART_NUM);
+        parts.forEach(item->{
+            List<String> nameList=item.stream().map(OrganBo::getName).collect(Collectors.toList());
+            Map<String,OrganBo> existOrganMap=repository.getByNames(nameList).stream().collect(Collectors.toMap(OrganBo::getName, Function.identity()));
+            item.forEach(organ->{
+                if(existOrganMap.containsKey(organ.getName())){
+                    organ.setId(existOrganMap.get(organ.getName()).getId());
+                    updateList.add(organ);
+                } else{
+                    addList.add(organ);
+                }
+            });
+        });
+        return Pair.of(addList,updateList);
+    }
 }

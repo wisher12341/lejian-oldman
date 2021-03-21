@@ -152,6 +152,11 @@ public class WorkerService {
      * @param latitude
      */
     private void beforeCheck(WorkerBo workerBo, OldmanBo oldmanBo, String longitude, String latitude) {
+        //白名单
+        if (Lists.newArrayList(139,140).contains(workerBo.getId())){
+            return;
+        }
+
         //check 1
         //服务人员服务的上一个记录
         WorkerCheckinBo lastWorkerCheckinBo = workerCheckinRepository.getLatestRecordByWid(workerBo.getId());

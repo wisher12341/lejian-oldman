@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 @Repository
 public class OrganRepository extends AbstractSpecificationRepository<OrganBo,OrganEntity> {
 
@@ -39,4 +43,7 @@ public class OrganRepository extends AbstractSpecificationRepository<OrganBo,Org
         return organEntity;
     }
 
+    public List<OrganBo> getByNames(List<String> nameList) {
+        return dao.findByNameIn(nameList).stream().map(this::convertEntity).collect(Collectors.toList());
+    }
 }

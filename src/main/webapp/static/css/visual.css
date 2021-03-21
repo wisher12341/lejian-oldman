@@ -29,6 +29,9 @@
 /*display: none;*/
 /*}*/
 @media only screen and ( max-width: 200000px){
+    .img1{
+        margin-right: 3%;
+    }
     #oldmanInfo{
         display: none;
         position:absolute;

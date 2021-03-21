@@ -241,7 +241,7 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
 
     public Long getRzzCount(String where) {
         try {
-            String sql = "select count(1) from rrz r left join oldman o on r.oid=o.oid" +
+            String sql = "select count(1) from rzz_oldman r left join oldman o on r.oid=o.oid" +
                     " where 1=1 ";
             if (StringUtils.isNotBlank(where)){
                 sql+=" and "+where;

@@ -12,16 +12,14 @@ import java.sql.Timestamp;
 @DynamicUpdate
 @Data
 @Entity
-@Table(name = "rzz_oldman")
-public class RzzEntity {
+@Table(name = "db")
+public class DbEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column
     private String oid;
-    @Column
-    private Integer type;
     @Column(name = "create_time")
     private Timestamp createTime;
     @Column(name = "datachange_time")

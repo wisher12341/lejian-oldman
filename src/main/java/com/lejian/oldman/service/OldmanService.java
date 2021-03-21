@@ -3,9 +3,7 @@ package com.lejian.oldman.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Floats;
-import com.lejian.oldman.bo.CareAlarmRecordBo;
-import com.lejian.oldman.bo.JpaSpecBo;
-import com.lejian.oldman.bo.OldmanBo;
+import com.lejian.oldman.bo.*;
 import com.lejian.oldman.check.CheckProcessor;
 import com.lejian.oldman.check.bo.CheckFieldBo;
 import com.lejian.oldman.check.bo.CheckResultBo;
@@ -65,6 +63,9 @@ public class OldmanService {
 
     @Autowired
     private RzzRepository rzzRepository;
+
+    @Autowired
+    private DbRepository dbRepository;
 
     private static final int PART_NUM=100;
 
@@ -188,11 +189,12 @@ public class OldmanService {
 
     public Map<String, String> getHomeServiceMapCount(OldmanSearchParam oldmanSearchParam) {
         Map<String, String> map = Maps.newHashMap();
-        for(OldmanEnum oldmanEnum:OldmanEnum.ServiceType.values()){
-            if(oldmanEnum.getValue()<100) {
-                map.put(oldmanEnum.getDesc(), "0");
-            }
-        }
+        map.put(OldmanEnum.ServiceType.CHX.getDesc(),"0");
+        map.put(OldmanEnum.ServiceType.JTFW.getDesc(),"0");
+        map.put(OldmanEnum.ServiceType.JJYLFW.getDesc(),"0");
+        map.put(OldmanEnum.ServiceType.RZZ.getDesc(),"0");
+        map.put(OldmanEnum.ServiceType.DB.getDesc(),"0");
+
         Map<Integer, Long> mapInt =oldmanRepository.getOldmanGroup(oldmanSearchParam,"service_type");
         mapInt.forEach((k,v)->{
             BusinessEnum businessEnum=BusinessEnum.find(k,OldmanEnum.ServiceType.class);
@@ -483,12 +485,209 @@ public class OldmanService {
     }
 
     public Map<String, String> getRzzMapCount(OldmanSearchParam oldmanSearchParam) {
-        Map<String, String> result = Maps.newHashMap();
-        OldmanEnum.RzzType rzzType = (OldmanEnum.RzzType) BusinessEnum.find(oldmanSearchParam.getRrzTypeDesc(),OldmanEnum.RzzType.class);
-        Map<Integer,Long> map = rzzRepository.getMapCount(rzzType.getSelectValue());
-        map.forEach((k,v)->{
-            result.put(BusinessEnum.find(oldmanSearchParam.getRrzTypeDesc(),OldmanEnum.RzzType.class).getDesc(),String.valueOf(v));
+        Map<String, String> result = Maps.newLinkedHashMap();
+        Map<OldmanEnum.RzzType, Long> rzzMap = Maps.newLinkedHashMap();
+        OldmanEnum.RzzType rzzType;
+        if (StringUtils.isBlank(oldmanSearchParam.getRrzTypeDesc())){
+            rzzType = OldmanEnum.RzzType.ROOT;
+        }else {
+            rzzType = (OldmanEnum.RzzType) BusinessEnum.find(oldmanSearchParam.getRrzTypeDesc(), OldmanEnum.RzzType.class);
+        }
+        Map<Integer,Long> map = rzzRepository.getMapCount(rzzType.getTypeValue(),oldmanSearchParam.getAreaCountry(),oldmanSearchParam.getAreaTown(),oldmanSearchParam.getAreaVillage(),oldmanSearchParam.getAreaCustomOne());
+
+        rzzType.getChildren().forEach(item->{
+            rzzMap.put(item,0L);
         });
+
+
+        map.forEach((k,v)->{
+            OldmanEnum.RzzType rzz = ((OldmanEnum.RzzType) BusinessEnum.find(k,OldmanEnum.RzzType.class));
+            Long count = rzzMap.get(rzz);
+            while (count == null){
+                rzz = rzz.getParent();
+                count = rzzMap.get(rzz);
+            }
+            rzzMap.put(rzz,++count);
+        });
+        rzzMap.forEach((k,v)-> result.put(k.getDesc(),String.valueOf(v)));
         return result;
+    }
+    @Transactional
+    public List<CheckResultBo> addRzzByExcel(Pair<List<String>, List<List<String>>> excelData) {
+        List<String> titleList=excelData.getFirst();
+        List<List<String>> valueList=excelData.getSecond();
+
+        //todo
+//        List<CheckResultBo> checkResultBoList=checkRzzImport(excelData);
+        List<CheckResultBo> checkResultBoList = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(checkResultBoList)){
+            return checkResultBoList;
+        }
+
+
+        List<RzzBo> rzzBoList = Lists.newArrayList();
+
+        IntStream.range(0,valueList.size()).forEach(item->{
+            RzzBo rzzBo=new RzzBo();
+            rzzBoList.add(rzzBo);
+        });
+
+        Map<String,Field> fieldMap= LjReflectionUtils.getFieldToMap(RzzBo.class);
+
+        try {
+            for (int i = 0; i < titleList.size(); i++) {
+                ExcelEnum rzzExcelEnum = ExcelEnum.findFieldName(titleList.get(i),RzzExcelEnum.class);
+                Field field = fieldMap.get(rzzExcelEnum.getFieldName());
+                field.setAccessible(true);
+                //纵向 遍历每个对象，一个属性一个属性 纵向赋值
+                for (int j = 0; j < valueList.size(); j++) {
+                    Object value=valueList.get(j).get(i);
+                    if(StringUtils.isNotBlank(String.valueOf(value))) {
+                        //转换成枚举值
+                        Class<? extends BusinessEnum> enumClass = rzzExcelEnum.getEnumType();
+                        if (enumClass != null) {
+                            //需要 枚举转换
+                            for (BusinessEnum businessEnum : enumClass.getEnumConstants()) {
+                                if (businessEnum.getDesc().equals(value)) {
+                                    value = businessEnum.getValue();
+                                    break;
+                                }
+                            }
+                        }
+                        if (field.getType() == Integer.class){
+                            field.set(rzzBoList.get(j), Integer.valueOf(String.valueOf(value)));
+                        }else {
+                            field.set(rzzBoList.get(j), value);
+                        }
+                    }
+                }
+            }
+        }catch (IllegalArgumentException | IllegalAccessException e){
+            REFLECTION_ERROR.doThrowException("fail to addRzzByExcel",e);
+        }
+
+        // left 添加 right更新
+        Pair<List<RzzBo>,List<RzzBo>> pair = rzzClassifyDbType(rzzBoList);
+        //todo 并非真正的 batch
+        rzzRepository.batchAdd(pair.getFirst());
+        rzzRepository.batchUpdate(pair.getSecond());
+
+        return Lists.newArrayList();
+    }
+
+
+    private Pair<List<RzzBo>,List<RzzBo>> rzzClassifyDbType(List<RzzBo> rzzBoList) {
+        List<RzzBo> addList=Lists.newArrayList();
+        List<RzzBo> updateList=Lists.newArrayList();
+
+        List<List<RzzBo>> parts = Lists.partition(rzzBoList, PART_NUM);
+        parts.forEach(item->{
+            List<String> oidList=item.stream().map(RzzBo::getOid).collect(Collectors.toList());
+            Map<String,RzzBo> existOldmanMap=rzzRepository.getByOids(oidList).stream().collect(Collectors.toMap(RzzBo::getOid, Function.identity()));
+            item.forEach(rzz->{
+                if(existOldmanMap.containsKey(rzz.getOid())){
+                    rzz.setId(existOldmanMap.get(rzz.getOid()).getId());
+                    updateList.add(rzz);
+                } else{
+                    addList.add(rzz);
+                }
+            });
+        });
+        return Pair.of(addList,updateList);
+    }
+
+    public List<OldmanVo> getRzzOldmanByPage(Integer pageNo, Integer pageSize, OldmanSearchParam oldmanSearchParam) {
+        OldmanEnum.RzzType rzzType;
+        if (StringUtils.isBlank(oldmanSearchParam.getRrzTypeDesc())){
+            rzzType = OldmanEnum.RzzType.ROOT;
+        }else {
+            rzzType = (OldmanEnum.RzzType) BusinessEnum.find(oldmanSearchParam.getRrzTypeDesc(), OldmanEnum.RzzType.class);
+        }
+        List<String> oidList = rzzRepository.getRzzOldmanByPage(pageNo,pageSize,oldmanSearchParam,rzzType.getTypeValue());
+        return oldmanRepository.getByOids(oidList).stream().map(OldmanBo::createVo).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<CheckResultBo> addDbByExcel(Pair<List<String>, List<List<String>>> excelData) {
+        List<String> titleList=excelData.getFirst();
+        List<List<String>> valueList=excelData.getSecond();
+
+        //todo
+//        List<CheckResultBo> checkResultBoList=checkRzzImport(excelData);
+        List<CheckResultBo> checkResultBoList = Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(checkResultBoList)){
+            return checkResultBoList;
+        }
+
+
+        List<DbBo> boList = Lists.newArrayList();
+
+        IntStream.range(0,valueList.size()).forEach(item->{
+            DbBo bo=new DbBo();
+            boList.add(bo);
+        });
+
+        Map<String,Field> fieldMap= LjReflectionUtils.getFieldToMap(DbBo.class);
+
+        try {
+            for (int i = 0; i < titleList.size(); i++) {
+                ExcelEnum excelEnum = ExcelEnum.findFieldName(titleList.get(i),DbExcelEnum.class);
+                Field field = fieldMap.get(excelEnum.getFieldName());
+                field.setAccessible(true);
+                //纵向 遍历每个对象，一个属性一个属性 纵向赋值
+                for (int j = 0; j < valueList.size(); j++) {
+                    Object value=valueList.get(j).get(i);
+                    if(StringUtils.isNotBlank(String.valueOf(value))) {
+                        //转换成枚举值
+                        Class<? extends BusinessEnum> enumClass = excelEnum.getEnumType();
+                        if (enumClass != null) {
+                            //需要 枚举转换
+                            for (BusinessEnum businessEnum : enumClass.getEnumConstants()) {
+                                if (businessEnum.getDesc().equals(value)) {
+                                    value = businessEnum.getValue();
+                                    break;
+                                }
+                            }
+                        }
+                        if (field.getType() == Integer.class){
+                            field.set(boList.get(j), Integer.valueOf(String.valueOf(value)));
+                        }else {
+                            field.set(boList.get(j), value);
+                        }
+                    }
+                }
+            }
+        }catch (IllegalArgumentException | IllegalAccessException e){
+            REFLECTION_ERROR.doThrowException("fail to addRzzByExcel",e);
+        }
+
+        // left 添加 right更新
+        Pair<List<DbBo>,List<DbBo>> pair = dbClassifyDbType(boList);
+        //todo 并非真正的 batch
+        dbRepository.batchAdd(pair.getFirst());
+        dbRepository.batchUpdate(pair.getSecond());
+
+        return Lists.newArrayList();
+    }
+
+
+    private Pair<List<DbBo>,List<DbBo>> dbClassifyDbType(List<DbBo> boList) {
+        List<DbBo> addList=Lists.newArrayList();
+        List<DbBo> updateList=Lists.newArrayList();
+
+        List<List<DbBo>> parts = Lists.partition(boList, PART_NUM);
+        parts.forEach(item->{
+            List<String> oidList=item.stream().map(DbBo::getOid).collect(Collectors.toList());
+            Map<String,DbBo> existOldmanMap=dbRepository.getByOids(oidList).stream().collect(Collectors.toMap(DbBo::getOid, Function.identity()));
+            item.forEach(db->{
+                if(existOldmanMap.containsKey(db.getOid())){
+                    db.setId(existOldmanMap.get(db.getOid()).getId());
+                    updateList.add(db);
+                } else{
+                    addList.add(db);
+                }
+            });
+        });
+        return Pair.of(addList,updateList);
     }
 }

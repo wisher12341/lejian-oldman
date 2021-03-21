@@ -208,7 +208,7 @@ function birthdayOldman() {
         success: function (result) {
             var oldmanList = result.oldmanVoList;
             for (var i = 0; i < oldmanList.length; i++) {
-                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + ")'>" +
+                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + "," + oldmanList[i].locationId + ")'>" +
                     "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].oid + "</span></div>" +
                     "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].name + "</span></div>" +
                     "<div class='bbbb' style='width: 25%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].age + "</span></div>" +
@@ -274,17 +274,23 @@ function secondceng(obj, type) {
         });
     }
     if (type == 6){
-        // $.ajax({
-        //     url: "/oldman/getRzz",
-        //     type: 'post',
-        //     dataType: 'json',
-        //     async: false,
-        //     contentType: "application/json;charset=UTF-8",
-        //     success: function (result) {
-        //         data = result.map;
-        //     }
-        // });
-        data={"活动":"0","筛查":"0"};
+        $.ajax({
+            url: "/oldman/getRzzCount",
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            data: JSON.stringify({
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage
+            }),
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
+        // data={"活动":"0","筛查":"0"};
     }
     if (type == 2) {
         oldmanSearchParam.oldmanSearchParam.equip = true;
@@ -341,12 +347,11 @@ function secondceng(obj, type) {
         $("#manName").html("老人名单");
     }
     else if (type==6){
-        oldmanSearchParam.pageParam.pageSize=0;
         createBarChart(null, chartData, document.getElementById('chart'), selectRzz);
-        createOldman(oldmanSearchParam, "manList", true);
+        createRzzOldman(oldmanSearchParam, "manList", true);
         // createBarChart(null, chartData, document.getElementById('chart'), selectRzz);
         // createRzzOldman(oldmanSearchParam, "manList", true);
-        // $("#manName").html("老人名单");
+        $("#manName").html("老人名单");
     }
     else if (type!=7){
         createBarChart(null, chartData, document.getElementById('chart'), selectManType);
@@ -378,46 +383,175 @@ function selectWorkerType(name) {
 }
 
 function selectRzz(name) {
-    var chartData={};
-    if (name == "筛查"){
-        chartData=[{
-            "key":"复筛",
-            "value":0
-        }, {
-                "key":"初筛",
-                "value":0
-        }];
-    }else if (name=="活动"){
-        chartData=[{
-            "key":"心里",
-            "value":0
-        }];
+    var data={};
+    $.ajax({
+        url: "/oldman/getRzzCount",
+        type: 'post',
+        dataType: 'json',
+        async: false,
+        data: JSON.stringify({
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "rrzTypeDesc":name
+        }),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            data = result.map;
+        }
+    });
+    var chartData = [];
+    var i = 0;
+    var num =0;
+    for (var key in data) {
+        chartData[i++] = {"key": key, "value": data[key]};
+        num += parseInt(data[key]);
     }
+
+    // var chartData={};
+    // if (name == "筛查"){
+    //     chartData=[{
+    //         "key":"复筛",
+    //         "value":0
+    //     }, {
+    //             "key":"初筛",
+    //             "value":0
+    //     }];
+    // }else if (name=="活动"){
+    //     chartData=[{
+    //         "key":"心里",
+    //         "value":0
+    //     }];
+    // }
 
     createBarChart(null, chartData, document.getElementById('chart'), selectRzzSc);
 
+    var oldmanSearchParam = {
+        "pageParam": {
+            "pageNo": 0,
+            "pageSize": 50
+        },
+        "oldmanSearchParam": {
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "rrzTypeDesc":name
+        },
+        "needCount": false
+    };
+    createRzzOldman(oldmanSearchParam, "manList", true);
 }
 
 function selectRzzSc(name) {
-    var chartData={};
     if (name == "初筛"){
-        chartData=[{
-            "key":"分诊",
-            "value":0
-        }];
+        var data={};
+        $.ajax({
+            url: "/oldman/getRzzCount",
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            data: JSON.stringify({
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage,
+                "rrzTypeDesc":name
+            }),
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
+        var chartData = [];
+        var i = 0;
+        var num =0;
+        for (var key in data) {
+            chartData[i++] = {"key": key, "value": data[key]};
+            num += parseInt(data[key]);
+        }
         createBarChart(null, chartData, document.getElementById('chart'), selectRzzScFz);
+        var oldmanSearchParam = {
+            "pageParam": {
+                "pageNo": 0,
+                "pageSize": 50
+            },
+            "oldmanSearchParam": {
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage,
+                "rrzTypeDesc":name
+            },
+            "needCount": false
+        };
+        createRzzOldman(oldmanSearchParam, "manList", true);
     }
 }
 
 function selectRzzScFz(name) {
-    var chartData={};
     if (name == "分诊"){
-        chartData=[{
-            "key":"卫区医院复查",
-            "value":0
-        }];
-        createBarChart(null, chartData, document.getElementById('chart'), selectRzzScFz);
+        var data={};
+        $.ajax({
+            url: "/oldman/getRzzCount",
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            data: JSON.stringify({
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage,
+                "rrzTypeDesc":name
+            }),
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
+        var chartData = [];
+        var i = 0;
+        var num =0;
+        for (var key in data) {
+            chartData[i++] = {"key": key, "value": data[key]};
+            num += parseInt(data[key]);
+        }
+        createBarChart(null, chartData, document.getElementById('chart'), selectRzzOldman);
+        var oldmanSearchParam = {
+            "pageParam": {
+                "pageNo": 0,
+                "pageSize": 50
+            },
+            "oldmanSearchParam": {
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage,
+                "rrzTypeDesc":name
+            },
+            "needCount": false
+        };
+        createRzzOldman(oldmanSearchParam, "manList", true);
     }
+}
+
+function selectRzzOldman(name) {
+    var oldmanSearchParam = {
+        "pageParam": {
+            "pageNo": 0,
+            "pageSize": 50
+        },
+        "oldmanSearchParam": {
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "rrzTypeDesc":name
+        },
+        "needCount": false
+    };
+    createRzzOldman(oldmanSearchParam, "manList", true);
 }
 
 function selectOrganType(type) {
@@ -649,7 +783,7 @@ function createAlarmData(type, clear) {
                 if (data[i].isHandle == false) {
                     colorCss = "color:red";
                 }
-                var li = "<li onclick='oldmanInfo(" + data[i].oldmanVo.oid + ")'>" +
+                var li = "<li onclick='oldmanInfo(" + data[i].oldmanVo.oid + "," + oldmanList[i].locationId + ")'>" +
                     "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;" + colorCss + "'>" + data[i].oldmanVo.oid + "</span></div>" +
                     "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;" + colorCss + "'>" + data[i].oldmanVo.name + "</span></div>" +
                     "<div class='bbbb' style='width: 25%;'><span class='word' style='font-size: larger;" + colorCss + "'>" + data[i].oldmanVo.age + "</span></div>" +
@@ -792,7 +926,34 @@ function createServiceOldman(param,id, clear) {
         success: function (result) {
             var oldmanList = result.oldmanVoList;
             for (var i = 0; i < oldmanList.length; i++) {
-                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + ")'>" +
+                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + "," + oldmanList[i].locationId + ")'>" +
+                    "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].oid + "</span></div>" +
+                    "<div class='bbbb'style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].name + "</span></div>" +
+                    "<div class='bbbb'style='width: 25%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].age + "</span></div>" +
+                    "<div class='bbbb'style='width: 10%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].sex + "</span></div></li>";
+                $("#" + id).append(li);
+            }
+        }
+    });
+}
+
+/**
+ * 获取认知症老人
+ */
+function createRzzOldman(param, id, clear) {
+    if (clear) {
+        $("#" + id).html("");
+    }
+    $.ajax({
+        url: "/oldman/getRzzOldmanByPage",
+        type: 'post',
+        dataType: 'json',
+        data: JSON.stringify(param),
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            var oldmanList = result.oldmanVoList;
+            for (var i = 0; i < oldmanList.length; i++) {
+                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + "," + oldmanList[i].locationId + ")'>" +
                     "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].oid + "</span></div>" +
                     "<div class='bbbb'style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].name + "</span></div>" +
                     "<div class='bbbb'style='width: 25%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].age + "</span></div>" +
@@ -819,7 +980,7 @@ function createOldman(param, id, clear) {
         success: function (result) {
             var oldmanList = result.oldmanVoList;
             for (var i = 0; i < oldmanList.length; i++) {
-                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + ")'>" +
+                var li = "<li onclick='oldmanInfo(" + oldmanList[i].oid + "," + oldmanList[i].locationId + ")'>" +
                     "<div class='bbbb' style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].oid + "</span></div>" +
                     "<div class='bbbb'style='width: 30%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].name + "</span></div>" +
                     "<div class='bbbb'style='width: 25%;'><span class='word' style='font-size: larger;'>" + oldmanList[i].age + "</span></div>" +

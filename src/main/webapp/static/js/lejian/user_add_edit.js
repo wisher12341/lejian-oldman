@@ -1,6 +1,8 @@
 var saveUrl;
 var uid;
 $(document).ready(function(){
+    $(".chosen-select").chosen();
+
     loadUserEnumInfo();
     uid=getQueryVariable("uid");
     if(uid!=null){
@@ -36,6 +38,9 @@ function loadUserInfo(uid) {
                     $.each($(this).find("option"), function() {
                         if ($(this).html() == value) {
                             $(this).attr("selected", "selected");
+                            if(($(this).attr("class")+"").indexOf("chosen-select")!==-1){
+                                $(this).trigger("chosen:updated");
+                            }
                         }
                     });
                 }

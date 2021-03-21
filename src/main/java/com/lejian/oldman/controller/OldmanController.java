@@ -268,4 +268,63 @@ public class OldmanController {
         mapResponse.setMap(oldmanService.getRzzMapCount(oldmanSearchParam));
         return mapResponse;
     }
+
+    /**
+     * 认知症excel导入
+     * 没有的添加  有的更新
+     * @param file
+     * @return
+     */
+    @BackUserAuth
+    //todo 限制  数量限制 一次1000？ 参数限制
+    @RequestMapping(value = "/importRzzExcel",method = RequestMethod.POST)
+    public ModelAndView importRzzExcel(@RequestParam MultipartFile file) {
+        Pair<List<String>,List<List<String>>> excelData=excelHandler.parse(file,2);
+        List<CheckResultBo> checkResultBoList= Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(excelData.getSecond())) {
+            checkResultBoList=oldmanService.addRzzByExcel(excelData);
+        }
+        ModelAndView mv=new ModelAndView("/rzz");
+        mv.addObject("check",checkResultBoList);
+        return mv;
+    }
+
+
+    /**
+     * 认知症excel导入
+     * 没有的添加  有的更新
+     * @param file
+     * @return
+     */
+    @BackUserAuth
+    //todo 限制  数量限制 一次1000？ 参数限制
+    @RequestMapping(value = "/importDbExcel",method = RequestMethod.POST)
+    public ModelAndView importDbExcel(@RequestParam MultipartFile file) {
+        Pair<List<String>,List<List<String>>> excelData=excelHandler.parse(file,2);
+        List<CheckResultBo> checkResultBoList= Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(excelData.getSecond())) {
+            checkResultBoList=oldmanService.addDbByExcel(excelData);
+        }
+        ModelAndView mv=new ModelAndView("/db");
+        mv.addObject("check",checkResultBoList);
+        return mv;
+    }
+
+    /**
+     * 认知症老人列表分页查询
+     * @param request
+     * @return
+     */
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping("/getRzzOldmanByPage")
+    public GetOldmanByPageResponse getRzzOldmanByPage(@RequestBody GetOldmanByPageRequest request){
+        GetOldmanByPageResponse response = new GetOldmanByPageResponse();
+        PageParam pageParam = request.getPageParam();
+        response.setOldmanVoList(oldmanService.getRzzOldmanByPage(pageParam.getPageNo(),pageParam.getPageSize(),request.getOldmanSearchParam()));
+        if(request.getNeedCount()) {
+            response.setCount(oldmanService.getOldmanCount(request.getOldmanSearchParam()));
+        }
+        return response;
+    }
 }

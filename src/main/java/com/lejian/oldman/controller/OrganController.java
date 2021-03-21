@@ -1,18 +1,24 @@
 package com.lejian.oldman.controller;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.lejian.oldman.check.bo.CheckResultBo;
 import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.*;
+import com.lejian.oldman.handler.ExcelHandler;
 import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.security.annotation.BackUserAuth;
 import com.lejian.oldman.service.OrganService;
 import com.lejian.oldman.service.UserService;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,6 +30,8 @@ public class OrganController {
 
     @Autowired
     private OrganService organService;
+    @Autowired
+    private ExcelHandler excelHandler;
 
     @RequestMapping("/getByPage")
     public GetOrganByPageResponse getUserByPage(@RequestBody GetOrganByPageRequest request){
@@ -102,4 +110,24 @@ public class OrganController {
 //        return new ResultResponse();
 //    }
 
+
+    /**
+     * 机构excel导入
+     * 没有的添加  有的更新
+     * @param file
+     * @return
+     */
+    @BackUserAuth
+    //todo 限制  数量限制 一次1000？ 参数限制
+    @RequestMapping(value = "/importExcel",method = RequestMethod.POST)
+    public ModelAndView importRzzExcel(@RequestParam MultipartFile file) {
+        Pair<List<String>,List<List<String>>> excelData=excelHandler.parse(file,2);
+        List<CheckResultBo> checkResultBoList= Lists.newArrayList();
+        if(CollectionUtils.isNotEmpty(excelData.getSecond())) {
+            checkResultBoList=organService.addByExcel(excelData);
+        }
+        ModelAndView mv=new ModelAndView("/organ");
+        mv.addObject("check",checkResultBoList);
+        return mv;
+    }
 }

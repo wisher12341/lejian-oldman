@@ -76,6 +76,30 @@ public class PageController {
     }
 
     @BackUserAuth
+    @GetMapping("/rzz")
+    public ModelAndView rzz(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/rzz");
+        return mv;
+    }
+
+    @BackUserAuth
+    @GetMapping("/organ")
+    public ModelAndView organ(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/organ");
+        return mv;
+    }
+
+    @BackUserAuth
+    @GetMapping("/db")
+    public ModelAndView db(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/db");
+        return mv;
+    }
+
+    @BackUserAuth
     @GetMapping("/chx")
     public ModelAndView chx(){
         ModelAndView mv = new ModelAndView();

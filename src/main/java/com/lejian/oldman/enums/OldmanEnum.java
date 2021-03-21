@@ -117,10 +117,10 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<Integer> getSearchValue() {
-                return Lists.newArrayList(1,101,102,104);
+                return Lists.newArrayList(1,11,101,111);
             }
         },
-        JTFW(2, "家庭服务") {
+        JTFW(10, "家庭服务") {
             @Override
             public List<ServiceType> map() {
                 return Lists.newArrayList(JTFW);
@@ -128,10 +128,10 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<Integer> getSearchValue() {
-                return Lists.newArrayList(2,101,103,104);
+                return Lists.newArrayList(10,11,110,111);
             }
         },
-        JJYLFW(3, "居家养老服务") {
+        JJYLFW(100, "居家养老服务") {
             @Override
             public List<ServiceType> map() {
                 return Lists.newArrayList(JJYLFW);
@@ -139,55 +139,10 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<Integer> getSearchValue() {
-                return Lists.newArrayList(3,102,103,104);
+                return Lists.newArrayList(100,101,110,111);
             }
         },
-        CHX_JTFW(101, "长护险+家庭服务") {
-            @Override
-            public List<ServiceType> map() {
-                return Lists.newArrayList(CHX, JTFW);
-            }
-
-            @Override
-            public List<Integer> getSearchValue() {
-                return Lists.newArrayList(101);
-            }
-        },
-        CHX_JJYLFW(102, "长护险+居家养老服务") {
-            @Override
-            public List<ServiceType> map() {
-                return Lists.newArrayList(CHX, JJYLFW);
-            }
-
-            @Override
-            public List<Integer> getSearchValue() {
-                return Lists.newArrayList(102);
-            }
-        },
-        JTFW_JJYLFW(103, "家庭服务+居家养老服务") {
-            @Override
-            public List<ServiceType> map() {
-                return Lists.newArrayList(JTFW, JJYLFW);
-            }
-
-            @Override
-            public List<Integer> getSearchValue() {
-                return Lists.newArrayList(103);
-            }
-        },
-        CHX_JTFW_JJYLFW(104, "家庭服务+家庭服务+居家养老服务") {
-            @Override
-            public List<ServiceType> map() {
-                return Lists.newArrayList(CHX, JTFW, JJYLFW);
-            }
-
-            @Override
-            public List<Integer> getSearchValue() {
-                return Lists.newArrayList(104);
-            }
-        },
-        //todo 组合 开会确认 哪些会交叉
-        RZZ(4,"认知症服务") {
+        RZZ(1000,"认知症服务") {
             @Override
             public List<ServiceType> map() {
                 return Lists.newArrayList(RZZ);
@@ -195,10 +150,10 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<Integer> getSearchValue() {
-                return Lists.newArrayList(4);
+                return Lists.newArrayList(1000);
             }
         },
-        DB(5,"大病服务") {
+        DB(10000,"大病服务") {
             @Override
             public List<ServiceType> map() {
                 return Lists.newArrayList(DB);
@@ -206,7 +161,51 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<Integer> getSearchValue() {
-                return Lists.newArrayList(5);
+                return Lists.newArrayList(10000);
+            }
+        },
+        CHX_JTFW(11, "长护险+家庭服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(CHX, JTFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(11);
+            }
+        },
+        CHX_JJYLFW(101, "长护险+居家养老服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(CHX, JJYLFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(101);
+            }
+        },
+        JTFW_JJYLFW(110, "家庭服务+居家养老服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(JTFW, JJYLFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(110);
+            }
+        },
+        CHX_JTFW_JJYLFW(111, "家庭服务+家庭服务+居家养老服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(CHX, JTFW, JJYLFW);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(111);
             }
         };
         private Integer value;
@@ -253,47 +252,135 @@ public interface OldmanEnum extends BusinessEnum{
     enum RzzType implements OldmanEnum {
         A(1,"卫区医院复查") {
             @Override
-            public List<Integer> getSelectValue() {
+            public List<Integer> getTypeValue() {
                 return Lists.newArrayList(1);
             }
+
+            @Override
+            public RzzType getParent() {
+                return FZ;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return null;
+            }
+
         },
         B(2,"复筛") {
             @Override
-            public List<Integer> getSelectValue() {
+            public List<Integer> getTypeValue() {
                 return Lists.newArrayList(2);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return SC;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return null;
             }
         },
         C(3,"心里") {
             @Override
-            public List<Integer> getSelectValue() {
+            public List<Integer> getTypeValue() {
                 return Lists.newArrayList(3);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return HD;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return null;
             }
         },
 
         SC(0,"筛查") {
             @Override
-            public List<Integer> getSelectValue() {
+            public List<Integer> getTypeValue() {
                 return Lists.newArrayList(1,2);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return ROOT;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return Lists.newArrayList(B,CS);
             }
         },
         HD(0,"活动") {
             @Override
-            public List<Integer> getSelectValue() {
+            public List<Integer> getTypeValue() {
                 return Lists.newArrayList(3);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return ROOT;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return Lists.newArrayList(C);
             }
         },
         CS(0,"初筛") {
             @Override
-            public List<Integer> getSelectValue() {
+            public List<Integer> getTypeValue() {
                 return Lists.newArrayList(1);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return SC;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return Lists.newArrayList(FZ);
             }
         },
         FZ(0,"分诊") {
             @Override
-            public List<Integer> getSelectValue() {
+            public List<Integer> getTypeValue() {
                 return Lists.newArrayList(1);
             }
+
+            @Override
+            public RzzType getParent() {
+                return CS;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return Lists.newArrayList(A);
+            }
         },
+        ROOT(0,"总"){
+            @Override
+            public List<Integer> getTypeValue() {
+                return Lists.newArrayList(1,2,3);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return null;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return Lists.newArrayList(HD,SC);
+            }
+
+        }
         ;
 
         private Integer value;
@@ -305,7 +392,11 @@ public interface OldmanEnum extends BusinessEnum{
          *
          * @return
          */
-        public abstract List<Integer> getSelectValue();
+        public abstract List<Integer> getTypeValue();
+
+        public abstract RzzType getParent();
+
+        public abstract List<RzzType> getChildren();
 
     }
 
