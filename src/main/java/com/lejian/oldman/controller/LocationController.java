@@ -1,5 +1,6 @@
 package com.lejian.oldman.controller;
 
+import com.lejian.oldman.controller.contract.request.GetLocationByPageRequest;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.controller.contract.response.GetLocationListResponse;
 import com.lejian.oldman.security.annotation.BackAdminAuth;
@@ -37,4 +38,11 @@ public class LocationController {
         return response;
     }
 
+
+    @RequestMapping("/getLocationByPage")
+    public GetLocationListResponse getLocationByPage(@RequestBody GetLocationByPageRequest request){
+        GetLocationListResponse response=new GetLocationListResponse();
+        response.setLocationVoList(service.getLocationByPage(request.getPageParam().getPageNo(),request.getPageParam().getPageSize(),request.getLocationSearchParam()));
+        return response;
+    }
 }

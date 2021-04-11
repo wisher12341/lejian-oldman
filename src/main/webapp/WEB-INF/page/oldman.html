@@ -95,14 +95,13 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-2">
+                        <div class="col-sm-4">
+                            <button class='btn btn-primary' onclick=newPage(1,'添加',"/oldmanAdd") >添加</button>
                             <!--<button class='btn btn-primary' onclick=newPage(1,'添加老人','/oldmanAdd')>添加</button>-->
                             <form action="/oldman/importExcel" method="post" enctype="multipart/form-data" id="importForm" style="display: inline">
                                 <input type="button" style="display:inline" class="btn btn-primary" onclick="$('#formFile').trigger('click');" value="导入">
                                 <input type="file" name="file" onchange="$('#importForm').submit()" id="formFile" style="display:none">
                             </form>
-                        </div>
-                        <div class="col-sm-2">
                             <button class='btn btn-primary' onclick=$("#exportForm").submit() >导出</button>
                         </div>
                     </div>

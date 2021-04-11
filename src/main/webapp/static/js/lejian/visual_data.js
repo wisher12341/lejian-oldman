@@ -116,6 +116,17 @@ function selectArea(name, obj) {
         var allOverlay = map.getOverlays();
         for (var i = 0; i < allOverlay.length; i++) {
             if (allOverlay[i].id != undefined && allOverlay[i].id != null && allOverlay[i].type != "RED") {
+                if(allOverlay[i].change === true) {
+                    var rawIcon;
+                    if (allOverlay[i].type == "GREEN") {
+                        rawIcon = new BMap.Icon("/static/img/mapGreen.png", new BMap.Size(48, 48));
+                    } else if (allOverlay[i].type == "YELLOW") {
+                        rawIcon = new BMap.Icon("/static/img/mapYellow.png", new BMap.Size(48, 48));
+                    } else {
+                        rawIcon = new BMap.Icon("/static/img/mapRed.png", new BMap.Size(48, 48));
+                    }
+                    allOverlay[i].setIcon(rawIcon);
+                }
                 allOverlay[i].setAnimation(null);
             }
         }
@@ -140,6 +151,17 @@ function selectArea(name, obj) {
                 var m = 0;
                 for (var i = 0; i < allOverlay.length; i++) {
                     if (allOverlay[i].id != undefined && allOverlay[i].id != null && allOverlay[i].type != "RED") {
+                        if(allOverlay[i].change === true) {
+                            var rawIcon;
+                            if (allOverlay[i].type == "GREEN") {
+                                rawIcon = new BMap.Icon("/static/img/mapGreen.png", new BMap.Size(48, 48));
+                            } else if (allOverlay[i].type == "YELLOW") {
+                                rawIcon = new BMap.Icon("/static/img/mapYellow.png", new BMap.Size(48, 48));
+                            } else {
+                                rawIcon = new BMap.Icon("/static/img/mapRed.png", new BMap.Size(48, 48));
+                            }
+                            allOverlay[i].setIcon(rawIcon);
+                        }
                         allOverlay[i].setAnimation(null);
                         for (var j = 0; j < data.length; j++) {
                             if (data[j].id == allOverlay[i].id) {

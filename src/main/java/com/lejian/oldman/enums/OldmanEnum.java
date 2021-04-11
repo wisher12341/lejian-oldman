@@ -164,6 +164,17 @@ public interface OldmanEnum extends BusinessEnum{
                 return Lists.newArrayList(10000);
             }
         },
+        ORGAN(100000,"机构服务") {
+            @Override
+            public List<ServiceType> map() {
+                return Lists.newArrayList(DB);
+            }
+
+            @Override
+            public List<Integer> getSearchValue() {
+                return Lists.newArrayList(10000);
+            }
+        },
         CHX_JTFW(11, "长护险+家庭服务") {
             @Override
             public List<ServiceType> map() {

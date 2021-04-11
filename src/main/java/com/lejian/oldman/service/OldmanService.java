@@ -49,8 +49,6 @@ public class OldmanService {
     private OldmanRepository oldmanRepository;
     @Autowired
     private CareAlarmRecordRepository careAlarmRecordRepository;
-    @Autowired
-    private LocationRepository locationRepository;
 
     @Autowired
     private CheckProcessor checkProcessor;
@@ -66,6 +64,8 @@ public class OldmanService {
 
     @Autowired
     private DbRepository dbRepository;
+    @Autowired
+    private LocationRepository locationRepository;
 
     private static final int PART_NUM=100;
 
@@ -115,7 +115,10 @@ public class OldmanService {
 
 
     public OldmanVo getOldmanByOid(String oid) {
-        return OldmanBo.createVo(oldmanRepository.findByOid(oid));
+        OldmanVo oldmanVo = OldmanBo.createVo(oldmanRepository.findByOid(oid));
+        LocationBo locationBo = locationRepository.getByPkId(oldmanVo.getLocationId());
+        oldmanVo.setLocationDesc(locationBo.getDesc());
+        return oldmanVo;
     }
 
     /**
@@ -572,6 +575,17 @@ public class OldmanService {
         rzzRepository.batchAdd(pair.getFirst());
         rzzRepository.batchUpdate(pair.getSecond());
 
+        List<OldmanBo> oldmanBoList = rzzBoList.stream().map(item->{
+            OldmanBo oldmanBo = new OldmanBo();
+            oldmanBo.setOid(item.getOid());
+            oldmanBo.setServiceType(OldmanEnum.ServiceType.RZZ.getValue());
+            return oldmanBo;
+        }).collect(Collectors.toList());
+
+        oldmanBoList.forEach(oldmanBo -> {
+            oldmanRepository.dynamicUpdate(oldmanBo,"oid");
+        });
+
         return Lists.newArrayList();
     }
 
@@ -666,6 +680,18 @@ public class OldmanService {
         //todo 并非真正的 batch
         dbRepository.batchAdd(pair.getFirst());
         dbRepository.batchUpdate(pair.getSecond());
+
+
+        List<OldmanBo> oldmanBoList = boList.stream().map(item->{
+            OldmanBo oldmanBo = new OldmanBo();
+            oldmanBo.setOid(item.getOid());
+            oldmanBo.setServiceType(OldmanEnum.ServiceType.DB.getValue());
+            return oldmanBo;
+        }).collect(Collectors.toList());
+
+        oldmanBoList.forEach(oldmanBo -> {
+            oldmanRepository.dynamicUpdate(oldmanBo,"oid");
+        });
 
         return Lists.newArrayList();
     }

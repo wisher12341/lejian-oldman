@@ -6,6 +6,7 @@ import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.bo.VisualSettingBo;
+import com.lejian.oldman.controller.contract.request.LocationSearchParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.repository.LocationRepository;
@@ -78,7 +79,7 @@ public class LocationService {
         return oldmanBoList.stream().collect(Collectors.groupingBy(OldmanBo::getLocationId));
     }
 
-    public Pair<Long, List<LocationVo>>     pollStatus(long timestamp) {
+    public Pair<Long, List<LocationVo>>  pollStatus(long timestamp) {
         List<LocationVo> locationVoList = Lists.newArrayList();
         VisualSettingBo visualSettingBo = visualSettingRepository.getUsed();
         OldmanSearchParam oldmanSearchParam=new OldmanSearchParam();
@@ -125,4 +126,14 @@ public class LocationService {
         }).collect(Collectors.toList());
     }
 
+    public List<LocationVo> getLocationByPage(Integer pageNo, Integer pageSize, LocationSearchParam locationSearchParam) {
+        List<LocationBo> locationBoList = locationRepository.findByPageWithSpec(pageNo,pageSize,LocationSearchParam.convert(locationSearchParam));
+        return locationBoList.stream().map(this::create).collect(Collectors.toList());
+    }
+
+    private LocationVo create(LocationBo locationBo) {
+        LocationVo vo = new LocationVo();
+        BeanUtils.copyProperties(locationBo,vo);
+        return vo;
+    }
 }

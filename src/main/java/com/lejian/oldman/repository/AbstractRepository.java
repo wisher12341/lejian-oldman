@@ -68,7 +68,7 @@ public abstract class AbstractRepository<Bo,Entity> {
     @Transactional
     public void dynamicUpdate(Bo bo,String fieldName){
         try {
-                String sqlFormat = "update %s set %s where %s='%s'";
+            String sqlFormat = "update %s set %s where %s='%s'";
 
             StringBuilder updateStr=new StringBuilder();
             Entity entity = convertBo(bo);
@@ -81,20 +81,22 @@ public abstract class AbstractRepository<Bo,Entity> {
                     if(field.getName().equals(fieldName)){
                         searchValue = fieldValue;
                     }else {
-                        updateStr.append(field.getName() + "='" + fieldValue + "'");
+                        updateStr.append(StringUtils.camelToUnderline(field.getName()) + "='" + fieldValue + "'");
                         updateStr.append(",");
                     }
                 }
             }
-            updateStr.deleteCharAt(updateStr.length()-1);
+                updateStr.deleteCharAt(updateStr.length()-1);
 
 
             REPOSITORY_ERROR.checkNotNull(searchValue,
                     "dynamicUpdate, no searchValue id found,"+this.getClass().getSimpleName());
 
+
+
             String sql = String.format(sqlFormat,
                     entity.getClass().getAnnotation(Table.class).name(),
-                    StringUtils.camelToUnderline(updateStr.toString()),
+                    updateStr.toString(),
                     fieldName,searchValue);
 
             Query query =entityManager.createNativeQuery(sql);

@@ -194,11 +194,11 @@ function createLocationMarker(position,map) {
     var pt = new BMap.Point(position.positionX, position.positionY);
     var myIcon;
     if(position.locationTypeEnum == "GREEN"){
-        myIcon = new BMap.Icon("/static/img/mapGreen.png", new BMap.Size(32, 32));
+        myIcon = new BMap.Icon("/static/img/mapGreen.png", new BMap.Size(48, 48));
     }else if(position.locationTypeEnum == "YELLOW"){
-        myIcon = new BMap.Icon("/static/img/mapYellow.png", new BMap.Size(32, 32));
+        myIcon = new BMap.Icon("/static/img/mapYellow.png", new BMap.Size(48, 48));
     }else{
-        myIcon = new BMap.Icon("/static/img/mapRed.png", new BMap.Size(32, 32));
+        myIcon = new BMap.Icon("/static/img/mapRed.png", new BMap.Size(48, 48));
     }
     var marker = new BMap.Marker(pt, {
         icon: myIcon
@@ -304,7 +304,27 @@ function oldmanInfo(oid,locationId) {
     for (var i = 0; i < allOverlay.length; i++) {
         if (allOverlay[i].id != undefined && allOverlay[i].id != null && allOverlay[i].type != "RED") {
             allOverlay[i].setAnimation(null);
+            // if(allOverlay[i].change === true){
+            //     var rawIcon;
+            //     if(allOverlay[i].type == "GREEN"){
+            //         rawIcon = new BMap.Icon("/static/img/mapGreen.png", new BMap.Size(48, 48));
+            //     }else if(allOverlay[i].type == "YELLOW"){
+            //         rawIcon = new BMap.Icon("/static/img/mapYellow.png", new BMap.Size(48, 48));
+            //     }else{
+            //         rawIcon = new BMap.Icon("/static/img/mapRed.png", new BMap.Size(48, 48));
+            //     }
+            //     allOverlay[i].setIcon(rawIcon);
+            // }
             if (locationId == allOverlay[i].id) {
+
+                var imgSrc=$("#secondcengName > img").attr("src");
+                //机构的
+                if (imgSrc.length<=0){
+                    imgSrc="/static/img/2.png"
+                }
+                var myIcon = new BMap.Icon(imgSrc, new BMap.Size(48, 48));
+                allOverlay[i].setIcon(myIcon);
+                allOverlay[i].change=true;
                 allOverlay[i].setAnimation(BMAP_ANIMATION_BOUNCE);
                 if (m < 50) {
                     positions[m++] = allOverlay[i].getPosition();
@@ -355,7 +375,7 @@ function showAllWorker() {
                 if(worker.positionList.length>0){
                     var location = worker.positionList[0];
                     var pt = new BMap.Point(location.lng, location.lat);
-                    var myIcon = new BMap.Icon("/static/img/worker.png", new BMap.Size(32, 32));
+                    var myIcon = new BMap.Icon("/static/img/worker.png", new BMap.Size(48, 48));
                     var marker = new BMap.Marker(pt, {
                         icon: myIcon
                     });  // 创建标注
@@ -392,7 +412,7 @@ function showOneWorker(id) {
                 var location = worker.positionList[i];
                 if(location.lng.length>0 && location.lat.length>0){
                     var pt = new BMap.Point(location.lng, location.lat);
-                    var myIcon = new BMap.Icon("/static/img/worker.png", new BMap.Size(32, 32));
+                    var myIcon = new BMap.Icon("/static/img/worker.png", new BMap.Size(48, 48));
                     var marker = new BMap.Marker(pt, {
                         icon: myIcon
                     });  // 创建标注

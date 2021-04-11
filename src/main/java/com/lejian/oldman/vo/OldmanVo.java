@@ -40,5 +40,6 @@ public class OldmanVo {
     private String serviceType;
     private String serviceStatus;
     private String createTime;
+    private String locationDesc;
 
 }

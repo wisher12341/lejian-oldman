@@ -62,6 +62,7 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         oldmanBo.setSexEnum(BusinessEnum.find(oldmanEntity.getSex(),OldmanEnum.Sex.class));
         oldmanBo.setFamilyEnum(BusinessEnum.find(oldmanEntity.getFamily(),OldmanEnum.FamilyType.class));
         oldmanBo.setServiceStatusEnum(BusinessEnum.find(oldmanBo.getServiceStatus(),OldmanEnum.ServiceStatus.class));
+        oldmanBo.setServiceTypeEnum(BusinessEnum.find(oldmanBo.getServiceType(),OldmanEnum.ServiceType.class));
         return oldmanBo;
     }
 

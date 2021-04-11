@@ -95,7 +95,7 @@ public class OldmanSearchParam {
 
 
         if(StringUtils.isNotBlank(oldmanSearchParam.getBirthdayLike())){
-            jpaSpecBo.getLikeMap().put("birthday","%"+oldmanSearchParam.getBirthdayLike()+"%s");
+            jpaSpecBo.getLikeMap().put("birthday","%"+oldmanSearchParam.getBirthdayLike()+"%");
         }
         if(oldmanSearchParam.getStatus()!=null){
             jpaSpecBo.getEqualMap().put("status",oldmanSearchParam.getStatus());
