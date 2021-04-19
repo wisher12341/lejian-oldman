@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum RzzExcelEnum implements ExcelEnum{
 
-    OID("老人编号","oid"),
+    OID("老人身份证号","idCard"),
     TYPE("认知症类型","type"),
     ;
 

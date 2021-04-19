@@ -14,5 +14,6 @@ public class RzzBo {
     private Integer id;
     private String oid;
     private Integer type;
+    private String idCard;
 
 }

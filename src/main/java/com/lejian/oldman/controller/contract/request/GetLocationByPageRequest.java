@@ -6,4 +6,5 @@ import lombok.Data;
 public class GetLocationByPageRequest {
     private PageParam pageParam;
     private LocationSearchParam locationSearchParam;
+    private Boolean needCount = false;
 }

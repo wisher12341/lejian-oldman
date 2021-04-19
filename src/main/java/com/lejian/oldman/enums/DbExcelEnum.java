@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum DbExcelEnum implements ExcelEnum{
 
-    OID("老人编号","oid"),
+    OID("老人编号","idCard"),
     ;
 
     private String columnName;

@@ -569,6 +569,9 @@ public class OldmanService {
             REFLECTION_ERROR.doThrowException("fail to addRzzByExcel",e);
         }
 
+        rzzBoList.forEach(bo->bo.setOid(bo.getIdCard().substring(bo.getIdCard().length()-10,bo.getIdCard().length())));
+
+
         // left 添加 right更新
         Pair<List<RzzBo>,List<RzzBo>> pair = rzzClassifyDbType(rzzBoList);
         //todo 并非真正的 batch
@@ -674,6 +677,8 @@ public class OldmanService {
         }catch (IllegalArgumentException | IllegalAccessException e){
             REFLECTION_ERROR.doThrowException("fail to addRzzByExcel",e);
         }
+
+        boList.forEach(bo->bo.setOid(bo.getIdCard().substring(bo.getIdCard().length()-10,bo.getIdCard().length())));
 
         // left 添加 right更新
         Pair<List<DbBo>,List<DbBo>> pair = dbClassifyDbType(boList);

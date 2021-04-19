@@ -9,6 +9,7 @@ import java.util.List;
 public class GetLocationListResponse {
 
     private List<LocationVo> locationVoList;
+    private Long count;
     /**
      * 用于轮询接口， 数据的最新时间
      */

@@ -84,6 +84,30 @@ public class PageController {
     }
 
     @BackUserAuth
+    @GetMapping("/location")
+    public ModelAndView location(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/location");
+        return mv;
+    }
+
+    @BackUserAuth
+    @GetMapping("/locationAdd")
+    public ModelAndView locationAdd(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/location_add_edit");
+        return mv;
+    }
+
+    @BackUserAuth
+    @GetMapping("/locationEdit")
+    public ModelAndView locationEdit(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/location_add_edit");
+        return mv;
+    }
+
+    @BackUserAuth
     @GetMapping("/organ")
     public ModelAndView organ(){
         ModelAndView mv = new ModelAndView();

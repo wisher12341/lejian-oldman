@@ -6,6 +6,7 @@ import com.lejian.oldman.bo.JpaSpecBo;
 import com.lejian.oldman.bo.LocationBo;
 import com.lejian.oldman.bo.OldmanBo;
 import com.lejian.oldman.bo.VisualSettingBo;
+import com.lejian.oldman.controller.contract.request.LocationParam;
 import com.lejian.oldman.controller.contract.request.LocationSearchParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.OldmanEnum;
@@ -135,5 +136,28 @@ public class LocationService {
         LocationVo vo = new LocationVo();
         BeanUtils.copyProperties(locationBo,vo);
         return vo;
+    }
+
+    public LocationVo getById(Integer id) {
+        return create(locationRepository.getByPkId(id));
+    }
+
+    public void add(LocationParam locationParam) {
+        locationRepository.save(convert(locationParam));
+    }
+
+    private LocationBo convert(LocationParam locationParam) {
+        LocationBo locationBo = new LocationBo();
+        BeanUtils.copyProperties(locationParam,locationBo);
+        return locationBo;
+    }
+
+    public void edit(LocationParam locationParam) {
+        LocationBo locationBo = convert(locationParam);
+        locationRepository.dynamicUpdateByPkId(locationBo);
+    }
+
+    public Long getCount(LocationSearchParam locationSearchParam) {
+        return locationRepository.countWithSpec(LocationSearchParam.convert(locationSearchParam));
     }
 }

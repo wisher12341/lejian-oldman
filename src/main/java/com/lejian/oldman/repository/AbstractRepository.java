@@ -2,13 +2,10 @@ package com.lejian.oldman.repository;
 
 import com.lejian.oldman.bo.ChxBo;
 import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.utils.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.util.List;
@@ -81,7 +78,8 @@ public abstract class AbstractRepository<Bo,Entity> {
                     if(field.getName().equals(fieldName)){
                         searchValue = fieldValue;
                     }else {
-                        updateStr.append(StringUtils.camelToUnderline(field.getName()) + "='" + fieldValue + "'");
+                        String name = StringUtils.isNotBlank(field.getAnnotation(Column.class).name())? field.getAnnotation(Column.class).name():field.getName();
+                        updateStr.append(name + "='" + fieldValue + "'");
                         updateStr.append(",");
                     }
                 }
