@@ -140,7 +140,7 @@ public abstract class AbstractRepository<Bo,Entity> {
 
     @Transactional
     public void dynamicBatchUpdate(List<Bo> boList, String fieldName) {
-        List<List<Bo>> list =Lists.partition(boList,5.0);
+        List<List<Bo>> list =Lists.partition(boList,50);
         list.forEach(item->{
             try {
                 StringBuilder sql = new StringBuilder("update ");
