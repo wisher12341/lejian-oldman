@@ -20,6 +20,7 @@ import com.lejian.oldman.utils.tuple.Tuple3;
 import com.lejian.oldman.vo.OldmanVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
@@ -307,29 +308,31 @@ public class OldmanService {
         /**
          * 校验坐标
          */
-        checkBoList.forEach(bo->{
-            if (StringUtils.isBlank(bo.getLocationAddress())){
-                checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标", LOCATION_CHECK.getDisplayMessage()));
-                return;
-            }
-            if(StringUtils.isNotBlank(bo.getLng()) && StringUtils.isNotBlank(bo.getLat())){
-                //todo 是否需要调用接口 验证 坐标正确？
-                if(bo.getLng().startsWith("121.") && bo.getLat().startsWith("31.") && NumberUtils.isNumber(bo.getLng()) && NumberUtils.isNumber(bo.getLat())){
-
-                }else {
+        if (MapUtils.isNotEmpty(checkResultBoMap)) {
+            checkBoList.forEach(bo -> {
+                if (StringUtils.isBlank(bo.getLocationAddress())) {
                     checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标", LOCATION_CHECK.getDisplayMessage()));
+                    return;
                 }
-                return;
-            }
-            if(StringUtils.isNotBlank(bo.getLocationAddress())){
-                Pair<String,String> result=baiduMapHandler.geocoding(bo.getLocationAddress(),"上海市");
-                if(result==null){
-                    checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标",LOCATION_CHECK.getDisplayMessage()));
+                if (StringUtils.isNotBlank(bo.getLng()) && StringUtils.isNotBlank(bo.getLat())) {
+                    //todo 是否需要调用接口 验证 坐标正确？
+                    if (bo.getLng().startsWith("121.") && bo.getLat().startsWith("31.") && NumberUtils.isNumber(bo.getLng()) && NumberUtils.isNumber(bo.getLat())) {
+
+                    } else {
+                        checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标", LOCATION_CHECK.getDisplayMessage()));
+                    }
+                    return;
                 }
-                return;
-            }
-            checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标",LOCATION_CHECK.getDisplayMessage()));
-        });
+                if (StringUtils.isNotBlank(bo.getLocationAddress())) {
+                    Pair<String, String> result = baiduMapHandler.geocoding(bo.getLocationAddress(), "上海市");
+                    if (result == null) {
+                        checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标", LOCATION_CHECK.getDisplayMessage()));
+                    }
+                    return;
+                }
+                checkResultBoMap.get(bo.getNumCheck()).getCheckFieldBoList().add(new CheckFieldBo("坐标", LOCATION_CHECK.getDisplayMessage()));
+            });
+        }
 
         // 属性名 改为 枚举中的表格文字
         checkResultBoList.forEach(a->{

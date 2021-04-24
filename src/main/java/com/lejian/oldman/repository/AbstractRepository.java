@@ -1,5 +1,7 @@
 package com.lejian.oldman.repository;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.lejian.oldman.bo.ChxBo;
 import com.lejian.oldman.bo.OldmanBo;
 import org.apache.commons.lang.StringUtils;
@@ -10,6 +12,7 @@ import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.lejian.oldman.common.ComponentRespCode.REPOSITORY_ERROR;
@@ -128,7 +131,75 @@ public abstract class AbstractRepository<Bo,Entity> {
      * 批量更新
      */
     public void batchUpdate(List<Bo> boList){
-        boList.forEach(this::dynamicUpdateByPkId);
+        dynamicBatchUpdateByPkId(boList);
+    }
+
+    private void dynamicBatchUpdateByPkId(List<Bo> boList) {
+        dynamicBatchUpdate(boList,"id");
+    }
+
+    @Transactional
+    public void dynamicBatchUpdate(List<Bo> boList, String fieldName) {
+        List<List<Bo>> list =Lists.partition(boList,5.0);
+        list.forEach(item->{
+            try {
+                StringBuilder sql = new StringBuilder("update ");
+                List<Entity> entityList = boList.stream().map(this::convertBo).collect(Collectors.toList());
+                Class<Entity> entityClass = (Class<Entity>) entityList.get(0).getClass();
+                sql.append(entityClass.getAnnotation(Table.class).name());
+                sql.append(" set ");
+
+
+                Field[] fields = entityClass.getDeclaredFields();
+
+                String sqlCase = "%s= case "+fieldName;
+                String updateCase = " when %s then '%s'";
+                Field idField =  entityClass.getDeclaredField(fieldName);
+
+                Set<String> idSet = Sets.newHashSet();
+                idField.setAccessible(true);
+                for(Field field:fields){
+                    field.setAccessible(true);
+                    String s1;
+                    if (!field.getName().equals(fieldName)){
+                        String name = StringUtils.isNotBlank(field.getAnnotation(Column.class).name()) ? field.getAnnotation(Column.class).name() : field.getName();
+                        s1 =String.format(sqlCase,name);
+                    }else{
+                        continue;
+                    }
+                    StringBuilder s2 = new StringBuilder();
+                    for (Entity entity : entityList) {
+                        Object fieldValue = field.get(entity);
+                        if (fieldValue != null) {
+                            Object id = idField.get(entity);
+                            idSet.add(String.valueOf(id));
+                            s2.append(String.format(updateCase,String.valueOf(id),String.valueOf(fieldValue)));
+                        }
+                    }
+                    if (StringUtils.isNotBlank(s2.toString())) {
+                        sql.append(s1);
+                        sql.append(s2);
+                        sql.append(" end,");
+                    }
+                }
+
+                String execSql = sql.toString().substring(0,sql.length()-1);
+
+                execSql+=String.format(" where %s in ('%s')",fieldName,idSet.stream().collect(Collectors.joining("','")));
+
+//            REPOSITORY_ERROR.checkNotNull(searchValue,
+//                    "dynamicBatchUpdate, no searchValue id found,"+this.getClass().getSimpleName());
+
+
+
+                Query query =entityManager.createNativeQuery(execSql);
+                query.executeUpdate();
+
+            }catch (Exception e){
+                REPOSITORY_ERROR.doThrowException("dynamicBatchUpdate,"+this.getClass().getSimpleName(),e);
+            }
+        });
+
     }
 
     public void deleteById(Integer id) {
