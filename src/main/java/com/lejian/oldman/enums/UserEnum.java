@@ -15,7 +15,8 @@ public interface UserEnum extends BusinessEnum{
     @AllArgsConstructor
     enum Role implements UserEnum {
         ADMIN(1,"管理员"),
-        WORKER(2,"服务人员")
+        WORKER(2,"服务人员"),
+        USER(3,"使用人员")
         ;
         private Integer value;
         private String desc;

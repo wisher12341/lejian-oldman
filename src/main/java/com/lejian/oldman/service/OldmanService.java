@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.lejian.oldman.common.ComponentRespCode.*;
+import static com.lejian.oldman.common.Constant.IMPORT_RESET;
 import static com.lejian.oldman.utils.DateUtils.YYMMDD;
 
 @Slf4j
@@ -265,18 +266,26 @@ public class OldmanService {
                 for (int j = 0; j < valueList.size(); j++) {
                     Object value=valueList.get(j).get(i);
                     if(StringUtils.isNotBlank(String.valueOf(value))) {
-                        //转换成枚举值
-                        Class<? extends BusinessEnum> enumClass = oldmanExcelEnum.getEnumType();
-                        if (enumClass != null) {
-                            //需要 枚举转换
-                            for (BusinessEnum businessEnum : enumClass.getEnumConstants()) {
-                                if (businessEnum.getDesc().equals(value)) {
-                                    value = businessEnum.getValue();
-                                    break;
+                        if (String.valueOf(value).equals(IMPORT_RESET)){
+                            if (field.getType() == Integer.class){
+                                field.set(oldmanBoList.get(j), 0);
+                            }else if (field.getType()  == String.class){
+                                field.set(oldmanBoList.get(j), StringUtils.EMPTY);
+                            }
+                        }else {
+                            //转换成枚举值
+                            Class<? extends BusinessEnum> enumClass = oldmanExcelEnum.getEnumType();
+                            if (enumClass != null) {
+                                //需要 枚举转换
+                                for (BusinessEnum businessEnum : enumClass.getEnumConstants()) {
+                                    if (businessEnum.getDesc().equals(value)) {
+                                        value = businessEnum.getValue();
+                                        break;
+                                    }
                                 }
                             }
+                            field.set(oldmanBoList.get(j), value);
                         }
-                        field.set(oldmanBoList.get(j), value);
                     }
                 }
             }
@@ -723,5 +732,10 @@ public class OldmanService {
             });
         });
         return Pair.of(addList,updateList);
+    }
+
+    public List<String> getPositionId(OldmanSearchParam oldmanSearchParam) {
+        List<OldmanBo> oldmanBoList = oldmanRepository.findWithSpec(OldmanSearchParam.convert(oldmanSearchParam));
+        return oldmanBoList.stream().map(item->String.valueOf(item.getLocationId())).distinct().collect(Collectors.toList());
     }
 }

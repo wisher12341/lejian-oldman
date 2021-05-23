@@ -115,6 +115,7 @@ function selectArea(name, obj) {
     if (name == null) {
         var allOverlay = map.getOverlays();
         for (var i = 0; i < allOverlay.length; i++) {
+            allOverlay[i].show();
             if (allOverlay[i].id != undefined && allOverlay[i].id != null && allOverlay[i].type != "RED") {
                 if(allOverlay[i].change === true) {
                     var rawIcon;
@@ -201,6 +202,23 @@ function secondReturn() {
     $("#secondFirst").show();
     $(".thirdceng").show();
     $(".fourceng").show();
+
+    var allOverlay = map.getOverlays();
+    for (var i = 0; i < allOverlay.length; i++) {
+        allOverlay[i].show();
+        if(allOverlay[i].change === true) {
+            var rawIcon;
+            if (allOverlay[i].type == "GREEN") {
+                rawIcon = new BMap.Icon("/static/img/mapGreen.png", new BMap.Size(48, 48));
+            } else if (allOverlay[i].type == "YELLOW") {
+                rawIcon = new BMap.Icon("/static/img/mapYellow.png", new BMap.Size(48, 48));
+            } else {
+                rawIcon = new BMap.Icon("/static/img/mapRed.png", new BMap.Size(48, 48));
+            }
+            allOverlay[i].setIcon(rawIcon);
+            allOverlay[i].setAnimation(null);
+        }
+    }
 }
 
 function sixReturn() {
@@ -247,6 +265,29 @@ function birthdayOldman() {
 
 }
 
+function locationShow(param) {
+    $.ajax({
+        url: "/oldman/getPositionId",
+        type: 'post',
+        dataType: 'json',
+        data: param,
+        contentType: "application/json;charset=UTF-8",
+        success: function (result) {
+            var locationIdList = result.list;
+            var allOverlay = map.getOverlays();
+            for (var i = 0; i < allOverlay.length; i++) {
+                if (locationIdList===null
+                    || locationIdList.length===0
+                    || locationIdList.indexOf(allOverlay[i].id+"")===-1) {
+                     allOverlay[i].hide();
+                }else{
+                    allOverlay[i].show();
+                }
+            }
+        }
+    });
+}
+
 
 function secondceng(obj, type) {
 
@@ -280,6 +321,14 @@ function secondceng(obj, type) {
             contentType: "application/json;charset=UTF-8",
             success: function (result) {
                 data = result.map;
+                locationShow(JSON.stringify({
+                    "areaCustomOne": areaCustomOne,
+                    "areaCountry": areaCountry,
+                    "areaTown": areaTown,
+                    "areaVillage": areaVillage,
+                    "homeService":true
+                }));
+
             }
         });
     }
@@ -513,7 +562,54 @@ function selectRzzSc(name) {
 }
 
 function selectRzzScFz(name) {
-    if (name == "分诊"){
+    if (name == "复筛"){
+        var data={};
+        $.ajax({
+            url: "/oldman/getRzzCount",
+            type: 'post',
+            dataType: 'json',
+            async: false,
+            data: JSON.stringify({
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage,
+                "rrzTypeDesc":name
+            }),
+            contentType: "application/json;charset=UTF-8",
+            success: function (result) {
+                data = result.map;
+            }
+        });
+        var chartData = [];
+        var i = 0;
+        var num =0;
+        for (var key in data) {
+            chartData[i++] = {"key": key, "value": data[key]};
+            num += parseInt(data[key]);
+        }
+        createBarChart(null, chartData, document.getElementById('chart'), selectRzzFC);
+        var oldmanSearchParam = {
+            "pageParam": {
+                "pageNo": 0,
+                "pageSize": 50
+            },
+            "oldmanSearchParam": {
+                "areaCustomOne": areaCustomOne,
+                "areaCountry": areaCountry,
+                "areaTown": areaTown,
+                "areaVillage": areaVillage,
+                "rrzTypeDesc":name
+            },
+            "needCount": false
+        };
+        createRzzOldman(oldmanSearchParam, "manList", true);
+    }
+}
+
+
+function selectRzzFC(name) {
+    if (name == "卫区医院复查"){
         var data={};
         $.ajax({
             url: "/oldman/getRzzCount",
@@ -706,11 +802,32 @@ function selectManType(name) {
     };
     $("#manName").html("老人名单：" + name);
     if (name == "家庭服务") {
-        param.oldmanSearchParam.serviceType = 2;
+        param.oldmanSearchParam.serviceType = 10;
+        locationShow(JSON.stringify({
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "serviceType":10
+        }));
     } else if (name == "长护险") {
         param.oldmanSearchParam.serviceType = 1;
+        locationShow(JSON.stringify({
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "serviceType":1
+        }));
     } else if (name == "居家养老服务") {
-        param.oldmanSearchParam.serviceType = 3;
+        param.oldmanSearchParam.serviceType = 100;
+        locationShow(JSON.stringify({
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "serviceType":100
+        }));
     } else if (name == "关怀系统") {
         param.oldmanSearchParam.equipType = "careGatewayId";
     } else if (name == "想家宝") {
@@ -718,9 +835,23 @@ function selectManType(name) {
     } else if (name == "摄像头") {
         param.oldmanSearchParam.equipType = "cameraId";
     }else if (name == "认知症服务") {
-        param.oldmanSearchParam.serviceType = 4;
+        param.oldmanSearchParam.serviceType = 1000;
+        locationShow(JSON.stringify({
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "serviceType":1000
+        }));
     }else if (name == "大病服务") {
-        param.oldmanSearchParam.serviceType = 5;
+        param.oldmanSearchParam.serviceType = 10000;
+        locationShow(JSON.stringify({
+            "areaCustomOne": areaCustomOne,
+            "areaCountry": areaCountry,
+            "areaTown": areaTown,
+            "areaVillage": areaVillage,
+            "serviceType":10000
+        }));
     }
     createOldman(param, "manList", true);
 

@@ -13,6 +13,6 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAnyAuthority('1')")
+@PreAuthorize("hasAnyAuthority('1','3')")
 public @interface BackUserAuth {
 }

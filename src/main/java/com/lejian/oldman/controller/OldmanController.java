@@ -14,6 +14,7 @@ import com.lejian.oldman.service.OldmanService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -232,12 +233,28 @@ public class OldmanController {
 
     /**
      * 导出
-     * @param oldmanSearchParam
+     * @param
      */
     @BackUserAuth
     @RequestMapping(value = "/exportExcel",method = RequestMethod.POST)
-    public void export(@RequestBody OldmanSearchParam oldmanSearchParam){
-        Pair<String[],String[][]> data=oldmanService.getExportOldmanInfo(oldmanSearchParam);
+    public void export(@RequestParam(value = "areaCountry",required = false) String areaCountry
+            ,@RequestParam(value = "areaTown",required = false) String areaTown
+            ,@RequestParam(value = "areaVillage",required = false) String areaVillage
+            ,@RequestParam(value = "areaCustomOne",required = false) String areaCustomOne
+            ,@RequestParam(value = "name",required = false) String name
+            ,@RequestParam(value = "idCard",required = false) String idCard
+            ,@RequestParam(value = "createTimeStart",required = false) String createTimeStart
+            ,@RequestParam(value = "createTimeEnd",required = false) String createTimeEnd){
+        OldmanSearchParam param = new OldmanSearchParam();
+        param.setAreaVillage(areaVillage);
+        param.setAreaTown(areaTown);
+        param.setAreaCustomOne(areaCustomOne);
+        param.setAreaCountry(areaCountry);
+        param.setName(name);
+        param.setIdCard(idCard);
+        param.setCreateTimeEnd(createTimeEnd);
+        param.setCreateTimeStart(createTimeStart);
+        Pair<String[],String[][]> data=oldmanService.getExportOldmanInfo(param);
         excelHandler.export("oldman",data.getFirst(),data.getSecond());
     }
 
@@ -248,6 +265,15 @@ public class OldmanController {
         MapResponse mapResponse = new MapResponse();
         mapResponse.setMap(oldmanService.getHomeServiceMapCount(oldmanSearchParam));
         return mapResponse;
+    }
+
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping(value = "/getPositionId",method = RequestMethod.POST)
+    public ListResponse getPositionId(@RequestBody OldmanSearchParam oldmanSearchParam){
+        ListResponse listResponse = new ListResponse();
+        listResponse.setList(oldmanService.getPositionId(oldmanSearchParam));
+        return listResponse;
     }
 
     @BackUserAuth

@@ -1,6 +1,8 @@
 package com.lejian.oldman.controller;
 
+import com.google.common.collect.Maps;
 import com.lejian.oldman.controller.contract.response.GetEnumResponse;
+import com.lejian.oldman.controller.contract.response.MapResponse;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.enums.UserEnum;
 import com.lejian.oldman.enums.WorkerEnum;
@@ -12,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * 获取系统定义的枚举值
@@ -43,6 +48,20 @@ public class EnumController {
         response.setWorkerType(CollectionUtils.enumToMap(WorkerEnum.Type.values()));
         response.setSex(CollectionUtils.enumToMap(OldmanEnum.Sex.values()));
         response.setEducation(CollectionUtils.enumToMap(OldmanEnum.Education.values()));
+        return response;
+    }
+
+    @RequestMapping("/rzzAdd")
+    public MapResponse rzzAdd(){
+        MapResponse response=new MapResponse();
+        Map<Integer,String> map = CollectionUtils.enumToMap(OldmanEnum.RzzType.values());
+        Map<String,String> result = Maps.newHashMap();
+        map.forEach((k,v)->{
+            if (k!=0){
+                result.put(String.valueOf(k),v);
+            }
+        });
+        response.setMap(result);
         return response;
     }
 

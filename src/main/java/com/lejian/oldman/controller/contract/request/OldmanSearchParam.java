@@ -1,10 +1,14 @@
 package com.lejian.oldman.controller.contract.request;
 
 import com.lejian.oldman.bo.JpaSpecBo;
+import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
+import com.lejian.oldman.enums.UserEnum;
+import com.lejian.oldman.security.UserContext;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.core.userdetails.User;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -28,6 +32,7 @@ public class OldmanSearchParam {
     private String age;
     private String householdType;
     private String familyType;
+
     /**
      * 认知症描述
      */
@@ -142,6 +147,7 @@ public class OldmanSearchParam {
     }
 
     public String getSql(String type) {
+
         String where="";
         if(StringUtils.isNotBlank(getAreaCustomOne())){
             where+=" "+type+"area_custom_one='"+getAreaCustomOne()+"' and ";
@@ -158,6 +164,14 @@ public class OldmanSearchParam {
 
         where+=" "+type+"is_delete=0 ";
 
+        User user = UserContext.getLoginUser();
+
+
+        User user =UserContext.getLoginUser();
+        UserBo userBo = userRepository.getByUsername(user.getUsername());
+        if (userBo.getRole() == UserEnum.Role.ADMIN){
+            
+        }
         return where;
     }
 }

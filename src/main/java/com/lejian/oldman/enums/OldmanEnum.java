@@ -261,7 +261,7 @@ public interface OldmanEnum extends BusinessEnum{
     @Getter
     @AllArgsConstructor
     enum RzzType implements OldmanEnum {
-        A(1,"卫区医院复查") {
+        A(1,"卫区医院复查正常") {
             @Override
             public List<Integer> getTypeValue() {
                 return Lists.newArrayList(1);
@@ -269,7 +269,7 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public RzzType getParent() {
-                return FZ;
+                return FC;
             }
 
             @Override
@@ -278,7 +278,7 @@ public interface OldmanEnum extends BusinessEnum{
             }
 
         },
-        B(2,"复筛") {
+        B(2,"需康复治疗") {
             @Override
             public List<Integer> getTypeValue() {
                 return Lists.newArrayList(2);
@@ -286,7 +286,7 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public RzzType getParent() {
-                return SC;
+                return FC;
             }
 
             @Override
@@ -294,7 +294,7 @@ public interface OldmanEnum extends BusinessEnum{
                 return null;
             }
         },
-        C(3,"心里") {
+        C(3,"心里疏导") {
             @Override
             public List<Integer> getTypeValue() {
                 return Lists.newArrayList(3);
@@ -310,11 +310,42 @@ public interface OldmanEnum extends BusinessEnum{
                 return null;
             }
         },
-
-        SC(0,"筛查") {
+        D(4,"复筛正常") {
             @Override
             public List<Integer> getTypeValue() {
-                return Lists.newArrayList(1,2);
+                return Lists.newArrayList(4);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return FS;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return null;
+            }
+        },
+        E(5,"初筛正常") {
+            @Override
+            public List<Integer> getTypeValue() {
+                return Lists.newArrayList(5);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return CS;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return null;
+            }
+        },
+        SC(0,"认证障碍筛查") {
+            @Override
+            public List<Integer> getTypeValue() {
+                return Lists.newArrayList(1,2,4,5);
             }
 
             @Override
@@ -324,7 +355,7 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<RzzType> getChildren() {
-                return Lists.newArrayList(B,CS);
+                return Lists.newArrayList(CS);
             }
         },
         HD(0,"活动") {
@@ -346,7 +377,7 @@ public interface OldmanEnum extends BusinessEnum{
         CS(0,"初筛") {
             @Override
             public List<Integer> getTypeValue() {
-                return Lists.newArrayList(1);
+                return Lists.newArrayList(1,2,4,5);
             }
 
             @Override
@@ -356,13 +387,13 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<RzzType> getChildren() {
-                return Lists.newArrayList(FZ);
+                return Lists.newArrayList(E,FS);
             }
         },
-        FZ(0,"分诊") {
+        FS(0,"复筛") {
             @Override
             public List<Integer> getTypeValue() {
-                return Lists.newArrayList(1);
+                return Lists.newArrayList(1,2,4);
             }
 
             @Override
@@ -372,13 +403,29 @@ public interface OldmanEnum extends BusinessEnum{
 
             @Override
             public List<RzzType> getChildren() {
-                return Lists.newArrayList(A);
+                return Lists.newArrayList(FC,D);
+            }
+        },
+        FC(0,"卫区医院复查") {
+            @Override
+            public List<Integer> getTypeValue() {
+                return Lists.newArrayList(1,2);
+            }
+
+            @Override
+            public RzzType getParent() {
+                return FS;
+            }
+
+            @Override
+            public List<RzzType> getChildren() {
+                return Lists.newArrayList(A,B);
             }
         },
         ROOT(0,"总"){
             @Override
             public List<Integer> getTypeValue() {
-                return Lists.newArrayList(1,2,3);
+                return Lists.newArrayList(1,2,3,4,5);
             }
 
             @Override

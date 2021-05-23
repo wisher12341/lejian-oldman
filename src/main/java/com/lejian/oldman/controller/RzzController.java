@@ -1,11 +1,10 @@
 package com.lejian.oldman.controller;
 
 
-import com.lejian.oldman.controller.contract.request.GetOldmanByPageRequest;
-import com.lejian.oldman.controller.contract.request.GetRzzByPageRequest;
-import com.lejian.oldman.controller.contract.request.PageParam;
+import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.GetOldmanByPageResponse;
 import com.lejian.oldman.controller.contract.response.GetRzzResponse;
+import com.lejian.oldman.controller.contract.response.ResultResponse;
 import com.lejian.oldman.handler.ExcelHandler;
 import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.security.annotation.BackUserAuth;
@@ -37,6 +36,39 @@ public class RzzController {
         return response;
     }
 
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping("/get")
+    public GetRzzResponse get(@RequestBody RzzSearchParam rzzSearchParam){
+        GetRzzResponse response = new GetRzzResponse();
+        response.setRzzVoList(service.get(rzzSearchParam));
+        return response;
+    }
 
 
+    /**
+     * 添加
+     * @return
+     */
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping("/add")
+    public ResultResponse add(@RequestBody SaveRzzRequest request){
+        ResultResponse response=new ResultResponse();
+        service.add(request.getRzzParam());
+        return response;
+    }
+
+    /**
+     * 编辑
+     * @return
+     */
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping("/edit")
+    public ResultResponse edit(@RequestBody SaveRzzRequest request){
+        ResultResponse response=new ResultResponse();
+        service.edit(request.getRzzParam());
+        return response;
+    }
 }

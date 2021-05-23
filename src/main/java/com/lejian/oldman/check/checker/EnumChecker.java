@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.Annotation;
 
 import static com.lejian.oldman.common.ComponentRespCode.ENUM_CHECK;
+import static com.lejian.oldman.common.Constant.IMPORT_RESET;
 
 @Component
 public class EnumChecker implements Checker {
@@ -17,7 +18,7 @@ public class EnumChecker implements Checker {
     @Override
     public CheckFieldBo check(String name, Object value, Annotation annotation) {
         EnumCheck enumCheck= (EnumCheck) annotation;
-        if(value==null || StringUtils.isBlank(String.valueOf(value))){
+        if(value==null || StringUtils.isBlank(String.valueOf(value)) || String.valueOf(value).equals(IMPORT_RESET)){
             return null;
         }
         Class<? extends BusinessEnum> enumClass=(enumCheck).value();

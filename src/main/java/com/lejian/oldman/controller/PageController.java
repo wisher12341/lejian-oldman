@@ -84,6 +84,22 @@ public class PageController {
     }
 
     @BackUserAuth
+    @GetMapping("/rzzAdd")
+    public ModelAndView rzzAdd(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/rzz_add_edit");
+        return mv;
+    }
+
+    @BackUserAuth
+    @GetMapping("/rzzEdit")
+    public ModelAndView rzzEdit(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/rzz_add_edit");
+        return mv;
+    }
+
+    @BackUserAuth
     @GetMapping("/location")
     public ModelAndView location(){
         ModelAndView mv = new ModelAndView();
