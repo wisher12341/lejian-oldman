@@ -45,6 +45,9 @@ function save() {
         if ($(this).val()!== null && $(this).val().length>0) {
         var condition = "param." + $(this).attr("name") + "='" + $(this).val()+"'";
         eval(condition);
+        }else{
+            var condition = "param." + $(this).attr("name") + "=''";
+            eval(condition);
         }
     });
     if(id!=null){

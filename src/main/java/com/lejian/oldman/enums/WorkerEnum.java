@@ -22,4 +22,20 @@ public interface WorkerEnum extends BusinessEnum{
         private Integer value;
         private String desc;
     }
+
+
+    /**
+     * 服务人员类型
+     */
+    @Getter
+    @AllArgsConstructor
+    enum WorkerStatus implements WorkerEnum {
+        NOT_START(0,"未开始"),
+        FINISH(1,"已完成"),
+        DOING(2,"正在进行"),
+        NOT_FINISH(3,"未完成"),
+        ;
+        private Integer value;
+        private String desc;
+    }
 }

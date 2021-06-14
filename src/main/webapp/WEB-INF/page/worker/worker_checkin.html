@@ -6,8 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no"/>
     <script type="text/javascript" src="/static/js/lejian/common.js"></script>
     <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=6YSpoya23ILZkeQeyRGdt8s0CVzhKtzG"></script>
-
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak=6YSpoya23ILZkeQeyRGdt8s0CVzhKtzG"></script>
+    <style>
+        #map {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            margin: 0;
+            position: absolute;
+        }
+    </style>
 </head>
 <body>
 <h2>服务人员</h2>
@@ -39,8 +48,14 @@
                 </div>
             </div>
         </div>
-        <div class="row" >
-            <div class="col-xs-3" ><span id="result"></span></div>
+        <div class="row">
+            <div class="col-xs-3"><span id="result"></span></div>
+        </div>
+        <div class="row">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-4">
+                <div id="map"></div>
+            </div>
         </div>
     </div>
 </div>

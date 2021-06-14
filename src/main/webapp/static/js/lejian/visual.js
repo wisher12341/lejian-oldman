@@ -406,11 +406,16 @@ function showOneWorker(id) {
         success: function (result) {
             map.clearOverlays();
             var worker=result.workerVo;
-            var pois =[];
+            //已签到  实线
+            var checinPois =[];
+            //后面的排单 虚线
+            var oldmanPois =[];
             var j=0;
+            var k=0;
             for(var i=0;i<worker.positionList.length;i++){
                 var location = worker.positionList[i];
-                if(location.lng.length>0 && location.lat.length>0){
+                if(location.lng.length>0 && location.lat.length>0 && location.type===0){
+
                     var pt = new BMap.Point(location.lng, location.lat);
                     var myIcon = new BMap.Icon("/static/img/worker.png", new BMap.Size(48, 48));
                     var marker = new BMap.Marker(pt, {
@@ -419,18 +424,36 @@ function showOneWorker(id) {
                     marker.setTitle(location.time);
                     marker.setZIndex(999);
                     map.addOverlay(marker);
-                    pois[j++]=new BMap.Point(location.lng, location.lat)
+                    checinPois[j++]=new BMap.Point(location.lng, location.lat)
+                }
+                if(location.lng.length>0 && location.lat.length>0 && location.type===1){
+                    var pt = new BMap.Point(location.lng, location.lat);
+                    var myIcon = new BMap.Icon("/static/img/oldman.png", new BMap.Size(48, 48));
+                    var marker = new BMap.Marker(pt, {
+                        icon: myIcon
+                    });  // 创建标注
+                    marker.setTitle(location.time);
+                    marker.setZIndex(999);
+                    map.addOverlay(marker);
+                    oldmanPois[k++]=new BMap.Point(location.lng, location.lat)
                 }
             }
 
-            var sy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+            var checkinSy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
                 scale: 0.6,//图标缩放大小
                 strokeColor:'#fff',//设置矢量图标的线填充颜色
                 strokeWeight: '2',//设置线宽
             });
-            var icons = new BMap.IconSequence(sy, '10', '30');
+            var oldmanSy = new BMap.Symbol(BMap_Symbol_SHAPE_BACKWARD_OPEN_ARROW, {
+                scale: 0.5,//图标缩放大小
+                strokeColor:'#fff',//设置矢量图标的线填充颜色
+                strokeWeight: '1',//设置线宽
+            });
+            var icons = new BMap.IconSequence(checkinSy, '10', '30');
+            var oldmanIcons = new BMap.IconSequence(oldmanSy, '10', '30');
+
             // 创建polyline对象
-            var polyline =new BMap.Polyline(pois, {
+            var polyline =new BMap.Polyline(checinPois, {
                 enableEditing: false,//是否启用线编辑，默认为false
                 enableClicking: true,//是否响应点击事件，默认为true
                 icons:[icons],
@@ -438,7 +461,25 @@ function showOneWorker(id) {
                 strokeOpacity: 0.8,//折线的透明度，取值范围0 - 1
                 strokeColor:"#18a45b" //折线颜色
             });
+            var dashedPoins =[];
+            var i=0;
+            if (checinPois.length>0){
+                dashedPoins[i++]=checinPois[checinPois.length-1];
+            }
+            for(var j=0;j<oldmanPois.length;j++){
+                dashedPoins[i++]=oldmanPois[j];
+            }
+            var oldmanPolyline =new BMap.Polyline(dashedPoins, {
+                enableEditing: false,//是否启用线编辑，默认为false
+                enableClicking: true,//是否响应点击事件，默认为true
+                icons:[oldmanIcons],
+                strokeStyle:"dashed",
+                strokeWeight:'2',//折线的宽度，以像素为单位
+                strokeOpacity: 0.5,//折线的透明度，取值范围0 - 1
+                strokeColor:"#18a45b" //折线颜色
+            });
             map.addOverlay(polyline);          //增加折线
+            map.addOverlay(oldmanPolyline);
             $(".worker-highlight").css("background-color","");
             $("#row"+id).css("background-color","#5c5c35");
         }

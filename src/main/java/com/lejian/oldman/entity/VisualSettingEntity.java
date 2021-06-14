@@ -29,5 +29,6 @@ public class VisualSettingEntity {
     private String areaVillage;
     @Column(name = "is_used")
     private Integer isUsed;
-
+    @Column(name = "user_id")
+    private Integer userId;
 }

@@ -67,4 +67,6 @@ public class WorkerEntity {
     private Integer type;
     @Column
     private String beyond;
+    @Column(name = "add_user_id")
+    private Integer addUserId;
 }

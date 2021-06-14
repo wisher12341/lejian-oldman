@@ -164,7 +164,7 @@ public class PageController {
         return mv;
     }
 
-    @BackAdminAuth
+    @BackUserAuth
     @GetMapping("/visual")
     public ModelAndView visual(){
         ModelAndView mv = new ModelAndView();
@@ -176,9 +176,18 @@ public class PageController {
     @GetMapping("/worker/checkin")
     public ModelAndView workerCheckin(){
         ModelAndView mv = new ModelAndView();
-        mv.setViewName("/worker_checkin");
+        mv.setViewName("/worker/worker_checkin");
         return mv;
     }
+
+    @WorkerAuth
+    @GetMapping("/worker/dispatch")
+    public ModelAndView workerWorkerDispatch(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/worker/worker_dispatch");
+        return mv;
+    }
+
 
     @GetMapping("/login")
     public ModelAndView login(){
@@ -202,7 +211,7 @@ public class PageController {
         return mv;
     }
 
-    @BackAdminAuth
+    @BackUserAuth
     @GetMapping("/visualSetting")
     public ModelAndView visualSetting(){
         ModelAndView mv = new ModelAndView();
@@ -210,7 +219,7 @@ public class PageController {
         return mv;
     }
 
-    @BackAdminAuth
+    @BackUserAuth
     @GetMapping("/visualSettingEdit")
     public ModelAndView visualSettingEdit(){
         ModelAndView mv = new ModelAndView();
@@ -239,6 +248,14 @@ public class PageController {
     public ModelAndView userEdit(){
         ModelAndView mv = new ModelAndView();
         mv.setViewName("/user_add_edit");
+        return mv;
+    }
+
+    @BackUserAuth
+    @GetMapping("/workerDispatch")
+    public ModelAndView workerDispatch(){
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("/worker_dispatch");
         return mv;
     }
 }

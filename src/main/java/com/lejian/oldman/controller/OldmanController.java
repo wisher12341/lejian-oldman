@@ -142,7 +142,7 @@ public class OldmanController {
      * 获取 根据区域分组的 各数量
      * @return
      */
-    @BackAdminAuth
+    @BackUserAuth
     @ResponseBody
     @RequestMapping("/getOldmanAreaGroupCount")
     public GetCountResponse getOldmanAreaGroupCount(@RequestBody GetOldmanAreaGroupCountRequest request){

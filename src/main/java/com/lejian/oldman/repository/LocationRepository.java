@@ -107,8 +107,8 @@ public class LocationRepository extends AbstractSpecificationRepository<Location
         return null;
     }
 
-    public List<LocationBo> getAllLocationByConfig(VisualSettingBo visualSettingBo) {
-        return dao.getAllLocationByConfig(visualSettingBo.getAreaCountry(),visualSettingBo.getAreaTown(),visualSettingBo.getAreaVillage()).stream().map(this::convertEntity).collect(Collectors.toList());
+    public List<LocationBo> getAllLocationByConfig(VisualSettingBo visualSettingBo, Integer userId) {
+        return dao.getAllLocationByConfig(visualSettingBo.getAreaCountry(),visualSettingBo.getAreaTown(),visualSettingBo.getAreaVillage(),userId).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 
     /**
@@ -138,4 +138,5 @@ public class LocationRepository extends AbstractSpecificationRepository<Location
         });
         return map;
     }
+
 }

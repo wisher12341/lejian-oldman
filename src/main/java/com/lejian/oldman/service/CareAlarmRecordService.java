@@ -13,6 +13,7 @@ import com.lejian.oldman.enums.CareSystemEnum;
 import com.lejian.oldman.repository.CareAlarmRecordRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.utils.DateUtils;
+import com.lejian.oldman.utils.UserUtils;
 import com.lejian.oldman.vo.CareAlarmRecordVo;
 import com.lejian.oldman.vo.LocationVo;
 import com.lejian.oldman.vo.OldmanVo;
@@ -114,9 +115,8 @@ public class CareAlarmRecordService {
     }
 
     public Pair<Long, List<CareAlarmRecordVo>> getByTime(long careTimeStamp) {
-        JpaSpecBo jpaSpecBo = new JpaSpecBo();
-        jpaSpecBo.getGreatMap().put("createTime", new Timestamp(careTimeStamp));
-        List<CareAlarmRecordBo> careAlarmRecordBoList = careAlarmRecordRepository.findWithSpec(jpaSpecBo);
+        String time = DateUtils.format(new Timestamp(careTimeStamp),DateUtils.YYMMDDHHMMSS);
+        List<CareAlarmRecordBo> careAlarmRecordBoList = careAlarmRecordRepository.getNewData(time,UserUtils.getUserRoleId());
         if(CollectionUtils.isNotEmpty(careAlarmRecordBoList)){
             Map<String,OldmanBo> oldmanBoMap=oldmanRepository.getByOids(careAlarmRecordBoList.stream().map(CareAlarmRecordBo::getOid).distinct().collect(Collectors.toList())).stream().collect(Collectors.toMap(OldmanBo::getOid, Function.identity()));
             CareAlarmRecordBo careAlarmRecordBo=careAlarmRecordBoList.stream().max(Comparator.comparing(CareAlarmRecordBo::getCreateTime)).get();

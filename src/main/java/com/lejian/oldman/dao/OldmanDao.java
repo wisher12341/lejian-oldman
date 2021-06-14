@@ -58,4 +58,6 @@ public interface OldmanDao extends JpaRepository<OldmanEntity, Long>,JpaSpecific
     @Modifying
     @Query(value = "update oldman set is_delete=1 where oid=?1",nativeQuery = true)
     void deleteByOid(String oid);
+
+    List<OldmanEntity> findByStatusInAndIsDeleteAndUserId(List<Integer> statusList, int i, Integer userId);
 }

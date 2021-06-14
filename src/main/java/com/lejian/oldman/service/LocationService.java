@@ -2,17 +2,16 @@ package com.lejian.oldman.service;
 
 
 import com.google.common.collect.Lists;
-import com.lejian.oldman.bo.JpaSpecBo;
-import com.lejian.oldman.bo.LocationBo;
-import com.lejian.oldman.bo.OldmanBo;
-import com.lejian.oldman.bo.VisualSettingBo;
+import com.lejian.oldman.bo.*;
 import com.lejian.oldman.controller.contract.request.LocationParam;
 import com.lejian.oldman.controller.contract.request.LocationSearchParam;
 import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
 import com.lejian.oldman.enums.OldmanEnum;
+import com.lejian.oldman.enums.UserEnum;
 import com.lejian.oldman.repository.LocationRepository;
 import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.repository.VisualSettingRepository;
+import com.lejian.oldman.utils.UserUtils;
 import com.lejian.oldman.vo.LocationVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +40,9 @@ public class LocationService {
      * @return
      */
     public List<LocationVo> getAllLocationByConfig() {
-        List<LocationBo> locationBoList = locationRepository.getAllLocationByConfig(visualSettingRepository.getUsed());
+        UserBo userBo= UserUtils.getUser();
+
+        List<LocationBo> locationBoList = locationRepository.getAllLocationByConfig(visualSettingRepository.getUsed(),(userBo.getRole().intValue()== UserEnum.Role.USER.getValue())?userBo.getId():null);
         Map<Integer,List<OldmanBo>> locationOldmanMap = getRedAndYellowLocation();
         return classifyLocation(locationBoList,locationOldmanMap);
     }
@@ -76,7 +77,9 @@ public class LocationService {
      * @return
      */
     private Map<Integer, List<OldmanBo>> getRedAndYellowLocation() {
-        List<OldmanBo> oldmanBoList = oldmanRepository.findByStatus(Lists.newArrayList(OldmanEnum.Status.RED.getValue(),OldmanEnum.Status.YELLOW.getValue()));
+        Integer userId = UserUtils.getUserRoleId();
+
+        List<OldmanBo> oldmanBoList = oldmanRepository.findByStatus(Lists.newArrayList(OldmanEnum.Status.RED.getValue(),OldmanEnum.Status.YELLOW.getValue()),userId);
         return oldmanBoList.stream().collect(Collectors.groupingBy(OldmanBo::getLocationId));
     }
 

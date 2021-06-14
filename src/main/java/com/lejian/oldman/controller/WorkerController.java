@@ -1,16 +1,13 @@
 package com.lejian.oldman.controller;
 
-import com.google.common.collect.Maps;
-import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.controller.contract.response.*;
 import com.lejian.oldman.handler.ExcelHandler;
-import com.lejian.oldman.repository.UserRepository;
 import com.lejian.oldman.security.annotation.BackAdminAuth;
 import com.lejian.oldman.security.annotation.BackUserAuth;
+import com.lejian.oldman.security.annotation.WorkerAndBackAuth;
 import com.lejian.oldman.security.annotation.WorkerAuth;
 import com.lejian.oldman.service.WorkerService;
-import com.lejian.oldman.utils.CookieUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
@@ -19,14 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.List;
-import java.util.Map;
-
-import static com.lejian.oldman.common.ComponentRespCode.ACCOUNT_ERROR;
 
 @Controller
 @ResponseBody
@@ -82,7 +72,7 @@ public class WorkerController {
     /**
      * 获取某个时间段  特定阿姨  全部位置信息
      */
-    @BackAdminAuth
+    @BackUserAuth
     @RequestMapping("/getWorkerPositionByTime")
     public GetWorkerResponse getWorkerPositionByTime(@RequestBody GetWorkerPositionByTimeAndIdRequest request){
         GetWorkerResponse response=new GetWorkerResponse();
@@ -163,6 +153,45 @@ public class WorkerController {
     public MapResponse getTypeMapCount(){
         MapResponse response = new MapResponse();
         response.setMap(workerService.getTypeMapCount());
+        return response;
+    }
+
+
+    /**
+     * 派单
+     * @param request
+     * @return
+     */
+    @BackUserAuth
+    @ResponseBody
+    @RequestMapping("/dispatch/add")
+    public ResultResponse dispatch(@RequestBody DispatchRequest request){
+        ResultResponse response=new ResultResponse();
+        workerService.dispatch(request);
+        return response;
+    }
+
+    /**
+     * 分页获取派单
+     */
+    @WorkerAndBackAuth
+    @ResponseBody
+    @RequestMapping("/dispatch/getByPage")
+    public GetWorkerDispatchResponse getDispatchByPage(@RequestBody GetWorkerDispatchByPageRequest request){
+        GetWorkerDispatchResponse response= new GetWorkerDispatchResponse();
+        response.setWorkerDispatchVoList(workerService.getWorkerDispatchByPage(request.getPageParam(),request.getWorkerDispatchSearchParam()));
+        if(request.getNeedCount()) {
+            response.setCount(workerService.getWorkerDispatchCount(request.getWorkerDispatchSearchParam()));
+        }
+        return response;
+    }
+
+    @WorkerAuth
+    @ResponseBody
+    @RequestMapping("/getWorkerByAccount")
+    public GetWorkerResponse getWorkerByAccount(){
+        GetWorkerResponse response = new GetWorkerResponse();
+        response.setWorkerVo(workerService.getWorkerByAccount());
         return response;
     }
 }

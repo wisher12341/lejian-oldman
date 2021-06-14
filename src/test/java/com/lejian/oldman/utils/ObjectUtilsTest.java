@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.sql.Timestamp;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectUtilsTest {
@@ -15,6 +17,9 @@ class ObjectUtilsTest {
 
     @Test
     void convertOldmanBoToOldmanVo() {
+
+        String val ="1622986680000";
+        Timestamp timestamp = new Timestamp(Long.valueOf(val));
 
         OldmanBo oldmanBo=new OldmanBo();
         oldmanBo.setOid("oid");

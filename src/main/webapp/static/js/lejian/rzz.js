@@ -48,7 +48,8 @@ $(document).ready(function(){
                 "pageParam": {
                     "pageNo": aoData.iDisplayStart / aoData.iDisplayLength,
                     "pageSize": aoData.iDisplayLength
-                }
+                },
+                "rzzSearchParam":{}
             }),
             type: 'post',
             dataType: 'json',

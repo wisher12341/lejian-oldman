@@ -7,8 +7,8 @@ public class VisualSettingParam {
     private Integer id;
     private String lat;
     private String lng;
-    private String areaCountry;
-    private String areaTown;
-    private String areaVillage;
+    private String areaCountry="";
+    private String areaTown="";
+    private String areaVillage="";
     private Boolean isUsed;
 }

@@ -14,8 +14,8 @@ public interface OrganServiceDao extends JpaRepository<OrganServiceEntity,Long>,
 
 
 
-    @Query(value = "select count(1) from organ_service s left join organ o on o.id=s.organ_id where o.beyond=?1",nativeQuery = true)
-    Long countByOrganBeyond(String beyond);
+    @Query(value = "select count(1) from organ_service s left join organ o on o.id=s.organ_id where o.beyond=?1 and if(?2!=0,user_id=?2,1=1)",nativeQuery = true)
+    Long countByOrganBeyond(String beyond, Integer userId);
 
 
     @Query(value = "select o.type,count(o.type) as count from organ_service s left join organ o on o.id=s.organ_id where o.beyond=?1 group by o.type",nativeQuery = true)

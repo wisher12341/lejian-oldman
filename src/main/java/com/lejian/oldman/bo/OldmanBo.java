@@ -62,6 +62,7 @@ public class OldmanBo {
 
     private String lng;
     private String lat;
+    private Integer userId;
 
     public static OldmanVo createVo(OldmanBo oldmanBo){
         OldmanVo oldmanVo = ObjectUtils.convert(oldmanBo,OldmanVo.class);

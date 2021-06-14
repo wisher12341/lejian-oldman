@@ -1,3 +1,4 @@
+var map;
 $(document).ready(function(){
     $.ajax({
         url: "/oldman/getOldmanByOid",
@@ -36,13 +37,24 @@ function checkIn() {
                 dataType: 'json',
                 contentType: "application/json;charset=UTF-8",
                 success: function (result) {
-                    console.info(JSON.stringify(result));
+                    // console.info(JSON.stringify(result));
                     if(result.errorCode==null){
                         $("#result").text("签到成功");
                     }else{
                         $("#result").text("签到失败："+result.errMsg);
                     }
                     $("#load-spinner").css("display","none");
+                    var lng =r.point.lng;
+                    var lat =r.point.lat;
+                    map = new BMap.Map("map",{enableMapClick:false});
+                    map.centerAndZoom(new BMap.Point(lng,lat), 15);
+                    map.enableScrollWheelZoom(true);
+                    map.enablePinchToZoom(true);
+                    var marker = new BMap.Marker(new BMap.Point(lng, lat), {
+                        icon: new BMap.Icon("/static/img/mapGreen.png", new BMap.Size(48, 48))
+                    });  // 创建标注
+                    marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+                    map.addOverlay(marker);
                 }
             });
             console.log("当前位置经度为:"+r.point.lng+"纬度为:"+r.point.lat);

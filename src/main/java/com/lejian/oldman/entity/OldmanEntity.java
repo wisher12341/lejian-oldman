@@ -84,4 +84,6 @@ public class OldmanEntity {
     private Integer serviceStatus;
     @Column(name = "is_rzz")
     private Integer isRzz;
+    @Column(name = "user_id")
+    private Integer userId;
 }

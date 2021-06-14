@@ -30,13 +30,13 @@ public class RzzService {
 
 
     public List<RzzVo> getByPage(Integer pageNo, Integer pageSize, RzzSearchParam rzzSearchParam) {
-        List<RzzBo> rzzBoList = rzzRepository.findByPageWithSpec(pageNo,pageSize, null);
+        List<RzzBo> rzzBoList = rzzRepository.findByPageWithSpec(pageNo,pageSize, rzzSearchParam.getJpaSpecBo());
         Map<String,OldmanBo> oldmanBoMap = oldmanRepository.getByOids(rzzBoList.stream().map(RzzBo::getOid).collect(Collectors.toList())).stream().collect(Collectors.toMap(OldmanBo::getOid, Function.identity()));
         return rzzBoList.stream().map(item->RzzVo.convert(item,oldmanBoMap)).collect(Collectors.toList());
     }
 
     public Long getCount(RzzSearchParam rzzSearchParam) {
-        return rzzRepository.countWithSpec(null);
+        return rzzRepository.countWithSpec(rzzSearchParam.getJpaSpecBo());
     }
 
     public List<RzzVo> get(RzzSearchParam rzzSearchParam) {

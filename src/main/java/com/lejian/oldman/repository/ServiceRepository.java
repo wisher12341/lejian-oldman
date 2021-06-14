@@ -42,8 +42,8 @@ public class ServiceRepository extends AbstractSpecificationRepository<OrganServ
         return serviceEntity;
     }
 
-    public Long countByOrganBeyond(String beyond) {
-        return dao.countByOrganBeyond(beyond);
+    public Long countByOrganBeyond(String beyond, Integer userId) {
+        return dao.countByOrganBeyond(beyond,userId);
     }
 
     public List<Map<String,Object>> getServiceCountGroupByType(String beyond) {

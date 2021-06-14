@@ -28,6 +28,7 @@ public class WorkerVo {
     private Double salary;
     private String organName;
     private List<Position> positionList;
+
     private String qq;
     private String type;
     private String beyond;
@@ -39,5 +40,9 @@ public class WorkerVo {
         private String lng;
         private String lat;
         private String time;
+        /**
+         * 类型 0签到 1派单（未签到）
+         */
+        private Integer type;
     }
 }

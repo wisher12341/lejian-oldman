@@ -15,5 +15,6 @@ public class OrganBo {
     private Integer type;
     private Integer id;
     private String beyond;
+    private Integer userId;
 
 }

@@ -5,6 +5,7 @@ import com.lejian.oldman.controller.contract.response.GetVisualSettingByPageResp
 import com.lejian.oldman.controller.contract.response.GetVisualSettingResponse;
 import com.lejian.oldman.controller.contract.response.ResultResponse;
 import com.lejian.oldman.security.annotation.BackAdminAuth;
+import com.lejian.oldman.security.annotation.BackUserAuth;
 import com.lejian.oldman.service.VisualSettingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@BackAdminAuth
+@BackUserAuth
 @Controller
 @ResponseBody
 @RequestMapping("/visual/setting")

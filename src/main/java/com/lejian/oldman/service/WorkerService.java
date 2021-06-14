@@ -3,14 +3,13 @@ package com.lejian.oldman.service;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.lejian.oldman.bo.*;
-import com.lejian.oldman.controller.contract.request.OldmanSearchParam;
-import com.lejian.oldman.controller.contract.request.PageParam;
-import com.lejian.oldman.controller.contract.request.WorkerParam;
-import com.lejian.oldman.controller.contract.request.WorkerSearchParam;
+import com.lejian.oldman.controller.contract.request.*;
 import com.lejian.oldman.enums.*;
 import com.lejian.oldman.security.UserContext;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.utils.LjReflectionUtils;
+import com.lejian.oldman.utils.UserUtils;
+import com.lejian.oldman.vo.WorkerDispatchVo;
 import com.lejian.oldman.vo.WorkerVo;
 import com.lejian.oldman.repository.*;
 import com.lejian.oldman.utils.MapUtils;
@@ -26,6 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -38,6 +38,7 @@ import java.util.stream.IntStream;
 import static com.lejian.oldman.common.ComponentRespCode.*;
 import static com.lejian.oldman.utils.DateUtils.YYMMDD;
 import static com.lejian.oldman.utils.DateUtils.YYMMDDHHMMSS;
+import static com.lejian.oldman.utils.DateUtils.YYMMDDHHMMSS_1;
 
 @Slf4j
 @Service
@@ -57,6 +58,9 @@ public class WorkerService {
     private VisualSettingRepository visualSettingRepository;
     @Autowired
     private OrganRepository organRepository;
+    @Autowired
+    private WorkerDispatchRepository workerDispatchRepository;
+
 
     /**
      * 服务人员签到签出 最小的时间间隔 分钟
@@ -93,13 +97,14 @@ public class WorkerService {
      * 服务人员签到处理
      * 1. 记录签到记录
      * 2. 老人状态变更
+     * 3. 派单状态变更
      * @param workerBo
      * @param oldmanBo
      * @param lng
      * @param lat
      */
-    //todo 事务
-    private void handleCheckIn(WorkerBo workerBo, OldmanBo oldmanBo, String lng, String lat) {
+    @Transactional
+    public void handleCheckIn(WorkerBo workerBo, OldmanBo oldmanBo, String lng, String lat) {
         WorkerCheckinBo workerCheckinBo = new WorkerCheckinBo();
         workerCheckinBo.setWorkerId(workerBo.getId());
         workerCheckinBo.setOid(oldmanBo.getOid());
@@ -108,6 +113,28 @@ public class WorkerService {
         workerCheckinRepository.save(workerCheckinBo);
 
         handleOldmanStatus(oldmanBo);
+
+        handleDispatch(workerBo,oldmanBo);
+    }
+
+    /**
+     * 派单状态变更
+     * 1. 之前未完成的订单状态变更
+     * 2. 当前订单状态变更
+     * @param workerBo
+     * @param oldmanBo
+     */
+    private void handleDispatch(WorkerBo workerBo, OldmanBo oldmanBo) {
+        workerDispatchRepository.notFinishUpdate(workerBo.getId(),LocalDateTime.now().format(YYMMDDHHMMSS));
+
+        WorkerDispatchBo workerDispatchBo = new WorkerDispatchBo();
+        workerDispatchBo.setId(workerBo.getCurrentDispatchId());
+        if(oldmanBo.getStatusEnum()== OldmanEnum.Status.YELLOW){
+            workerDispatchBo.setStatus(WorkerEnum.WorkerStatus.FINISH.getValue());
+        }else{
+            workerDispatchBo.setStatus(WorkerEnum.WorkerStatus.DOING.getValue());
+        }
+        workerDispatchRepository.dynamicUpdateByPkId(workerDispatchBo);
     }
 
     /**
@@ -146,6 +173,7 @@ public class WorkerService {
      * 检查数据正确性
      * 1. 距离上次签到至少相差xx分钟
      * 2. gps数据 距离老人的位置小于xx
+     * 3. 签入时判断（签出不判断）：有相应派单，时间限制  +- 10分钟
      * @param workerBo
      * @param oldmanBo
      * @param longitude
@@ -169,10 +197,27 @@ public class WorkerService {
         //check 2
         LocationBo locationBo = locationRepository.getByPkId(oldmanBo.getLocationId());
         double distance = MapUtils.distance(longitude,latitude,locationBo.getPositionX(),locationBo.getPositionY());
-        if(distance > MAX_MAP_DISTANCE){
-            log.info("check in location:{},{}; oldman location:{},{}; distance:{}"
-                    ,longitude,latitude,locationBo.getPositionX(),locationBo.getPositionY(),distance);
-            CHECKIN_OVER_DISTANCE.doThrowException();
+//        if(distance > MAX_MAP_DISTANCE){
+//            CHECKIN_OVER_DISTANCE.doThrowException();
+//        }
+
+
+
+        //check3
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        jpaSpecBo.getEqualMap().put("workerId", workerBo.getId());
+        jpaSpecBo.getEqualMap().put("oid", oldmanBo.getOid());
+        WorkerDispatchBo workerDispatchBo = workerDispatchRepository.findWithSpec(jpaSpecBo).stream().findFirst().orElse(null);
+        if (workerDispatchBo == null) {
+            CHECKIN_NO_DISPATCH.doThrowException();
+        }
+        workerBo.setCurrentDispatchId(workerDispatchBo.getId());
+        if(oldmanBo.getStatusEnum()== OldmanEnum.Status.GREEN) {
+            LocalDateTime currentTime = LocalDateTime.now();
+            if (currentTime.isBefore(workerDispatchBo.getStartTime().toLocalDateTime().minusMinutes(10))
+                    || currentTime.isAfter(workerDispatchBo.getStartTime().toLocalDateTime().plusMinutes(10))) {
+                CHECKIN_TIME.doThrowException();
+            }
         }
     }
 
@@ -201,8 +246,9 @@ public class WorkerService {
         BeanUtils.copyProperties(workerBo,workerVo);
         if(CollectionUtils.isNotEmpty(workerCheckinBoList)) {
             List<WorkerVo.Position> positionList = Lists.newArrayList();
-            workerCheckinBoList.forEach(checkinBo -> positionList.add(new WorkerVo.Position(checkinBo.getLng(), checkinBo.getLat(), checkinBo.getCreateTime().toLocalDateTime().format(YYMMDDHHMMSS))));
+            workerCheckinBoList.forEach(checkinBo -> positionList.add(new WorkerVo.Position(checkinBo.getLng(), checkinBo.getLat(), checkinBo.getCreateTime().toLocalDateTime().format(YYMMDDHHMMSS),0)));
             workerVo.setPositionList(positionList.stream().sorted(Comparator.comparing(WorkerVo.Position::getTime)).collect(Collectors.toList()));
+
         }
         return workerVo;
     }
@@ -217,9 +263,33 @@ public class WorkerService {
         jpaSpecBo.getLessEMap().put("createTime", DateUtils.toTimeStamp(endTime));
         jpaSpecBo.getGreatEMap().put("createTime",DateUtils.toTimeStamp(startTime));
         List<WorkerCheckinBo> workerCheckinBoList = workerCheckinRepository.findWithSpec(jpaSpecBo);
+
         WorkerBo workerBo = new WorkerBo();
         workerBo.setId(workerId);
-        return convert(workerBo,workerCheckinBoList);
+        WorkerVo workerVo = convert(workerBo,workerCheckinBoList);
+
+
+        //未开始的订单， 虚线
+        JpaSpecBo jpaSpecBo1 = new JpaSpecBo();
+        jpaSpecBo1.getEqualMap().put("workerId",workerId);
+        jpaSpecBo1.getEqualMap().put("status",WorkerEnum.WorkerStatus.NOT_START.getValue());
+        jpaSpecBo1.getLessEMap().put("startTime",DateUtils.toTimeStamp(endTime));
+        jpaSpecBo1.getGreatEMap().put("startTime",DateUtils.toTimeStamp(startTime));
+        List<WorkerDispatchBo> workerDispatchBoList = workerDispatchRepository.findWithSpec(jpaSpecBo1);
+        if (CollectionUtils.isNotEmpty(workerCheckinBoList)){
+            List<String> oidList = workerDispatchBoList.stream().map(WorkerDispatchBo::getOid).collect(Collectors.toList());
+            Map<String,OldmanBo> oldmanBoMap = oldmanRepository.getByOids(oidList).stream().collect(Collectors.toMap(OldmanBo::getOid,Function.identity()));
+            Map<Integer,LocationBo> locationBoMap = locationRepository.getByPkIds(oldmanBoMap.values().stream().map(OldmanBo::getLocationId).collect(Collectors.toList())).stream().collect(Collectors.toMap(LocationBo::getId,Function.identity()));;
+            workerDispatchBoList.forEach(item->{
+                OldmanBo bo = oldmanBoMap.get(item.getOid());
+                LocationBo locationBo = locationBoMap.get(bo.getLocationId());
+                WorkerVo.Position position = new WorkerVo.Position(locationBo.getPositionX(),locationBo.getPositionY(),DateUtils.format(item.getStartTime(),YYMMDDHHMMSS),1);
+                workerVo.getPositionList().add(position);
+            });
+        }
+        workerVo.getPositionList().stream().sorted(Comparator.comparing(WorkerVo.Position::getTime));
+
+        return workerVo;
     }
 
 
@@ -259,7 +329,7 @@ public class WorkerService {
     }
 
     public List<WorkerVo> getWorkerByPage(PageParam pageParam, WorkerSearchParam param) {
-        JpaSpecBo jpaSpecBo=new JpaSpecBo();
+        JpaSpecBo jpaSpecBo = WorkerSearchParam.convert(param);
         if(param!=null) {
             if (StringUtils.isNotBlank(param.getOrganName())){
                 JpaSpecBo bo = new JpaSpecBo();
@@ -276,23 +346,6 @@ public class WorkerService {
         }
         return workerRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),jpaSpecBo).stream().map(this::convert).collect(Collectors.toList());
     }
-
-    public Map<String, Long> getTypeCount() {
-        Map<String, Long> map = Maps.newHashMap();
-        for(WorkerEnum workerEnum: WorkerEnum.Type.values()){
-            map.put(workerEnum.getDesc(),0L);
-        }
-        List<Map<String,Object>> typeMapList=workerRepository.getTypeCountByBeyond(visualSettingRepository.getWorkerBeyond());
-
-        typeMapList.forEach(item->{
-            Integer type= (Integer) item.get("type");
-            Long b=((BigInteger)item.get("count")).longValue();
-
-            map.put(BusinessEnum.find(type, WorkerEnum.Type.class).getDesc(),b);
-        });
-        return map;
-    }
-
     @Transactional
     public void addWorkerByExcel(Pair<List<String>, List<List<String>>> excelData) {
         List<String> titleList=excelData.getFirst();
@@ -355,6 +408,8 @@ public class WorkerService {
         List<WorkerBo> addList=Lists.newArrayList();
         List<WorkerBo> updateList=Lists.newArrayList();
 
+        UserBo userBo = UserUtils.getUser();
+
         List<List<WorkerBo>> parts = Lists.partition(workerBoList, PART_NUM);
         parts.forEach(item->{
             List<String> idCardList=item.stream().map(WorkerBo::getIdCard).collect(Collectors.toList());
@@ -364,6 +419,7 @@ public class WorkerService {
                     worker.setId(existWorkerMap.get(worker.getIdCard()).getId());
                     updateList.add(worker);
                 } else{
+                    worker.setAddUserId(userBo.getId());
                     addList.add(worker);
                 }
             });
@@ -416,6 +472,10 @@ public class WorkerService {
         String beyond = visualSettingRepository.getWorkerBeyond();
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
         jpaSpecBo.getEqualMap().put("beyond",beyond);
+        Integer userRoleId = UserUtils.getUserRoleId();
+        if (userRoleId!=null){
+            jpaSpecBo.getEqualMap().put("addUserId",userRoleId);
+        }
         return workerRepository.countWithSpec(jpaSpecBo);
     }
 
@@ -433,5 +493,48 @@ public class WorkerService {
             map.put(BusinessEnum.find(type, WorkerEnum.Type.class).getDesc(),String.valueOf(b));
         });
         return map;
+    }
+
+
+    public void dispatch(DispatchRequest request) {
+        UserBo userBo = UserUtils.getUser();
+
+        WorkerDispatchBo bo = new WorkerDispatchBo();
+        bo.setOid(request.getOid());
+        bo.setWorkerId(request.getWorkerId());
+        bo.setStartTime(new Timestamp(request.getStartTime()));
+        bo.setEndTime(new Timestamp(request.getEndTime()));
+        bo.setUserId(userBo.getId());
+        workerDispatchRepository.save(bo);
+    }
+
+    public List<WorkerDispatchVo> getWorkerDispatchByPage(PageParam pageParam, WorkerDispatchSearchParam workerDispatchSearchParam) {
+        List<WorkerDispatchBo> workerDispatchBoList =  workerDispatchRepository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),workerDispatchSearchParam.getJpaSpecBo());
+        List<String> oidList = workerDispatchBoList.stream().map(WorkerDispatchBo::getOid).distinct().collect(Collectors.toList());
+        List<Integer> workerIdList = workerDispatchBoList.stream().map(WorkerDispatchBo::getWorkerId).distinct().collect(Collectors.toList());
+        Map<String,OldmanBo> oldmanBoMap = oldmanRepository.getByOids(oidList).stream().collect(Collectors.toMap(OldmanBo::getOid,Function.identity()));
+        Map<Integer,WorkerBo> workerBoMap = workerRepository.getByPkIds(workerIdList).stream().collect(Collectors.toMap(WorkerBo::getId,Function.identity()));
+        return workerDispatchBoList.stream().map(bo->{
+            WorkerDispatchVo vo = new WorkerDispatchVo();
+            vo.setOid(bo.getOid());
+            vo.setOldmanName(oldmanBoMap.get(bo.getOid()).getName());
+            vo.setWorkerId(bo.getWorkerId());
+            vo.setWorkerName(workerBoMap.get(bo.getWorkerId()).getName());
+            vo.setStartTime(DateUtils.format(bo.getStartTime(),YYMMDDHHMMSS_1));
+            vo.setEndTime(DateUtils.format(bo.getEndTime(),YYMMDDHHMMSS_1));
+            vo.setStatus(BusinessEnum.find(bo.getStatus(),WorkerEnum.WorkerStatus.class).getDesc());
+            return vo;
+        }).collect(Collectors.toList());
+    }
+
+    public Long getWorkerDispatchCount(WorkerDispatchSearchParam workerDispatchSearchParam) {
+        return workerDispatchRepository.countWithSpec(workerDispatchSearchParam.getJpaSpecBo());
+    }
+
+    public WorkerVo getWorkerByAccount() {
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        UserBo userBo = UserUtils.getUser();
+        jpaSpecBo.getEqualMap().put("userId",userBo.getId());
+        return convert(workerRepository.findWithSpec(jpaSpecBo).get(0));
     }
 }

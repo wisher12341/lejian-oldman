@@ -21,6 +21,8 @@ public enum ComponentRespCode implements IRespCode {
      */
     CHECKIN_SHORT_TIME("200","签到时间间隔太短"),
     CHECKIN_OVER_DISTANCE("201","签到超过最大距离"),
+    CHECKIN_TIME("202","签到时间不对"),
+    CHECKIN_NO_DISPATCH("203","未派单"),
 
     /**
      * 3xx 数据错误

@@ -12,8 +12,8 @@ public interface VisualSettingDao extends JpaRepository<VisualSettingEntity, Lon
 
 
     @Modifying
-    @Query(value = "update visual_setting set is_used=0",nativeQuery = true)
-    Integer clearUsed();
+    @Query(value = "update visual_setting set is_used=0 where user_id = ?1",nativeQuery = true)
+    Integer clearUsed(Integer userId);
 
-    VisualSettingEntity findByIsUsed(Integer used);
+    VisualSettingEntity findByIsUsedAndUserId(Integer used,Integer userId);
 }

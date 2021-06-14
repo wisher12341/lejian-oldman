@@ -159,7 +159,6 @@ public class CareAlarmRecordRepository extends AbstractSpecificationRepository<C
             if(oldmanSearchParam!=null && StringUtils.isNotBlank(oldmanSearchParam.getSql())){
                 sql+="where oid in (select oid from oldman where "+oldmanSearchParam.getSql()+")";
             }
-
             Query query =entityManager.createNativeQuery(sql);
             return ((BigInteger) query.getResultList().get(0)).longValue();
 
@@ -167,5 +166,9 @@ public class CareAlarmRecordRepository extends AbstractSpecificationRepository<C
             REPOSITORY_ERROR.doThrowException("getCount",e);
         }
         return 0L;
+    }
+
+    public List<CareAlarmRecordBo> getNewData(String time, Integer userRoleId) {
+        return careAlarmRecordDao.getNewData(time,userRoleId);
     }
 }

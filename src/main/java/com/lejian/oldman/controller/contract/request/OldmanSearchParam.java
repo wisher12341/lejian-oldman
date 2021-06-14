@@ -5,7 +5,10 @@ import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.enums.UserEnum;
+import com.lejian.oldman.repository.UserRepository;
 import com.lejian.oldman.security.UserContext;
+import com.lejian.oldman.utils.BeanUtils;
+import com.lejian.oldman.utils.UserUtils;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.User;
@@ -59,6 +62,13 @@ public class OldmanSearchParam {
     public static JpaSpecBo convert(OldmanSearchParam oldmanSearchParam){
         JpaSpecBo jpaSpecBo = new JpaSpecBo();
         jpaSpecBo.getEqualMap().put("isDelete",0);
+
+        UserBo userBo = UserUtils.getUser();
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()){
+            jpaSpecBo.getEqualMap().put("userId",userBo.getId());
+        }
+
+
         if(oldmanSearchParam == null){
             return jpaSpecBo;
         }
@@ -79,7 +89,7 @@ public class OldmanSearchParam {
             jpaSpecBo.getEqualMap().put("areaCountry", oldmanSearchParam.getAreaCountry());
         }
         if (StringUtils.isNotBlank(oldmanSearchParam.getName())){
-            jpaSpecBo.getEqualMap().put("name", oldmanSearchParam.getName());
+            jpaSpecBo.getLikeMap().put("name","%"+oldmanSearchParam.getName()+"%");
         }
 
         if (StringUtils.isNotBlank(oldmanSearchParam.getIdCard())){
@@ -164,13 +174,10 @@ public class OldmanSearchParam {
 
         where+=" "+type+"is_delete=0 ";
 
-        User user = UserContext.getLoginUser();
 
-
-        User user =UserContext.getLoginUser();
-        UserBo userBo = userRepository.getByUsername(user.getUsername());
-        if (userBo.getRole() == UserEnum.Role.ADMIN){
-            
+        UserBo userBo = UserUtils.getUser();
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()){
+            where+=" and "+type+"user_id="+userBo.getId();
         }
         return where;
     }

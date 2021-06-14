@@ -10,6 +10,7 @@ import com.lejian.oldman.entity.WorkerCheckinEntity;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.OldmanEnum;
 import com.lejian.oldman.utils.ObjectUtils;
+import com.lejian.oldman.utils.UserUtils;
 import com.lejian.oldman.vo.LocationVo;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +67,10 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
         return oldmanBo;
     }
 
-    public List<OldmanBo> findByStatus(List<Integer> statusList) {
+    public List<OldmanBo> findByStatus(List<Integer> statusList, Integer userId) {
+        if (userId!=null){
+            return oldmanDao.findByStatusInAndIsDeleteAndUserId(statusList,0,userId).stream().map(this::convertEntity).collect(Collectors.toList());
+        }
         return oldmanDao.findByStatusInAndIsDelete(statusList,0).stream().map(this::convertEntity).collect(Collectors.toList());
     }
 
@@ -104,7 +108,11 @@ public class OldmanRepository extends AbstractSpecificationRepository<OldmanBo,O
     public Map<String,Long> getGroupCount(String groupFieldName, Map<String, String> where) {
         try {
             Map<String,Long> map= Maps.newHashMap();
+            Integer userId = UserUtils.getUserRoleId();
             StringBuilder whereCase=new StringBuilder("where is_delete=0 ");
+            if (userId!=null){
+                whereCase.append(" and user_id=").append(userId).append(" ");
+            }
             if(MapUtils.isNotEmpty(where)){
                 Iterator iterator= where.keySet().iterator();
                 String key= (String) iterator.next();

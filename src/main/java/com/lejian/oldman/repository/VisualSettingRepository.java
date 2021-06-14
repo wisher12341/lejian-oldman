@@ -1,8 +1,11 @@
 package com.lejian.oldman.repository;
 
+import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.bo.VisualSettingBo;
 import com.lejian.oldman.dao.VisualSettingDao;
 import com.lejian.oldman.entity.VisualSettingEntity;
+import com.lejian.oldman.enums.UserEnum;
+import com.lejian.oldman.utils.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -45,11 +48,21 @@ public class VisualSettingRepository extends AbstractSpecificationRepository<Vis
     }
 
     public void clearUsed() {
-        visualSettingDao.clearUsed();
+        UserBo userBo = UserUtils.getUser();
+        int searchUserId= 0;
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()){
+            searchUserId = userBo.getId();
+        }
+        visualSettingDao.clearUsed(searchUserId);
     }
 
     public String getWorkerBeyond() {
-        VisualSettingEntity entity = visualSettingDao.findByIsUsed(USED);
+        UserBo userBo = UserUtils.getUser();
+        int searchUserId= 0;
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()){
+            searchUserId = userBo.getId();
+        }
+        VisualSettingEntity entity = visualSettingDao.findByIsUsedAndUserId(USED,searchUserId);
         StringBuilder str = new StringBuilder();
         if (StringUtils.isNotBlank(entity.getAreaCountry())) {
             str.append(entity.getAreaCountry()).append("-");
@@ -64,6 +77,11 @@ public class VisualSettingRepository extends AbstractSpecificationRepository<Vis
     }
 
     public VisualSettingBo getUsed() {
-        return convertEntity(visualSettingDao.findByIsUsed(USED));
+        UserBo userBo = UserUtils.getUser();
+        int searchUserId= 0;
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()){
+            searchUserId = userBo.getId();
+        }
+        return convertEntity(visualSettingDao.findByIsUsedAndUserId(USED,searchUserId));
     }
 }

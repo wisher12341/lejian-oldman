@@ -1,10 +1,12 @@
 package com.lejian.oldman.repository;
 
+import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.bo.WorkerBo;
 import com.lejian.oldman.dao.WorkerDao;
 import com.lejian.oldman.entity.WorkerEntity;
 import com.lejian.oldman.enums.BusinessEnum;
 import com.lejian.oldman.enums.WorkerEnum;
+import com.lejian.oldman.utils.UserUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,7 +50,8 @@ public class WorkerRepository extends AbstractSpecificationRepository<WorkerBo,W
     }
 
     public List<Map<String,Object>> getTypeCountByBeyond(String workerBeyond) {
-        return workerDao.getTypeCountByBeyond(workerBeyond);
+        Integer userId = UserUtils.getUserRoleId();
+        return workerDao.getTypeCountByBeyond(workerBeyond,userId);
     }
 
     public List<WorkerBo> getByIdCards(List<String> idCardList) {

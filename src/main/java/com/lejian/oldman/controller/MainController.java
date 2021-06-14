@@ -10,6 +10,7 @@ import com.lejian.oldman.controller.contract.response.PollResponse;
 import com.lejian.oldman.enums.OldmanEnum;
 
 import com.lejian.oldman.security.annotation.BackAdminAuth;
+import com.lejian.oldman.security.annotation.BackUserAuth;
 import com.lejian.oldman.service.*;
 import com.lejian.oldman.vo.CareAlarmRecordVo;
 import com.lejian.oldman.vo.LocationVo;
@@ -27,7 +28,7 @@ import java.util.List;
 /**
  * 主页可视化查询
  */
-@BackAdminAuth
+@BackUserAuth
 @Controller
 @ResponseBody
 @RequestMapping("/main")

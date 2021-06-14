@@ -1,6 +1,9 @@
 package com.lejian.oldman.controller.contract.request;
 
 import com.lejian.oldman.bo.JpaSpecBo;
+import com.lejian.oldman.bo.UserBo;
+import com.lejian.oldman.enums.UserEnum;
+import com.lejian.oldman.utils.UserUtils;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 
@@ -14,10 +17,16 @@ public class WorkerSearchParam {
     private String name;
 
     public static JpaSpecBo convert(WorkerSearchParam param) {
-        if(param==null){
-            return null;
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+
+
+        UserBo userBo = UserUtils.getUser();
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()) {
+            jpaSpecBo.getEqualMap().put("addUserId", userBo.getId());
         }
-        JpaSpecBo jpaSpecBo=new JpaSpecBo();
+        if (param == null){
+            return jpaSpecBo;
+        }
         if(param.getType()!=null){
             jpaSpecBo.getEqualMap().put("type",param.getType());
         }

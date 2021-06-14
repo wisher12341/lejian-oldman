@@ -30,4 +30,11 @@ public class WorkerBo {
     private String qq;
     private String beyond;
     private Integer type;
+    private Integer addUserId;
+
+
+    /**
+     * 当前排单的 id
+     */
+    private Integer currentDispatchId;
 }

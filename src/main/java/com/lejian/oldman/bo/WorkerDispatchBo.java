@@ -1,19 +1,20 @@
 package com.lejian.oldman.bo;
 
+
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 @Data
-public class VisualSettingBo {
+public class WorkerDispatchBo {
     private Integer id;
-    private String lat;
-    private String lng;
-    private String areaCountry;
-    private String areaTown;
-    private String areaVillage;
-    private Boolean isUsed;
+    private String oid;
+    private Integer workerId;
+    private Integer status;
+    private Timestamp startTime;
+    private Timestamp endTime;
     private Integer userId;
 }

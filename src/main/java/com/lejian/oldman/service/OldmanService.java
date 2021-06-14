@@ -16,6 +16,7 @@ import com.lejian.oldman.repository.*;
 import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.utils.LjReflectionUtils;
 import com.lejian.oldman.utils.ObjectUtils;
+import com.lejian.oldman.utils.UserUtils;
 import com.lejian.oldman.utils.tuple.Tuple3;
 import com.lejian.oldman.vo.OldmanVo;
 import lombok.extern.slf4j.Slf4j;
@@ -230,6 +231,8 @@ public class OldmanService {
         BeanUtils.copyProperties(oldmanParam,oldmanBo);
         oldmanBo.setBirthday(DateUtils.stringToLocalDate(oldmanParam.getIdCard().substring(6,14),YYMMDD));
         oldmanBo.setOid(oldmanParam.getIdCard().substring(oldmanParam.getIdCard().length()-10,oldmanParam.getIdCard().length()));
+        UserBo userBo = UserUtils.getUser();
+        oldmanBo.setUserId(userBo.getId());
         return oldmanBo;
     }
 

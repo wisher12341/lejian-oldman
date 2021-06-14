@@ -43,6 +43,7 @@ $(document).ready(function(){
                     "render": function(data, type, full) { // 返回自定义内容
                         return "<button class='btn btn-primary' onclick=newPage("+data+",'人员详情信息','/workerInfo?id="+data+"')>查看</button>" +
                             "<button class='btn btn-primary' onclick=newPage("+data+",'编辑','/workerEdit?id="+data+"')>编辑</button>" +
+                            "<button class='btn btn-primary' onclick=newPage("+data+",'派单','/workerDispatch?workerId="+data+"')>派单</button>" +
                             "<button class='btn btn-primary' onclick=deleteWorker("+data+")>删除</button>";
                     }
                 }
@@ -58,6 +59,7 @@ $(document).ready(function(){
                     "pageNo": aoData.iDisplayStart / aoData.iDisplayLength,
                     "pageSize": aoData.iDisplayLength
                 },
+                "workerSearchParam":{},
                 "needCount":true
             }),
             type: 'post',

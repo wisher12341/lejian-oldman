@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="/static/js/lejian/common.js"></script>
+
+    <script type="text/javascript" src="/static/js/lejian/common_function.js"></script>
+
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>阿姨派单</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">阿姨</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control workerName" disabled>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">老人</label>
+
+                            <div class="col-sm-10">
+                                <select class="oid" style="width: 100%" name="oid"></select>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">时间</label>
+
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <input type="datetime-local" class="input-sm form-control" name="startTime" />
+                                    </div>
+                                    <div class="col-sm-1">
+                                        <span class="control-label">至</span>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="datetime-local" class="input-sm form-control" name="endTime"  />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <button class="btn btn-primary"  onclick="submitData()">保存内容</button>
+                                <button class="btn btn-white" >取消</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
+<script type="text/javascript" src="/static/js/lejian/worker_dispatch.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/js/select2.min.js"></script>
+
+</body>
+
+</html>

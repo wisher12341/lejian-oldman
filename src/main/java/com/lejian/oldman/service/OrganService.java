@@ -14,7 +14,9 @@ import com.lejian.oldman.repository.OldmanRepository;
 import com.lejian.oldman.repository.OrganRepository;
 import com.lejian.oldman.repository.ServiceRepository;
 import com.lejian.oldman.repository.VisualSettingRepository;
+import com.lejian.oldman.utils.DateUtils;
 import com.lejian.oldman.utils.LjReflectionUtils;
+import com.lejian.oldman.utils.UserUtils;
 import com.lejian.oldman.vo.OldmanVo;
 import com.lejian.oldman.vo.OrganVo;
 import org.apache.commons.collections4.CollectionUtils;
@@ -50,7 +52,9 @@ public class OrganService {
     private static final int PART_NUM=100;
 
     public List<OrganVo> getByPage(PageParam pageParam) {
-        return repository.findByPageWithSpec(pageParam.getPageNo(), pageParam.getPageSize(), null).stream().map(this::convert).collect(Collectors.toList());
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        jpaSpecBo.getEqualMap().put("userId",UserUtils.getUserRoleId());
+        return repository.findByPageWithSpec(pageParam.getPageNo(), pageParam.getPageSize(), jpaSpecBo).stream().map(this::convert).collect(Collectors.toList());
     }
 
     private OrganVo convert(OrganBo organBo) {
@@ -72,7 +76,8 @@ public class OrganService {
      */
     public Long getServiceCount() {
         String beyond = visualSettingRepository.getWorkerBeyond();
-        return serviceRepository.countByOrganBeyond(beyond);
+        Integer userId = UserUtils.getUserRoleId();
+        return serviceRepository.countByOrganBeyond(beyond,userId);
     }
 
     public Map<String, String> getServiceCountGroupByType() {
@@ -219,6 +224,7 @@ public class OrganService {
                     organ.setId(existOrganMap.get(organ.getName()).getId());
                     updateList.add(organ);
                 } else{
+                    organ.setUserId(UserUtils.getUser().getId());
                     addList.add(organ);
                 }
             });

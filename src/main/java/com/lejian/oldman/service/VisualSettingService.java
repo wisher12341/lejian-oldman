@@ -1,9 +1,13 @@
 package com.lejian.oldman.service;
 
+import com.lejian.oldman.bo.JpaSpecBo;
+import com.lejian.oldman.bo.UserBo;
 import com.lejian.oldman.bo.VisualSettingBo;
 import com.lejian.oldman.controller.contract.request.PageParam;
 import com.lejian.oldman.controller.contract.request.VisualSettingParam;
+import com.lejian.oldman.enums.UserEnum;
 import com.lejian.oldman.repository.VisualSettingRepository;
+import com.lejian.oldman.utils.UserUtils;
 import com.lejian.oldman.vo.UserVo;
 import com.lejian.oldman.vo.VisualSettingVo;
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +27,14 @@ public class VisualSettingService {
 
 
     public List<VisualSettingVo> getByPage(PageParam pageParam) {
-        List<VisualSettingVo> visualSettingVoList= repository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),null)
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        UserBo userBo = UserUtils.getUser();
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()) {
+            jpaSpecBo.getEqualMap().put("userId", userBo.getId());
+        }else {
+            jpaSpecBo.getEqualMap().put("userId", 0);
+        }
+        List<VisualSettingVo> visualSettingVoList= repository.findByPageWithSpec(pageParam.getPageNo(),pageParam.getPageSize(),jpaSpecBo)
                 .stream()
                 .map(this::convert)
                 .collect(Collectors.toList());
@@ -52,12 +63,21 @@ public class VisualSettingService {
     }
 
     public Long getCount() {
-        return repository.count();
+        JpaSpecBo jpaSpecBo = new JpaSpecBo();
+        UserBo userBo = UserUtils.getUser();
+        if (userBo.getRole().intValue() == UserEnum.Role.USER.getValue()) {
+            jpaSpecBo.getEqualMap().put("userId", userBo.getId());
+        }else {
+            jpaSpecBo.getEqualMap().put("userId", 0);
+        }
+        return repository.countWithSpec(jpaSpecBo);
     }
 
     @Transactional
     public void add(VisualSettingParam visualSettingParam) {
         VisualSettingBo bo=convert(visualSettingParam);
+        UserBo userBo = UserUtils.getUser();
+        bo.setUserId(userBo.getId());
         repository.save(bo);
     }
 
@@ -84,6 +104,8 @@ public class VisualSettingService {
         VisualSettingBo visualSettingBo = new VisualSettingBo();
         visualSettingBo.setId(id);
         visualSettingBo.setIsUsed(true);
+        UserBo userBo = UserUtils.getUser();
+        visualSettingBo.setUserId(userBo.getId());
         repository.dynamicUpdateByPkId(visualSettingBo);
 
     }
